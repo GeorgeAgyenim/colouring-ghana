@@ -597,23 +597,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
         },
     ],
     [Category.TypologySize]: [
-        {
-            mapStyle: 'typology_classification',
-            legend: {
-                title: 'Typology classification',
-                elements: [
-                    { color: '#0311AB', text: '1-2 storeys: Detached' },
-                    { color: '#3845D4', text: '1-2 storeys: Tightly grouped' },
-                    { color: '#6D79FD', text: '1-2 storeys: Loosely grouped' },
-                    { color: '#FF5D00', text: '3-5 storeys: Detached' },
-                    { color: '#FF8000', text: '3-5 storeys: Tightly grouped' },
-                    { color: '#FFA200', text: '3-5 storeys: Loosely grouped' },
-                    { color: '#AB1303', text: '6+ storeys: Detached' },
-                    { color: '#D43A29', text: '6+ storeys: Tightly grouped' },
-                    { color: '#FC604F', text: '6+ storeys: Loosely grouped' },
-                ]
-            }
-        },
+        
         /*{
             mapStyle: 'typology_style_period',
             legend: {
@@ -738,7 +722,24 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: '#980043', text: '2000 +'}
                 ]
             },
-        }
+        },
+        {
+            mapStyle: 'typology_classification',
+            legend: {
+                title: 'Typology classification',
+                elements: [
+                    { color: '#0311AB', text: '1-2 storeys: Detached' },
+                    { color: '#3845D4', text: '1-2 storeys: Tightly grouped' },
+                    { color: '#6D79FD', text: '1-2 storeys: Loosely grouped' },
+                    { color: '#FF5D00', text: '3-5 storeys: Detached' },
+                    { color: '#FF8000', text: '3-5 storeys: Tightly grouped' },
+                    { color: '#FFA200', text: '3-5 storeys: Loosely grouped' },
+                    { color: '#AB1303', text: '6+ storeys: Detached' },
+                    { color: '#D43A29', text: '6+ storeys: Tightly grouped' },
+                    { color: '#FC604F', text: '6+ storeys: Loosely grouped' },
+                ]
+            }
+        },
     ],
     [Category.LandUse]: [
         {
