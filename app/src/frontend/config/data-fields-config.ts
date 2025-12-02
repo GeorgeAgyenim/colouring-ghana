@@ -2197,7 +2197,8 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
             "Good (Minor wear; faded surfaces or light repairs needed)",
             "Fair (Visible cracks, peeling paint, or minor damage)",
             "Poor (Major damage; structural wear posing potential safety risks)",
-            "Derelict (Ruinous; abandoned or partially collapsing, posing safety risks)"
+            "Derelict (Ruinous; abandoned or partially collapsing, posing safety risks)",
+            "Uncompleted (Under construction or unfinished)"
         ]
     },
     building_condition_source_type: {

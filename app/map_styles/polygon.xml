@@ -1989,6 +1989,11 @@
             <PolygonSymbolizer fill="#cc1212" />
             <LineSymbolizer stroke="#cc1212" stroke-width="2.0"/>
         </Rule>
+        <Rule>
+            <Filter>[building_condition] = "Uncompleted (Under construction or unfinished)"</Filter>
+            <PolygonSymbolizer fill="#95A5A6" />
+            <LineSymbolizer stroke="#95A5A6" stroke-width="2.0"/>
+        </Rule>
 
         <Rule>
             <MaxScaleDenominator>8530</MaxScaleDenominator>

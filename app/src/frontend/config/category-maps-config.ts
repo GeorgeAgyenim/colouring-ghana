@@ -807,7 +807,8 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: '#acc98f', text: 'Good (Minor wear; faded surfaces or light repairs needed)' },
                     { color: '#fae269', text: 'Fair (Visible cracks, peeling paint, or minor damage)' },
                     { color: '#e6711d', text: 'Poor (Major damage; structural wear posing potential safety risks)' },
-                    { color: '#cc1212', text: 'Derelict (Ruinous; abandoned or partially collapsing, posing safety risks)' }
+                    { color: '#cc1212', text: 'Derelict (Ruinous; abandoned or partially collapsing, posing safety risks)' },
+                    { color: '#95A5A6', text: 'Uncompleted (Under construction or unfinished)' }
                 ]
             }
         },
