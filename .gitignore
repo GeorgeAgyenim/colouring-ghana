@@ -23,6 +23,7 @@ etl/**/*.gml
 etl/**/*.gz
 etl/**/5690395*
 postgresdata
+colouring_ghana_data.sql
 */__pycache__/*
 
 .DS_Store
