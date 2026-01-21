@@ -5,6 +5,6 @@ import extractController from '../controllers/extractController';
 const router = express.Router();
 
 router.get('/', extractController.getAllDataExtracts);
-router.get('/:extract_id', extractController.getDataExtract);
+router.get(`/${process.env.SUBDIRECTORY??''}/:extract_id`, extractController.getDataExtract);
 
 export default router;

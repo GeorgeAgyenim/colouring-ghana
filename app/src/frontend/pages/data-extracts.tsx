@@ -102,5 +102,5 @@ export default class DataExtracts extends React.Component<{}, DataExtractsState>
 
 
 const ExtractDownloadLink: FunctionComponent<ExtractViewModel> = (props) => (
-    <p><a href={props.download_path}>Extracted on {props.extracted_on.toDateString()}</a></p>
+    <p><a href={`${process.env.SUBDIRECTORY??''}${props.download_path}`}>Extracted on {props.extracted_on.toDateString()}</a></p>
 );
