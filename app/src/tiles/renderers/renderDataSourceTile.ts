@@ -1,4 +1,4 @@
-import mapnik from "@mapnik/mapnik";
+import mapnik from "mapnik";
 import path from 'path';
 import { promisify } from "util";
 
