@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AttributionControl, MapContainer, ZoomControl, useMapEvent, Pane, useMap } from 'react-leaflet';
+import { GeolocationControl } from './geolocation-control'
 
 import 'leaflet/dist/leaflet.css';
 import './map.css';
@@ -151,6 +152,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                 </Pane>
 
                 <ZoomControl position="topright" />
+                <GeolocationControl />
                 <AttributionControl prefix=""/>
             </MapContainer>
             {
