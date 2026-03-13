@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { AttributionControl, MapContainer, ZoomControl, useMapEvent, Pane, useMap } from 'react-leaflet';
 import { GeolocationControl } from './geolocation-control'
+import { BuildingVectorDataLayer } from './layers/building-vector-data-layer';
 
 import 'leaflet/dist/leaflet.css';
 import './map.css';
@@ -91,7 +92,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                 center={initialMapViewport.position}
                 zoom={initialMapViewport.zoom}
                 minZoom={9}
-                maxZoom={18}
+                maxZoom={25}
                 doubleClickZoom={false}
                 zoomControl={false}
                 attributionControl={false}
@@ -118,7 +119,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
 
                 {
                     mapColourScale &&
-                        <BuildingDataLayer
+                        <BuildingVectorDataLayer
                             tileset={mapColourScale}
                             revisionId={revisionId}
                         />

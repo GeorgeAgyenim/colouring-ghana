@@ -8,6 +8,8 @@ import { TileCache } from "./tileCache";
 import { BoundingBox, Tile, TileParams } from "./types";
 import { isOutsideExtent } from "./util";
 import { CCConfig } from '../cc-config';
+import { renderVectorTile } from './renderers/renderVectorTile';
+import { getVectorLayerQuery } from './dataDefinition';
 let config: CCConfig = require('../cc-config.json')
 
 /**
@@ -57,6 +59,7 @@ const tileCache = new TileCache(
 );
 
 const renderBuildingTile = (t: TileParams, d: any) => renderDataSourceTile(t, d, getDataConfig, getLayerVariables);
+const renderBuildingVectorTile = (t: TileParams) => renderVectorTile(t, getVectorLayerQuery(t.tileset));
 
 function cacheOrCreateBuildingTile(tileParams: TileParams, dataParams: any): Promise<Tile> {
     return getTileWithCaching(tileParams, dataParams, tileCache, stitchOrRenderBuildingTile);
@@ -94,5 +97,6 @@ function renderTile(tileParams: TileParams, dataParams: any): Promise<Tile> {
 export {
     allTilesets,
     renderTile,
+    renderBuildingVectorTile,
     tileCache
 };

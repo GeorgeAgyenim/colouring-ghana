@@ -8,7 +8,7 @@ import express from 'express';
 import asyncController from '../api/routes/asyncController';
 import { strictParseInt } from '../parse';
 
-import { allTilesets, renderTile } from './rendererDefinition';
+import { allTilesets, renderTile, renderBuildingVectorTile } from './rendererDefinition';
 import { TileParams } from './types';
 
 const handleTileRequest = asyncController(async function (req: express.Request, res: express.Response) {
@@ -30,10 +30,46 @@ const handleTileRequest = asyncController(async function (req: express.Request, 
     }
 });
 
+const vectorTileCache = new Map<string, { buf: Buffer, ts: number }>();
+const CACHE_TTL_MS = 60_000;
+
+const handleVectorTileRequest = asyncController(async function (req: express.Request, res: express.Response) {
+    try {
+        var tileParams = parseTileParams(req.params);
+    } catch (err) {
+        console.error(err);
+        return res.status(400).send({ error: err.message });
+    }
+
+    const cacheKey = `${tileParams.tileset}/${tileParams.z}/${tileParams.x}/${tileParams.y}`;
+    const cached = vectorTileCache.get(cacheKey);
+    if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
+        res.writeHead(200, {
+            'Content-Type': 'application/x-protobuf',
+            'Cache-Control': 'public, max-age=60',
+        });
+        return res.end(cached.buf);
+    }
+
+    try {
+        const pbf = await renderBuildingVectorTile(tileParams);
+        vectorTileCache.set(cacheKey, { buf: pbf, ts: Date.now() });
+        res.writeHead(200, {
+            'Content-Type': 'application/x-protobuf',
+            'Cache-Control': 'public, max-age=60',
+        });
+        res.end(pbf);
+    } catch(err) {
+        console.error(err);
+        res.status(500).send({ error: err });
+    }
+});
+
 // tiles router
 const router = express.Router();
 
 router.get('/:tileset/:z/:x/:y(\\d+):scale(@\\dx)?.png', handleTileRequest);
+router.get('/:tileset/:z/:x/:y(\\d+).pbf', handleVectorTileRequest);
 
 function parseTileParams(params: any): TileParams {
     const { tileset, z, x, y, scale } = params;

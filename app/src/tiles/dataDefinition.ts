@@ -667,9 +667,26 @@ function getLayerVariables(tileset: string, dataParams: any): object {
     return {};
 }
 
+/**
+ * Returns the raw inner SQL for a tileset, adapted for use with ST_AsMVT
+ * in renderVectorTile. Unlike getDataConfig (which wraps the query for Mapnik),
+ * this returns just the inner SELECT so renderVectorTile can compose the full
+ * ST_AsMVT call itself.
+ *
+ * Throws if the tileset name is not recognised.
+ */
+function getVectorLayerQuery(tileset: string): string {
+    const query = LAYER_QUERIES[tileset];
+    if (query == undefined) {
+        throw new Error(`No vector layer query for tileset: ${tileset}`);
+    }
+    return query;
+}
+
 export {
     getBuildingLayerNames,
     getAllLayerNames,
     getDataConfig,
-    getLayerVariables
+    getLayerVariables,
+    getVectorLayerQuery,
 };
