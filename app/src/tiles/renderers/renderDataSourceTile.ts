@@ -1,4 +1,3 @@
-import mapnik from "mapnik";
 import path from 'path';
 import { promisify } from "util";
 
@@ -21,12 +20,17 @@ const DATASOURCE_CONFIG = {
     'type': 'postgis'
 };
 
-// register datasource adapters for mapnik database connection
-if (mapnik.register_default_input_plugins) {
-    mapnik.register_default_input_plugins();
+let _mapnik: typeof import('mapnik')['default'] | undefined;
+function getMapnik() {
+    if (!_mapnik) {
+        _mapnik = require('mapnik');
+        if (_mapnik.register_default_input_plugins) {
+            _mapnik.register_default_input_plugins();
+        }
+        _mapnik.register_default_fonts();
+    }
+    return _mapnik;
 }
-// register fonts for text rendering
-mapnik.register_default_fonts();
 
 
 async function renderDataSourceTile(
@@ -35,6 +39,7 @@ async function renderDataSourceTile(
     getTableDefinitionFn: TableDefinitionFunction,
     getVariablesFn: VariablesFunction
 ): Promise<Tile> {
+    const mapnik = getMapnik();
     const bbox = getBbox(z, x, y);
 
     const tileSize = TILE_SIZE * scale;

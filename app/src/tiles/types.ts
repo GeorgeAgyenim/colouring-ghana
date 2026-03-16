@@ -1,4 +1,4 @@
-import { Image } from 'mapnik';
+import type { Image } from 'mapnik';
 import { Sharp } from 'sharp';
 
 /**
