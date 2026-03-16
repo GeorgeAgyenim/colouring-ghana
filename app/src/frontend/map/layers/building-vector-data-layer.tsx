@@ -6,7 +6,7 @@ import { BuildingMapTileset } from '../../config/tileserver-config';
 import { VECTOR_TILE_STYLES, VectorTileFeatureStyle, makeHighlightStyle } from './vector-tile-styles';
 
 interface BuildingVectorDataLayerProps {
-    tileset:    BuildingMapTileset | 'highlight';
+    tileset:    BuildingMapTileset | 'highlight' | 'number_labels';
     revisionId: string;
     selectedBuildingId?: number;
     baseTileset?: string;

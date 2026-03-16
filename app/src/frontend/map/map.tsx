@@ -23,7 +23,7 @@ import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
 import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
 import { BuildingBaseLayer } from './layers/building-base-layer';
 import { BuildingDataLayer } from './layers/building-data-layer';
-import { BuildingNumbersLayer } from './layers/building-numbers-layer';
+
 
 
 import { Legend } from './legend';
@@ -137,7 +137,10 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <VistaBoundaryLayer/>
                     <HousingBoundaryLayer/>
                     <CreativeBoundaryLayer/>
-                    <BuildingNumbersLayer revisionId={revisionId} />
+                    <BuildingVectorDataLayer
+                        tileset="number_labels"
+                        revisionId={revisionId}
+                    />
                     {
                         selectedBuildingId &&
                             <BuildingVectorDataLayer

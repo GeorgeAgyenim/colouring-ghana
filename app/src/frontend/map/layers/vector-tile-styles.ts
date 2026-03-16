@@ -795,6 +795,18 @@ function styleAgeInferred(props: Record<string, any>, zoom: number): VectorTileF
     return styleDateYear(props, zoom);
 }
 
+function styleNumberLabels(props: Record<string, any>, zoom: number): VectorTileFeatureStyle | null {
+    if (zoom < 18 || !props.location_number) return null;
+    return {
+        fill:        false,
+        fillColor:   TRANSPARENT,
+        fillOpacity: 0,
+        color:       '#333333',
+        weight:      2,
+        opacity:     0.8,
+    };
+}
+
 function stylePlanningWorldHeritageSites(props: Record<string, any>, zoom: number): VectorTileFeatureStyle | null {
     const colour = '#858eff';
     return makeStyle(colour, standardStroke(zoom, colour));
@@ -810,6 +822,7 @@ export const VECTOR_TILE_STYLES: Record<string, StyleFunction> = {
     base_light:                                 styleBaseLight,
     base_night:                                 styleBaseNight,
     base_night_outlines:                        styleBaseNightOutlines,
+    number_labels:                              styleNumberLabels,
     age_amalgamated:                            styleAgeAmalgamated,
     age_inferred:                               styleAgeInferred,
     date_year:                                  styleDateYear,
