@@ -24,7 +24,7 @@ import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
 import { BuildingBaseLayer } from './layers/building-base-layer';
 import { BuildingDataLayer } from './layers/building-data-layer';
 import { BuildingNumbersLayer } from './layers/building-numbers-layer';
-import { BuildingHighlightLayer } from './layers/building-highlight-layer';
+
 
 import { Legend } from './legend';
 import SearchBox from './search-box';
@@ -140,9 +140,11 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <BuildingNumbersLayer revisionId={revisionId} />
                     {
                         selectedBuildingId &&
-                            <BuildingHighlightLayer
+                            <BuildingVectorDataLayer
+                                tileset="highlight"
+                                revisionId={revisionId}
                                 selectedBuildingId={selectedBuildingId}
-                                baseTileset={mapColourScale} 
+                                baseTileset={mapColourScale}
                             />
                     }
                 </Pane>

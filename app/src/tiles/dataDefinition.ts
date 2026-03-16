@@ -26,10 +26,10 @@ const LAYER_QUERIES = {
             buildings`,
     highlight: `
         SELECT
-            geometry_id
+            geometry_id,
+            building_id
         FROM
-            buildings
-        WHERE building_id = !@highlight!`,
+            buildings`,
     date_year: `
         SELECT
             geometry_id,

@@ -759,18 +759,30 @@ function styleEnergyGreenRoof(props: Record<string, any>, zoom: number): VectorT
     return makeStyle(colour, standardStroke(zoom, colour));
 }
 
-function styleHighlight(props: Record<string, any>, zoom: number): VectorTileFeatureStyle {
-    // The highlight layer uses a coloured border, no fill
-    const base = props.base_data_layer;
-    const isRedHighlight = base === 'location' || base === 'conservation_area';
+/**
+ * Factory that returns a StyleFunction for the highlight tileset.
+ * Filters client-side: only the selected building gets a coloured outline;
+ * every other feature is suppressed (returns null).
+ */
+export function makeHighlightStyle(
+    selectedBuildingId: number,
+    baseTileset: string,
+): StyleFunction {
+    if (!selectedBuildingId) return () => null;
+
+    const isRedHighlight = baseTileset === 'location' || baseTileset === 'conservation_area';
     const colour = isRedHighlight ? '#ff0000' : '#00ffff';
-    return {
-        fill:        false,
-        fillColor:   TRANSPARENT,
-        fillOpacity: 0,
-        color:       colour,
-        weight:      4.5,
-        opacity:     0.67,
+
+    return (properties: Record<string, any>, _zoom: number): VectorTileFeatureStyle | null => {
+        if (Number(properties.building_id) !== Number(selectedBuildingId)) return null;
+        return {
+            fill:        false,
+            fillColor:   TRANSPARENT,
+            fillOpacity: 0,
+            color:       colour,
+            weight:      4.5,
+            opacity:     0.67,
+        };
     };
 }
 
@@ -798,7 +810,6 @@ export const VECTOR_TILE_STYLES: Record<string, StyleFunction> = {
     base_light:                                 styleBaseLight,
     base_night:                                 styleBaseNight,
     base_night_outlines:                        styleBaseNightOutlines,
-    highlight:                                  styleHighlight,
     age_amalgamated:                            styleAgeAmalgamated,
     age_inferred:                               styleAgeInferred,
     date_year:                                  styleDateYear,
