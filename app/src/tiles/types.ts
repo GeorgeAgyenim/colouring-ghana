@@ -1,6 +1,3 @@
-import type { Image } from 'mapnik';
-import { Sharp } from 'sharp';
-
 /**
  * Bounding box in the format [w, s, e, n]
  */
@@ -41,7 +38,7 @@ interface DataConfig {
 type TableDefinitionFunction = (tileset: string) => DataConfig;
 type VariablesFunction = (tileset: string, dataParams: any) => object;
 
-type Tile = Image | Sharp;
+type Tile = Buffer;
 type RendererFunction = (tileParams: TileParams, dataParams: any) => Promise<Tile>;
 
 interface TileRenderer {

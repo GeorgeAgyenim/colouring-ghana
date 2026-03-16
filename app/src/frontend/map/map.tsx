@@ -21,8 +21,6 @@ import { ConservationAreaBoundaryLayer } from './layers/conservation-boundary-la
 import { VistaBoundaryLayer } from './layers/vista-boundary-layer';
 import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
 import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
-import { BuildingDataLayer } from './layers/building-data-layer';
-
 
 
 import { Legend } from './legend';

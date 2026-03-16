@@ -8,27 +8,8 @@ import express from 'express';
 import asyncController from '../api/routes/asyncController';
 import { strictParseInt } from '../parse';
 
-import { allTilesets, renderTile, renderBuildingVectorTile } from './rendererDefinition';
+import { allTilesets, renderBuildingVectorTile } from './rendererDefinition';
 import { TileParams } from './types';
-
-const handleTileRequest = asyncController(async function (req: express.Request, res: express.Response) {
-    try {
-        var tileParams = parseTileParams(req.params);
-        var dataParams = req.query;
-    } catch(err) {
-        console.error(err);
-        return res.status(400).send({error: err.message});
-    }
-    
-    try {
-        const im = await renderTile(tileParams, dataParams);
-        res.writeHead(200, { 'Content-Type': 'image/png' });
-        res.end(im);
-    } catch(err) {
-        console.error(err);
-        res.status(500).send({ error: err });
-    }
-});
 
 const vectorTileCache = new Map<string, { buf: Buffer, ts: number }>();
 const CACHE_TTL_MS = 60_000;
@@ -68,7 +49,6 @@ const handleVectorTileRequest = asyncController(async function (req: express.Req
 // tiles router
 const router = express.Router();
 
-router.get('/:tileset/:z/:x/:y(\\d+):scale(@\\dx)?.png', handleTileRequest);
 router.get('/:tileset/:z/:x/:y(\\d+).pbf', handleVectorTileRequest);
 
 function parseTileParams(params: any): TileParams {

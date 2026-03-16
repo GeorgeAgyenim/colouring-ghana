@@ -16,7 +16,6 @@
 // Using node-fs package to patch fs
 // for node >10 we could drop this in favour of fs.mkdir (which has recursive option)
 // and then use stdlib `import fs from 'fs';`
-import type { Image } from 'mapnik';
 import fs from 'node-fs';
 import { promisify } from 'util';
 
@@ -75,7 +74,7 @@ class TileCache {
         private shouldBulkClearTilesetFn?: (tileset: string) => boolean
     ) {}
 
-    async get(tileParams: TileParams): Promise<Image> {
+    async get(tileParams: TileParams): Promise<Buffer> {
         if (!this.shouldUseCache(tileParams)) {
             throw new Error(`Skip cache get ${formatParams(tileParams)}`);
         }
@@ -83,7 +82,7 @@ class TileCache {
         return readFile(location.fname);
     }
 
-    async put(im: Image, tileParams: TileParams): Promise<void> {
+    async put(im: Buffer, tileParams: TileParams): Promise<void> {
         if (!this.shouldUseCache(tileParams)) {
             throw new Error(`Skip cache put ${formatParams(tileParams)}`);
         }
