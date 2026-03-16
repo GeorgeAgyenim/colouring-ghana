@@ -21,7 +21,6 @@ import { ConservationAreaBoundaryLayer } from './layers/conservation-boundary-la
 import { VistaBoundaryLayer } from './layers/vista-boundary-layer';
 import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
 import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
-import { BuildingBaseLayer } from './layers/building-base-layer';
 import { BuildingDataLayer } from './layers/building-data-layer';
 
 
@@ -107,8 +106,12 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     style={{zIndex: 50}}
                 >
                     <CityBaseMapLayer theme={darkLightTheme} />
-                    <BuildingBaseLayer theme={darkLightTheme} />
                 </Pane>
+
+                <BuildingVectorDataLayer
+                    tileset={`base_${darkLightTheme}` as any}
+                    revisionId={revisionId}
+                />
 
                 <Pane
                     name='cc-overlay-pane-shown-behind-buildings'

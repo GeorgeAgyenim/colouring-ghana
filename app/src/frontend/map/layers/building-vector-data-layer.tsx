@@ -6,11 +6,14 @@ import { BuildingMapTileset } from '../../config/tileserver-config';
 import { VECTOR_TILE_STYLES, VectorTileFeatureStyle, makeHighlightStyle } from './vector-tile-styles';
 
 interface BuildingVectorDataLayerProps {
-    tileset:    BuildingMapTileset | 'highlight' | 'number_labels';
+    tileset:    BuildingMapTileset | 'highlight' | 'number_labels' | 'base_light' | 'base_night' | 'base_night_outlines';
     revisionId: string;
     selectedBuildingId?: number;
     baseTileset?: string;
 }
+
+const BASE_PANE_Z_INDEX = 100;
+const BASE_PANE_NAME = 'cc-vector-base-pane';
 
 const VECTOR_PANE_Z_INDEX = 200;
 const VECTOR_PANE_NAME = 'cc-vector-data-pane';
@@ -34,8 +37,9 @@ const BuildingVectorDataLayer: React.FC<BuildingVectorDataLayerProps> = ({
             if (cancelled) return;
 
             const isHighlight = tileset === 'highlight';
-            const paneName = isHighlight ? HIGHLIGHT_PANE_NAME : VECTOR_PANE_NAME;
-            const paneZ = isHighlight ? HIGHLIGHT_PANE_Z_INDEX : VECTOR_PANE_Z_INDEX;
+            const isBase = tileset === 'base_light' || tileset === 'base_night' || tileset === 'base_night_outlines';
+            const paneName = isHighlight ? HIGHLIGHT_PANE_NAME : isBase ? BASE_PANE_NAME : VECTOR_PANE_NAME;
+            const paneZ = isHighlight ? HIGHLIGHT_PANE_Z_INDEX : isBase ? BASE_PANE_Z_INDEX : VECTOR_PANE_Z_INDEX;
 
             if (!map.getPane(paneName)) {
                 const pane = map.createPane(paneName);
