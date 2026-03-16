@@ -66,6 +66,8 @@ function standardStroke(zoom: number, fillColour: string): Pick<VectorTileFeatur
     if (zoom >= 18) return { color: STROKE_COLOUR, weight: 1 };
     if (zoom >= 17) return { color: STROKE_COLOUR, weight: 1.5 };
     if (zoom >= 15) return { color: STROKE_COLOUR, weight: 1 };
+    if (zoom <= 11) return { color: fillColour, weight: 0.5 };
+    if (zoom <= 13) return { color: fillColour, weight: 1 };
     return { color: fillColour, weight: 2 };
 }
 
@@ -76,6 +78,8 @@ function tightStroke(zoom: number, fillColour: string): Pick<VectorTileFeatureSt
     if (zoom >= 18) return { color: STROKE_COLOUR, weight: 1 };
     if (zoom >= 17) return { color: STROKE_COLOUR, weight: 1.5 };
     if (zoom >= 16) return { color: STROKE_COLOUR, weight: 1 };
+    if (zoom <= 11) return { color: fillColour, weight: 0.5 };
+    if (zoom <= 13) return { color: fillColour, weight: 1 };
     return { color: fillColour, weight: 2 };
 }
 
@@ -86,6 +90,8 @@ function narrowStroke(zoom: number, fillColour: string): Pick<VectorTileFeatureS
     if (zoom >= 18) return { color: STROKE_COLOUR, weight: 0.8 };
     if (zoom >= 17) return { color: STROKE_COLOUR, weight: 1 };
     if (zoom >= 16) return { color: STROKE_COLOUR, weight: 0.8 };
+    if (zoom <= 11) return { color: fillColour, weight: 0.5 };
+    if (zoom <= 13) return { color: fillColour, weight: 1 };
     return { color: fillColour, weight: 2 };
 }
 
@@ -96,6 +102,8 @@ function typologyStroke(zoom: number, fillColour: string): Pick<VectorTileFeatur
     if (zoom >= 18) return { color: STROKE_COLOUR, weight: 0.8 };
     if (zoom >= 17) return { color: STROKE_COLOUR, weight: 1 };
     if (zoom >= 15) return { color: STROKE_COLOUR, weight: 0.8 };
+    if (zoom <= 11) return { color: fillColour, weight: 0.5 };
+    if (zoom <= 13) return { color: fillColour, weight: 1 };
     return { color: fillColour, weight: 2 };
 }
 

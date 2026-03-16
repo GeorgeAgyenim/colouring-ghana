@@ -66,9 +66,9 @@ const BuildingVectorDataLayer: React.FC<BuildingVectorDataLayerProps> = ({
             const vectorGrid = (L as any).vectorGrid.protobuf(tileUrl, {
                 // rendererFactory: (L as any).canvas.tile,
                 pane: paneName,
-                minZoom: 14,
-                maxNativeZoom: 22,  // stop fetching new tiles here...
-                maxZoom: 22,        // ...but keep rendering up to here
+                minZoom: 10,
+                maxNativeZoom: 19,
+                maxZoom: 25,
                 vectorTileLayerStyles: {
                     [tileset]: (properties: Record<string, any>, zoom: number): any => {
                         return styleFunction(properties, zoom) ?? [];

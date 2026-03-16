@@ -42,7 +42,14 @@ function buildMvtQuery(innerSql: string, tileset: string): string {
         FROM (
             SELECT
                 ST_AsMVTGeom(
-                    ST_Simplify(g.geometry_geom, CASE WHEN $1::int < 15 THEN 2.0 ELSE 0 END),
+                    ST_Simplify(g.geometry_geom,
+                        CASE
+                            WHEN $1::int <= 10 THEN 50.0
+                            WHEN $1::int <= 12 THEN 10.0
+                            WHEN $1::int <= 14 THEN 2.0
+                            ELSE 0
+                        END
+                    ),
                     ST_TileEnvelope($1, $2, $3),
                     ${MVT_EXTENT},
                     ${MVT_BUFFER},
