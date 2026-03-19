@@ -18,7 +18,8 @@ const db = pgp({
     'database': process.env.PGDATABASE,
     'user': process.env.PGUSER,
     'password': process.env.PGPASSWORD,
-    'port': parseInt(process.env.PGPORT)
+    'port': parseInt(process.env.PGPORT),
+    'ssl': process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
 export default db;
