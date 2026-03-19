@@ -28,3 +28,9 @@ psql -c "DELETE FROM geometries a USING (
 ) b
 WHERE a.source_id = b.source_id
 AND a.ctid <> b.ctid;"
+
+echo "Flushing geometry tile cache..."
+curl -s -X POST http://localhost:3000/tiles/cache/clear-geometry \
+     -H "x-admin-secret: ${ADMIN_SECRET}" \
+  && echo "Geometry cache flushed successfully" \
+  || echo "Warning: failed to flush geometry cache (is the app running?)"

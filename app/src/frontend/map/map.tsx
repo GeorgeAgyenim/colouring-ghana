@@ -63,6 +63,13 @@ export const ColouringMap : FC<ColouringMapProps> = ({
     const { darkLightTheme, darkLightThemeSwitch, showLayerSelection } = useDisplayPreferences();
     const [position, setPosition] = useState(initialMapViewport.position);
     const [zoom, setZoom] = useState(initialMapViewport.zoom);
+    const [geometryVersion, setGeometryVersion] = useState<number | null>(null);
+
+    useEffect(() => {
+        apiGet('/tiles/geometry-version')
+            .then((data: any) => setGeometryVersion(data?.gv ?? 1))
+            .catch(() => setGeometryVersion(1));
+    }, []);
 
 
     const handleLocate = useCallback(
@@ -109,6 +116,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                 <BuildingVectorDataLayer
                     tileset={`base_${darkLightTheme}` as any}
                     revisionId={revisionId}
+                    geometryVersion={geometryVersion}
                 />
 
                 <Pane
@@ -131,7 +139,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     style={{zIndex: 300}}
                 >
                     <CityBoundaryLayer/>
-                    <HistoricDataLayer revisionId={revisionId} />
+                    <HistoricDataLayer revisionId={revisionId} geometryVersion={geometryVersion} />
                     <HistoricMapLayer revisionId={revisionId} />
                     <ParcelBoundaryLayer/>
                     <FloodBoundaryLayer/>

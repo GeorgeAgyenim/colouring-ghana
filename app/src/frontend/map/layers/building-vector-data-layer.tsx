@@ -5,11 +5,14 @@ import { useMap } from 'react-leaflet';
 import { BuildingMapTileset } from '../../config/tileserver-config';
 import { VECTOR_TILE_STYLES, VectorTileFeatureStyle, makeHighlightStyle } from './vector-tile-styles';
 
+const GEOMETRY_ONLY_TILESETS = new Set(['base_light', 'base_night', 'base_night_outlines']);
+
 interface BuildingVectorDataLayerProps {
     tileset:    BuildingMapTileset | 'highlight' | 'number_labels' | 'base_light' | 'base_night' | 'base_night_outlines';
     revisionId: string;
     selectedBuildingId?: number;
     baseTileset?: string;
+    geometryVersion?: number | null;
 }
 
 const BASE_PANE_Z_INDEX = 100;
@@ -26,20 +29,23 @@ const BuildingVectorDataLayer: React.FC<BuildingVectorDataLayerProps> = ({
     revisionId,
     selectedBuildingId,
     baseTileset,
+    geometryVersion,
 }) => {
     const map = useMap();
     const layerRef = useRef<L.Layer | null>(null);
+    const isGeometryOnly = GEOMETRY_ONLY_TILESETS.has(tileset);
 
     useEffect(() => {
+        if (isGeometryOnly && geometryVersion == null) return;
+
         let cancelled = false;
 
         import('leaflet.vectorgrid').then(() => {
             if (cancelled) return;
 
             const isHighlight = tileset === 'highlight';
-            const isBase = tileset === 'base_light' || tileset === 'base_night' || tileset === 'base_night_outlines';
-            const paneName = isHighlight ? HIGHLIGHT_PANE_NAME : isBase ? BASE_PANE_NAME : VECTOR_PANE_NAME;
-            const paneZ = isHighlight ? HIGHLIGHT_PANE_Z_INDEX : isBase ? BASE_PANE_Z_INDEX : VECTOR_PANE_Z_INDEX;
+            const paneName = isHighlight ? HIGHLIGHT_PANE_NAME : isGeometryOnly ? BASE_PANE_NAME : VECTOR_PANE_NAME;
+            const paneZ = isHighlight ? HIGHLIGHT_PANE_Z_INDEX : isGeometryOnly ? BASE_PANE_Z_INDEX : VECTOR_PANE_Z_INDEX;
 
             if (!map.getPane(paneName)) {
                 const pane = map.createPane(paneName);
@@ -61,7 +67,9 @@ const BuildingVectorDataLayer: React.FC<BuildingVectorDataLayerProps> = ({
                 return;
             }
 
-            const tileUrl = `/tiles/${tileset}/{z}/{x}/{y}.pbf?rev=${encodeURIComponent(revisionId)}`;
+            const tileUrl = isGeometryOnly
+                ? `/tiles/${tileset}/{z}/{x}/{y}.pbf?gv=${geometryVersion}`
+                : `/tiles/${tileset}/{z}/{x}/{y}.pbf?rev=${encodeURIComponent(revisionId)}`;
 
             const vectorGrid = (L as any).vectorGrid.protobuf(tileUrl, {
                 // rendererFactory: (L as any).canvas.tile,
@@ -90,7 +98,10 @@ const BuildingVectorDataLayer: React.FC<BuildingVectorDataLayerProps> = ({
                 layerRef.current = null;
             }
         };
-    }, [map, tileset, revisionId, selectedBuildingId, baseTileset]);
+    }, isGeometryOnly
+        ? [map, tileset, geometryVersion]
+        : [map, tileset, revisionId, selectedBuildingId, baseTileset]
+    );
 
     return null;
 };
