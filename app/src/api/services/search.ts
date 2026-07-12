@@ -12,7 +12,7 @@ function queryLocation(term) {
     const limit = 5;
     return db.manyOrNone(
         `SELECT
-            search_str, search_class, ST_AsGeoJSON(center), zoom,
+            search_id, search_str, search_class, ST_AsGeoJSON(center), zoom,
             search_str <-> $1 AS dist
         FROM
             search_locations

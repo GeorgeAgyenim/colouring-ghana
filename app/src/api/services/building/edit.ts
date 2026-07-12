@@ -8,6 +8,7 @@ import { aggregateUserAttributes } from '../domainLogic/aggregateUserAttributes'
 import { processBuildingUpdate } from '../domainLogic/processBuildingUpdate';
 import { validateChangeSet } from '../domainLogic/validateUpdate';
 import { expireBuildingTileCache } from './tileCache';
+import { syncBuildingSearchLocations } from './searchSync';
 
 
 export async function editBuilding(
@@ -79,6 +80,12 @@ export async function editBuilding(
     });
     
     expireBuildingTileCache(buildingId);
+
+    // Keep the search index fresh when a searchable location field changes
+    // (fire-and-forget, post-commit: never blocks or rolls back the edit).
+    if(attributes && ('location_name' in attributes || 'location_gps_address' in attributes)) {
+        syncBuildingSearchLocations(buildingId);
+    }
 
     return finalUpdate;
 }

@@ -45,8 +45,10 @@ GRANT SELECT, INSERT ON TABLE logs to appusername;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public to appusername;
 -- use postgis/pgcrypto functions
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO appusername;
--- read map search locations
-GRANT SELECT ON TABLE search_locations to appusername;
+-- read map search locations, and write name/gps rows synced on building edit
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE search_locations to appusername;
+-- read GeoNames place gazetteer for town search/autofill
+GRANT SELECT ON TABLE reference_tables.places TO appusername;
 -- add/save user building attribute verification
 GRANT SELECT, INSERT, DELETE ON TABLE building_verification TO appusername;
 ```

@@ -45,6 +45,9 @@ const DataEntry: React.FC<DataEntryProps> = (props) => {
                 isUrl={props.isUrl}
                 required={props.required}
                 valueTransform={props.valueTransform}
+                autofill={props.autofill}
+                showAllOptionsOnEmpty={props.showAllOptionsOnEmpty}
+                confirmOnAutofillSelect={props.confirmOnAutofillSelect}
             />
         </Fragment>
     );

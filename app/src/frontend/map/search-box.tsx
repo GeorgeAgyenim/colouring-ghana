@@ -6,10 +6,12 @@ import './search-box.css';
 import { apiGet } from '../apiHelpers';
 import { SearchIcon } from '../components/icons';
 
-interface SearchResult {
+export interface SearchResult {
+    id: number;
     type: string;
     attributes: {
         label: string;
+        search_class: string;
         zoom: number;
     };
     geometry: Point;
@@ -17,12 +19,18 @@ interface SearchResult {
 
 
 interface SearchBoxProps {
-    onLocate: (lat: number, lng: number, zoom: number) => void;
+    /** Called with the full set of matches (for map pins + fit-to-bounds); empty array clears them. */
+    onResults: (results: SearchResult[]) => void;
+    /** Called with the hovered result's id (or null) so its map pin can be emphasised. */
+    onResultHover: (id: number | null) => void;
+    /** Called when the user picks a result; the map flies to it. */
+    onResultSelect: (result: SearchResult) => void;
 }
 
 interface SearchBoxState {
     q: string;
     results: SearchResult[];
+    searched: boolean;
     fetching: boolean;
     collapsedSearch: boolean;
     smallScreen: boolean;
@@ -37,6 +45,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         this.state = {
             q: '',
             results: [],
+            searched: false,
             fetching: false,
             //track the state of the search box i.e. collapsed or expanded. Default to true
             collapsedSearch: true,
@@ -48,6 +57,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.clearResults = this.clearResults.bind(this);
         this.clearQuery = this.clearQuery.bind(this);
+        this.selectResult = this.selectResult.bind(this);
         this.expandSearch = this.expandSearch.bind(this);
         this.onResize= this.onResize.bind(this);
     }
@@ -77,13 +87,26 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     clearResults(){
         this.setState({
-            results: []
+            results: [],
+            searched: false
         });
+        // Clear map pins and any active hover emphasis
+        this.props.onResults([]);
+        this.props.onResultHover(null);
     }
 
     clearQuery(){
         this.setState({
             q: ''
+        });
+    }
+
+    // The user picked a result: fly there and hide the list (map clears its own pins)
+    selectResult(result: SearchResult){
+        this.props.onResultSelect(result);
+        this.setState({
+            results: [],
+            searched: false
         });
     }
 
@@ -100,25 +123,34 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             fetching: true
         });
 
-        apiGet(`/api/search?q=${this.state.q}`)
+        apiGet(`/api/search?q=${encodeURIComponent(this.state.q)}`)
         .then((data) => {
             if (data && data.results){
-                this.props.onLocate(data.results[0].geometry.coordinates[1], data.results[0].geometry.coordinates[0], data.results[0].attributes.zoom)
+                this.setState({
+                    results: data.results,
+                    searched: true,
+                    fetching: false
+                });
+                this.props.onResults(data.results);
             } else {
                 console.error(data);
 
                 this.setState({
                     results: [],
+                    searched: true,
                     fetching: false
                 });
+                this.props.onResults([]);
             }
         }).catch((err) => {
             console.error(err);
 
             this.setState({
                 results: [],
+                searched: true,
                 fetching: false
             });
+            this.props.onResults([]);
         });
     }
 
@@ -140,6 +172,40 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         this.setState({smallScreen: (e.target.innerWidth < 990)});
     }
 
+    renderResultsList() {
+        if(!this.state.searched) return null;
+
+        if(this.state.results.length === 0) {
+            return (
+                <div className="search-results-list search-results-empty">
+                    No matches found
+                </div>
+            );
+        }
+
+        return (
+            <ul className="search-results-list">
+                {
+                    this.state.results.map(result => (
+                        <li
+                            key={result.id}
+                            className="search-result"
+                            onMouseEnter={() => this.props.onResultHover(result.id)}
+                            onMouseLeave={() => this.props.onResultHover(null)}
+                            onClick={() => this.selectResult(result)}
+                        >
+                            <span className="search-result-label">{result.attributes.label}</span>
+                            <span className="search-result-class">{result.attributes.search_class}</span>
+                        </li>
+                    ))
+                }
+                <li className="search-results-attribution">
+                    Place names © <a href="https://www.geonames.org" target="_blank" rel="noopener noreferrer">GeoNames</a> (CC BY 4.0)
+                </li>
+            </ul>
+        );
+    }
+
     render() {
         // if the current state is collapsed (and a mobile device) just render the icon
         if(this.state.collapsedSearch && this.state.smallScreen){
@@ -154,11 +220,10 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             );
         }
 
-        const resultsList = null;
         return (
             <div className="search-box" onKeyDown={this.handleKeyPress}>
                 <div className="search-box-pane">
-                    <div className={`collapse-btn ${this.state.smallScreen ? 'active' : ''}`} onClick={this.state.smallScreen ? this.expandSearch : null}>
+                    <div className={`collapse-btn ${this.state.smallScreen ? 'active' : ''}`} onClick={this.state.smallScreen ? this.expandSearch : undefined}>
                         <SearchIcon/>
                     </div>
                     <form onSubmit={this.search} className="form-inline d-flex flex-nowrap">
@@ -168,15 +233,15 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             id="search-box-q"
                             name="q"
                             value={this.state.q}
-                            placeholder="Type a postcode or a place name..."
-                            aria-label="Type a postcode or a place name..."
+                            placeholder="Search town, street, name or GPS address..."
+                            aria-label="Search town, street, name or GPS address..."
                             onChange={this.handleChange}
                             maxLength={28}
                         />
                         <button className="search-btn btn btn-outline-dark" type="submit">Search</button>
                     </form>
                 </div>
-                { resultsList }
+                { this.renderResultsList() }
             </div>
         );
     }

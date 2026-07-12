@@ -14,6 +14,7 @@ import { CCConfig } from '../../../cc-config';
 
 const locationNumberPattern = "[1-9]\\d*[a-z]?(-([1-9]\\d*))?"; ///[1-9]\d*[a-z]?(-([1-9]\d*))?/;
 const postcodeCharacterPattern = "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?(\\s*[0-9][A-Z]{1,2})?$";
+const gpsAddressPattern = "^[A-Z]{2}-[0-9]{3,4}-[0-9]{3,4}$";
 const osmIdentifierPattern = "[0-9]{1,9}";
 let config: CCConfig = require('../../../cc-config.json')
 
@@ -227,7 +228,8 @@ const LocationView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                     copy={props.copy}
                     onChange={props.onChange}
-                    disabled={true}
+                    autofill={true}
+                    placeholder={props.mode=="edit"?"Start typing a town or place name...":""}
                     />
                 <Verification
                     slug="location_town"
@@ -256,6 +258,27 @@ const LocationView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     user_verified={props.user_verified.hasOwnProperty("location_postcode")}
                     user_verified_as={props.user_verified.location_postcode}
                     verified_count={props.building.verified.location_postcode}
+                    />
+                <PatternDataEntry
+                    title={dataFields.location_gps_address.title}
+                    slug="location_gps_address"
+                    value={props.building.location_gps_address}
+                    pattern={gpsAddressPattern}
+                    mode={props.mode}
+                    copy={props.copy}
+                    onChange={props.onChange}
+                    maxLength={12}
+                    valueTransform={x=>x.toUpperCase()}
+                    tooltip={dataFields.location_gps_address.tooltip}
+                    placeholder={props.mode=="edit"?dataFields.location_gps_address.example:""}
+                    />
+                <Verification
+                    slug="location_gps_address"
+                    allow_verify={props.user !== undefined && props.building.location_gps_address !== null && !props.edited}
+                    onVerify={props.onVerify}
+                    user_verified={props.user_verified.hasOwnProperty("location_gps_address")}
+                    user_verified_as={props.user_verified.location_gps_address}
+                    verified_count={props.building.verified.location_gps_address}
                     />
                 <SelectDataEntry
                     title={dataFields.location_address_source.title}

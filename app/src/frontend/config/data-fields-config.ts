@@ -353,6 +353,12 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
         example: "W1W 6TR",
         tooltip: "Correctly formatted UK postcode, i.e. NW1 2FB",
     },
+    location_gps_address: {
+        category: Category.Location,
+        title: "GhanaPost GPS address",
+        example: "GA-183-9385",
+        tooltip: "The building's GhanaPost GPS digital address, formatted AA-NNN-NNNN, e.g. GA-183-9385. Searchable to locate this building on the map.",
+    },
     location_address_source: {
         category: Category.Location,
         title: "Source type",

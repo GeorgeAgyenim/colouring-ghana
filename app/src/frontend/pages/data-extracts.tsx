@@ -51,6 +51,9 @@ export default class DataExtracts extends React.Component<{}, DataExtractsState>
                     You are free to copy, distribute, transmit and adapt our data, as long as you credit Colouring Cities and our contributors. If you alter or build upon our data, you may distribute the result only under the same licence.
                     </p>
                     <p>
+                    Place and town names used for map search are derived from the <a href="https://www.geonames.org" target="_blank" rel="noopener noreferrer">GeoNames geographical database</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
+                    </p>
+                    <p>
                     Choose one of the links below to download an archive containing the open data collected on the Colouring Cities platform.
                     </p>
                     <p>

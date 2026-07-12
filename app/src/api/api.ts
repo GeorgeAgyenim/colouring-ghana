@@ -85,8 +85,10 @@ server.get('/search', function (req, res) {
                 const geom = JSON.parse(item.st_asgeojson);
                 return {
                     type: 'Feature',
+                    id: item.search_id,
                     attributes: {
                         label: item.search_str,
+                        search_class: item.search_class,
                         zoom: item.zoom || 9
                     },
                     geometry: geom

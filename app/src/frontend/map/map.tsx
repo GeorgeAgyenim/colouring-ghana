@@ -26,7 +26,8 @@ import { BuildingNumbersLayer } from './layers/building-numbers-layer';
 import { BuildingHighlightLayer } from './layers/building-highlight-layer';
 
 import { Legend } from './legend';
-import SearchBox from './search-box';
+import SearchBox, { SearchResult } from './search-box';
+import { SearchResultsLayer } from './search-results-layer';
 import ThemeSwitcher from './theme-switcher';
 import DataLayerSwitcher from './data-switcher';
 import { ParcelSwitcher } from './parcel-switcher';
@@ -66,11 +67,28 @@ export const ColouringMap : FC<ColouringMapProps> = ({
     const [position, setPosition] = useState(initialMapViewport.position);
     const [zoom, setZoom] = useState(initialMapViewport.zoom);
 
+    // Search state: all current matches (drawn as pins) and the one hovered in the list.
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+    const [hoveredSearchResultId, setHoveredSearchResultId] = useState<number | null>(null);
 
-    const handleLocate = useCallback(
-        (lat: number, lng: number, zoom: number) => {
+    const handleSearchResults = useCallback(
+        (results: SearchResult[]) => setSearchResults(results),
+        []
+    );
+
+    const handleSearchResultHover = useCallback(
+        (id: number | null) => setHoveredSearchResultId(id),
+        []
+    );
+
+    const handleSearchResultSelect = useCallback(
+        (result: SearchResult) => {
+            const [lng, lat] = result.geometry.coordinates;
             setPosition([lat, lng]);
-            setZoom(zoom);
+            setZoom(result.attributes.zoom);
+            // Clear pins once the user has picked one.
+            setSearchResults([]);
+            setHoveredSearchResultId(null);
         },
         []
     );
@@ -153,6 +171,11 @@ export const ColouringMap : FC<ColouringMapProps> = ({
 
                 <ZoomControl position="topright" />
                 <GeolocationControl />
+                <SearchResultsLayer
+                    results={searchResults}
+                    hoveredId={hoveredSearchResultId}
+                    onSelect={handleSearchResultSelect}
+                />
                 <AttributionControl prefix=""/>
             </MapContainer>
             {
@@ -180,7 +203,11 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     : <></>
                 }
             </div>
-            <SearchBox onLocate={handleLocate} />
+            <SearchBox
+                onResults={handleSearchResults}
+                onResultHover={handleSearchResultHover}
+                onResultSelect={handleSearchResultSelect}
+            />
         </div>
     );
 }
