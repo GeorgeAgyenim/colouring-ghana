@@ -76,12 +76,15 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }
     }
 
-    // Clear search results on ESC
+    // Exit the search on ESC: clear the query and results, and drop focus
     handleKeyPress(e){
         if(e.keyCode === 27) {
             //ESC is pressed
             this.clearQuery();
             this.clearResults();
+            if (e.target && typeof e.target.blur === 'function') {
+                e.target.blur();
+            }
         }
     }
 
@@ -233,14 +236,18 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             id="search-box-q"
                             name="q"
                             value={this.state.q}
-                            placeholder="Search town, street, name or GPS address..."
-                            aria-label="Search town, street, name or GPS address..."
+                            placeholder="Search location"
+                            aria-describedby="search-box-hint"
+                            aria-label="Search place, building name, street name or GPS address"
                             onChange={this.handleChange}
                             maxLength={28}
                         />
                         <button className="search-btn btn btn-outline-dark" type="submit">Search</button>
                     </form>
                 </div>
+                <span id="search-box-hint" role="tooltip" className={`search-tooltip ${this.state.q ? 'has-query' : ''}`}>
+                    Search place, building name, street name or GPS address
+                </span>
                 { this.renderResultsList() }
             </div>
         );
