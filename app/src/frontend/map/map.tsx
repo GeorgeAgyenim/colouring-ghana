@@ -16,6 +16,8 @@ import { ParcelBoundaryLayer } from './layers/parcel-boundary-layer';
 import { HistoricDataLayer } from './layers/historic-data-layer';
 import { HistoricMapLayer } from './layers/historic-map-layer';
 import { FloodBoundaryLayer } from './layers/flood-boundary-layer';
+import { RegionBoundaryLayer } from './layers/region-boundary-layer';
+import { DistrictBoundaryLayer } from './layers/district-boundary-layer';
 import { ConservationAreaBoundaryLayer } from './layers/conservation-boundary-layer';
 import { VistaBoundaryLayer } from './layers/vista-boundary-layer';
 import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
@@ -32,6 +34,8 @@ import ThemeSwitcher from './theme-switcher';
 import DataLayerSwitcher from './data-switcher';
 import { ParcelSwitcher } from './parcel-switcher';
 import { FloodSwitcher } from './flood-switcher';
+import { RegionSwitcher } from './region-switcher';
+import { DistrictSwitcher } from './district-switcher';
 import { ConservationAreaSwitcher } from './conservation-switcher';
 import { HistoricDataSwitcher } from './historic-data-switcher';
 import { HistoricMapSwitcher } from './historic-map-switcher';
@@ -151,6 +155,8 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <HistoricMapLayer revisionId={revisionId} />
                     <ParcelBoundaryLayer/>
                     <FloodBoundaryLayer/>
+                    <RegionBoundaryLayer/>
+                    <DistrictBoundaryLayer/>
                     <VistaBoundaryLayer/>
                     <HousingBoundaryLayer/>
                     <CreativeBoundaryLayer/>
@@ -192,6 +198,8 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <>
                         <ParcelSwitcher/>
                         <FloodSwitcher/>
+                        <RegionSwitcher/>
+                        <DistrictSwitcher/>
                         <ConservationAreaSwitcher/>
                         { /* <HistoricMapSwitcher/> */ }
                         { /* <HistoricDataSwitcher/> */ }

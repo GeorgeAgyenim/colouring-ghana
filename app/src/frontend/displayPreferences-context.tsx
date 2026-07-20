@@ -14,6 +14,14 @@ interface DisplayPreferencesContextState {
     floodSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
     floodSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 
+    region: LayerEnablementState;
+    regionSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    regionSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
+
+    district: LayerEnablementState;
+    districtSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    districtSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
+
     creative: LayerEnablementState;
     creativeSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
     creativeSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -68,6 +76,14 @@ export const DisplayPreferencesContext = createContext<DisplayPreferencesContext
     floodSwitch: stub,
     floodSwitchOnClick: undefined,
 
+    region: undefined,
+    regionSwitch: stub,
+    regionSwitchOnClick: undefined,
+
+    district: undefined,
+    districtSwitch: stub,
+    districtSwitchOnClick: undefined,
+
     creative: undefined,
     creativeSwitch: stub,
     creativeSwitchOnClick: undefined,
@@ -111,6 +127,8 @@ const noop = () => {};
 export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
     const defaultVista = 'disabled'
     const defaultFlood = 'disabled'
+    const defaultRegion = 'disabled'
+    const defaultDistrict = 'disabled'
     const defaultCreative = 'disabled'
     const defaultHousing = 'disabled'
     const defaultParcel = 'disabled'
@@ -121,6 +139,8 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
     const defaultShowLayerSelection = 'disabled'
     const [vista, setVista] = useState<LayerEnablementState>(defaultVista);
     const [flood, setFlood] = useState<LayerEnablementState>(defaultFlood);
+    const [region, setRegion] = useState<LayerEnablementState>(defaultRegion);
+    const [district, setDistrict] = useState<LayerEnablementState>(defaultDistrict);
     const [creative, setCreative] = useState<LayerEnablementState>(defaultCreative);
     const [housing, setHousing] = useState<LayerEnablementState>(defaultHousing);
     const [parcel, setParcel] = useState<LayerEnablementState>(defaultParcel);
@@ -142,6 +162,8 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
         (e) => {
             setVista(defaultVista);
             setFlood(defaultFlood);
+            setRegion(defaultRegion);
+            setDistrict(defaultDistrict);
             setCreative(defaultCreative);
             setHousing(defaultHousing);
             setParcel(defaultParcel);
@@ -160,6 +182,12 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
             return true;
         }
         if(flood != defaultFlood) {
+            return true;
+        }
+        if(region != defaultRegion) {
+            return true;
+        }
+        if(district != defaultDistrict) {
             return true;
         }
         if(creative != defaultCreative) {
@@ -216,6 +244,36 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
         e.preventDefault();
         const newFlood = (flood === 'enabled')? 'disabled' : 'enabled';
         setFlood(newFlood);
+    }
+
+    const regionSwitch = useCallback(
+        (e) => {
+            e.preventDefault();
+            const newRegion = (region === 'enabled')? 'disabled' : 'enabled';
+            setRegion(newRegion);
+        },
+        [region],
+    )
+
+    const regionSwitchOnClick = (e) => {
+        e.preventDefault();
+        const newRegion = (region === 'enabled')? 'disabled' : 'enabled';
+        setRegion(newRegion);
+    }
+
+    const districtSwitch = useCallback(
+        (e) => {
+            e.preventDefault();
+            const newDistrict = (district === 'enabled')? 'disabled' : 'enabled';
+            setDistrict(newDistrict);
+        },
+        [district],
+    )
+
+    const districtSwitchOnClick = (e) => {
+        e.preventDefault();
+        const newDistrict = (district === 'enabled')? 'disabled' : 'enabled';
+        setDistrict(newDistrict);
     }
 
     const housingSwitch = useCallback(
@@ -372,6 +430,12 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
             flood,
             floodSwitch,
             floodSwitchOnClick,
+            region,
+            regionSwitch,
+            regionSwitchOnClick,
+            district,
+            districtSwitch,
+            districtSwitchOnClick,
             creative,
             creativeSwitch,
             creativeSwitchOnClick,

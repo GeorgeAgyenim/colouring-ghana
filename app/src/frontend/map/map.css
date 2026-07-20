@@ -28,6 +28,25 @@
 .leaflet-grab {
     cursor: crosshair;
 }
+/* Zoom-dependent boundary name labels
+   (see region-boundary-layer.tsx / district-boundary-layer.tsx) */
+.leaflet-tooltip.boundary-label {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #e05a00;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff;
+    pointer-events: none;
+}
+.leaflet-tooltip.boundary-label::before {
+    display: none; /* hide the little pointer triangle */
+}
+.leaflet-tooltip.district-label {
+    color: #555;
+    font-size: 0.75rem;
+}
 @media (min-width: 990px){
     /* Only show the "Click a building ..." notice for larger screens */
     .map-notice {
