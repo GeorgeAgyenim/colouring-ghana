@@ -4,6 +4,7 @@ import { LayerEnablementState, MapTheme } from './config/map-config';
 
 interface DisplayPreferencesContextState {
     showOverlayList: (e: React.FormEvent<HTMLFormElement>) => void;
+    hideOverlayList: (e: React.FormEvent<HTMLFormElement>) => void;
     resetLayersAndHideTheirList: (e: React.FormEvent<HTMLFormElement>) => void;
 
     vista: LayerEnablementState;
@@ -66,6 +67,7 @@ const stub = (): never => {
 
 export const DisplayPreferencesContext = createContext<DisplayPreferencesContextState>({
     showOverlayList: stub,
+    hideOverlayList: stub,
     resetLayersAndHideTheirList: stub,
 
     vista: undefined,
@@ -154,6 +156,13 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
     const showOverlayList = useCallback(
         (e) => {
             setShowLayerSelection('enabled')
+        },
+        []
+    )
+
+    const hideOverlayList = useCallback(
+        (e) => {
+            setShowLayerSelection('disabled')
         },
         []
     )
@@ -422,6 +431,7 @@ export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
     return (
         <DisplayPreferencesContext.Provider value={{
             showOverlayList,
+            hideOverlayList,
             resetLayersAndHideTheirList,
 
             vista,
