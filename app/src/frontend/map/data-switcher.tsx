@@ -7,11 +7,11 @@ interface DataLayerSwitcherProps {
 }
 
 const DataLayerSwitcher: React.FC<DataLayerSwitcherProps> = (props) => {
-    const { showLayerSelection, showOverlayList, resetLayersAndHideTheirList, darkLightTheme } = useDisplayPreferences();
+    const { showLayerSelection, showOverlayList, hideOverlayList, darkLightTheme } = useDisplayPreferences();
     const handleSubmit = (evt) => {
         evt.preventDefault();
         if (showLayerSelection === 'enabled') {
-            resetLayersAndHideTheirList(evt)
+            hideOverlayList(evt)
         } else {
             showOverlayList(evt)
         }
@@ -20,7 +20,7 @@ const DataLayerSwitcher: React.FC<DataLayerSwitcherProps> = (props) => {
         <form className={`map-button ${darkLightTheme}`} onSubmit={handleSubmit}>
             <button className="btn btn-outline btn-outline-dark"
                 type="submit">
-                {(showLayerSelection === 'enabled')? 'Clear layer options' : 'Show layer options'}
+                {(showLayerSelection === 'enabled')? 'Hide layer options' : 'Show layer options'}
             </button>
         </form>
     );
