@@ -20,3 +20,13 @@ continuously rather than released. Entries cite the requirement IDs, ADRs and ti
   setting the NFR-1.4 and bytes targets for the migration (NFR-1.4, NFR-1.5; ADR-0027).
 - README: how to run the app locally (standard PostgreSQL variables, Node 18, tile cache path).
 - Feature document `docs/features/map-migration.md` (FR-9).
+
+### Fixed
+
+- Server-rendered building pages (`/view/<category>/<id>`, `/edit/...`) answered HTTP 500 and dropped the
+  preloaded building because twelve data containers read the `sc` sub-category parameter from
+  `window.location`, which does not exist in Node. They now read it through react-router via the new
+  `useSubCategory()` hook (`app/src/frontend/hooks/use-sub-category.ts`), so the page answers 200 with the
+  building in the markup; a node-environment jest test renders every data container through `StaticRouter`
+  so the regression cannot return silently (NFR-1.4 evidence, since the benchmark selects a building;
+  `docs/tickets/building-view/issues/01-server-render-building-route-window.md`).

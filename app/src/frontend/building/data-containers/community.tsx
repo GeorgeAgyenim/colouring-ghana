@@ -6,6 +6,7 @@ import UserOpinionEntry from '../data-components/user-opinion-data-entry';
 import { MultiSelectDataEntry } from '../data-components/multi-select-data-entry';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { LogicalDataEntry, LogicalDataEntryYesOnlyWithExplanation } from '../data-components/logical-data-entry/logical-data-entry';
 import { buildingUserFields, dataFields } from '../../config/data-fields-config';
 import SelectDataEntry from '../data-components/select-data-entry';
@@ -70,8 +71,7 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
         props.building.community_streetscape_hominess > 0 || props.building.community_streetscape_fascination > 0 || props.building.community_streetscape_coherence > 0 ||
         props.building.community_streetscape_worth_keeping != null;
 
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>

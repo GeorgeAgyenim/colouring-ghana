@@ -10,6 +10,7 @@ import Verification from '../data-components/verification';
 import withCopyEdit from '../data-container';
 
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-data-entry';
 import InfoBox from '../../components/info-box';
@@ -19,8 +20,7 @@ import InfoBox from '../../components/info-box';
 */
 const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (props) => {
     
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     const currentYear = new Date().getFullYear();
 
