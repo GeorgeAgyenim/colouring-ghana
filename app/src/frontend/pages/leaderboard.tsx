@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { apiGet } from '../apiHelpers';
+
 
 interface Leader {
     number_edits: number;
@@ -55,10 +57,8 @@ class LeaderboardPage extends Component<LeaderboardProps, LeaderboardState> {
             fetching: true
         });
 
-        fetch(
+        apiGet(
             `/api/leaderboard/leaders?number_limit=${number_limit}&time_limit=${time_limit}`
-        ).then(
-            (res) => res.json()
         ).then((data) => {
             if (data && data.leaders){
                 this.setState({

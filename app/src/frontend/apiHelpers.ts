@@ -12,6 +12,12 @@ export function apiPost(path: string, data?: object, options?: {
     return apiRequest(path, 'POST', data, options);
 }
 
+export function apiPut(path: string, data?: object, options?: {
+    jsonReviver?: JsonReviver
+}): Promise<any> {
+    return apiRequest(path, 'PUT', data, options);
+}
+
 export function apiDelete(path: string, options?: {
     jsonReviver?: JsonReviver
 }): Promise<any> {
@@ -20,7 +26,7 @@ export function apiDelete(path: string, options?: {
 
 async function apiRequest(
     path: string,
-    method: 'GET' | 'POST' | 'DELETE',
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     data?: object,
     options?: {
         jsonReviver?: JsonReviver

@@ -2,6 +2,7 @@ import React, { FormEvent } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import { apiPut } from '../apiHelpers';
 import ErrorBox from '../components/error-box';
 
 interface PasswordResetState {
@@ -65,14 +66,7 @@ export default class PasswordReset extends React.Component<RouteComponentProps, 
             password: this.state.password
         };
 
-        const res = await fetch('/api/users/password', {
-            method: 'PUT',
-            body: JSON.stringify(requestData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await res.json();
+        const data = await apiPut('/api/users/password', requestData);
 
         if (data.error != undefined) {
             this.setState({ error: data.error });

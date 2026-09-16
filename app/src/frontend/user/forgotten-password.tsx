@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FormEvent } from 'react';
 
+import { apiPut } from '../apiHelpers';
 import ErrorBox from '../components/error-box';
 import InfoBox from '../components/info-box';
 
@@ -35,14 +36,7 @@ export default class ForgottenPassword extends React.Component<{}, ForgottenPass
 
         const emailSent = this.state.email;
         try {
-            const res = await fetch('/api/users/password', {
-                method: 'PUT',
-                body: JSON.stringify({ email: emailSent }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await res.json();
+            const data = await apiPut('/api/users/password', { email: emailSent });
 
             if (data.error != undefined) {
                 this.setState({ error: data.error });
