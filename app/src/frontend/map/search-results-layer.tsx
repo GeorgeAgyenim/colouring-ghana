@@ -106,14 +106,16 @@ export const SearchResultsLayer: React.FC<SearchResultsLayerProps> = ({ results,
         };
     }, [results, map]);
 
-    // Emphasise the hovered marker without rebuilding the whole set.
+    // Emphasise the hovered marker without rebuilding the whole set. Re-run
+    // when the result set changes too, since freshly built markers start
+    // un-highlighted.
     useEffect(() => {
         markersRef.current.forEach((marker, id) => {
             const highlighted = id === hoveredId;
             marker.setIcon(buildDropPinIcon(highlighted));
             marker.setZIndexOffset(highlighted ? 1500 : 500);
         });
-    }, [hoveredId]);
+    }, [hoveredId, results]);
 
     return null;
 };

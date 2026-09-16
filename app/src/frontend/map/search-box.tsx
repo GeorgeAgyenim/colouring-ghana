@@ -32,6 +32,8 @@ interface SearchBoxState {
     results: SearchResult[];
     searched: boolean;
     fetching: boolean;
+    /** Message shown when the search request itself failed (as opposed to finding nothing). */
+    error: string | null;
     collapsedSearch: boolean;
     smallScreen: boolean;
 }
@@ -47,6 +49,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             results: [],
             searched: false,
             fetching: false,
+            error: null,
             //track the state of the search box i.e. collapsed or expanded. Default to true
             collapsedSearch: true,
             //is this a small screen device? if not we will disable collapse option
@@ -78,8 +81,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     // Exit the search on ESC: clear the query and results, and drop focus
     handleKeyPress(e){
-        if(e.keyCode === 27) {
-            //ESC is pressed
+        if(e.key === 'Escape') {
             this.clearQuery();
             this.clearResults();
             if (e.target && typeof e.target.blur === 'function') {
@@ -91,7 +93,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     clearResults(){
         this.setState({
             results: [],
-            searched: false
+            searched: false,
+            error: null
         });
         // Clear map pins and any active hover emphasis
         this.props.onResults([]);
@@ -122,11 +125,16 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     // Query search endpoint
     search(e) {
         e.preventDefault();
+        const q = this.state.q.trim();
+        if (q === '') {
+            return;
+        }
         this.setState({
-            fetching: true
+            fetching: true,
+            error: null
         });
 
-        apiGet(`/api/search?q=${encodeURIComponent(this.state.q)}`)
+        apiGet(`/api/search?q=${encodeURIComponent(q)}`)
         .then((data) => {
             if (data && data.results){
                 this.setState({
@@ -136,22 +144,16 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                 });
                 this.props.onResults(data.results);
             } else {
-                console.error(data);
-
-                this.setState({
-                    results: [],
-                    searched: true,
-                    fetching: false
-                });
-                this.props.onResults([]);
+                throw new Error(data?.error ?? 'Unexpected search response');
             }
         }).catch((err) => {
-            console.error(err);
+            console.error('Search failed', err);
 
             this.setState({
                 results: [],
                 searched: true,
-                fetching: false
+                fetching: false,
+                error: 'Search is unavailable right now. Please try again.'
             });
             this.props.onResults([]);
         });
@@ -177,6 +179,14 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     renderResultsList() {
         if(!this.state.searched) return null;
+
+        if(this.state.error) {
+            return (
+                <div className="search-results-list search-results-empty" role="alert">
+                    {this.state.error}
+                </div>
+            );
+        }
 
         if(this.state.results.length === 0) {
             return (
@@ -242,7 +252,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             onChange={this.handleChange}
                             maxLength={28}
                         />
-                        <button className="search-btn btn btn-outline-dark" type="submit">Search</button>
+                        <button className="search-btn btn btn-outline-dark" type="submit" disabled={this.state.fetching}>
+                            {this.state.fetching ? 'Searching…' : 'Search'}
+                        </button>
                     </form>
                 </div>
                 <span id="search-box-hint" role="tooltip" className={`search-tooltip ${this.state.q ? 'has-query' : ''}`}>
