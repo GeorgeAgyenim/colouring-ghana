@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Seeded from the requirements dialogue of 15–16 September 2026 (the `/grill-with-docs` stage, run outside the repo). Plain-English mirror: `docs/Design-Decisions-Plain-English.md`. New ADRs continue the numbering from 0019.
+Seeded from the requirements dialogue of 15–16 September 2026 (the `/grill-with-docs` stage, run outside the repo). Plain-English mirror: `docs/Design-Decisions-Plain-English.md`. New ADRs continue the numbering from 0022. ADR-0019 to ADR-0021 are engineering decisions from the September 2026 audit, moved here from the former `docs/adr/` on 16 September 2026.
 
 | ADR | Title | Decisions | Status | Date |
 |---|---|---|---|---|
@@ -22,3 +22,6 @@ Seeded from the requirements dialogue of 15–16 September 2026 (the `/grill-wit
 | ADR-0016 | A query result replaces the category colouring on the map; Clicking a building in result view shows a small popup with the values the plan used; Tables and charts are result cards that open full-size in a centred pop-up; there is no results drawer | D22, D23, D24 | Accepted | 16 September 2026 |
 | ADR-0017 | The assistant never assumes a location; it asks, and the answer chips are the consent; 'My location' is resolved on the device; the person always chooses between a named area and a radius | D25, D26 | Accepted | 16 September 2026 |
 | ADR-0018 | The map migration is its own project, delivered first, before the analytics work is stacked on it | D28 | Accepted | 16 September 2026 |
+| ADR-0019 | Remove the London map layers and lazy-load boundary GeoJSON | — | Accepted | 16 September 2026 |
+| ADR-0020 | Shim `node:process` for jest 26 instead of upgrading jest | — | Accepted | 16 September 2026 |
+| ADR-0021 | Route every API call through `apiHelpers` | — | Accepted | 16 September 2026 |

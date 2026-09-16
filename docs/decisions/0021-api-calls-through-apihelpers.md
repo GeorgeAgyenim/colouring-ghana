@@ -1,6 +1,7 @@
-# ADR 0003 — Route every API call through `apiHelpers`
+# ADR-0021 — Route every API call through `apiHelpers`
 
 Date: 2026-09-16. Status: accepted.
+Formerly `docs/adr/0003`; moved to `docs/decisions/` as ADR-0021 on 16 September 2026. Body unchanged.
 
 ## Context
 
