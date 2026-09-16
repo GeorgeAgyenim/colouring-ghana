@@ -2,7 +2,7 @@
 
 Status: spec-complete
 Type: task
-Blocked by: 07, 08, 09
+Blocked by: 07b, 08, 09
 Spec: docs/tickets/map-migration/PRD.md (seam 5)
 Requirements: FR-9.5; ADRs: ADR-0027
 
@@ -27,6 +27,6 @@ stacks coexist; it is deleted with the flag (ticket 13).
 
 ## Blocked by
 
-- `docs/tickets/map-migration/issues/07-edits-since-overlay.md`.
+- `docs/tickets/map-migration/issues/07b-edits-since-overlay-client.md`.
 - `docs/tickets/map-migration/issues/08-boundaries-search-and-geolocation.md`.
 - `docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md`.
