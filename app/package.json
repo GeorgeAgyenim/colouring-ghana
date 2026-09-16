@@ -11,7 +11,10 @@
     "build": "razzle build --noninteractive",
     "test": "razzle test --env=jsdom",
     "lint": "eslint --ext .tsx --ext .ts .",
-    "start:prod": "NODE_ENV=production node build/server.js"
+    "start:prod": "NODE_ENV=production node build/server.js",
+    "benchmark:map": "playwright test --config e2e/playwright.config.ts e2e/benchmark",
+    "typecheck:e2e": "tsc -p e2e/tsconfig.json",
+    "benchmark:map:selfcheck": "node e2e/benchmark/stub-map/server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
@@ -48,6 +51,7 @@
     "use-throttle": "0.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/express": "^4.17.7",
     "@types/express-session": "^1.17.0",
     "@types/geojson": "^7946.0.7",
@@ -89,7 +93,8 @@
     },
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.(ts|js)?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).(ts|js)?(x)"
+      "<rootDir>/src/**/?(*.)(spec|test).(ts|js)?(x)",
+      "<rootDir>/e2e/**/*.test.ts"
     ],
     "moduleFileExtensions": [
       "ts",

@@ -29,6 +29,7 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | API | Application Programming Interface: a defined way for one program to ask another for something over the internet. |
 | As of | The date and time of the data snapshot an answer was computed from. Shown on every result. |
 | Attribute | A piece of information recorded about a building, such as its number of storeys, construction material or condition. |
+| Benchmark run (A, B, C) | One of the three settings the map benchmark is measured in: A, a laptop on an unthrottled office connection; B, the same laptop with a fixed slow-4G network throttle (the run the pass rule is judged on); C, an Android phone on mobile data driven over remote debugging. Five repetitions each. |
 | Bottom sheet | On a phone, a panel that slides up from the bottom of the screen; the mobile form of the bubble's panel and the sidebar. |
 | Bounding box | The smallest rectangle that contains a set of shapes. |
 | Bring your own key (BYOK) | Letting a user connect their own account with an AI provider instead of using the project's model. |
@@ -41,6 +42,7 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Chip | A small clickable option (for example 'This view', 'My location') rendered under a clarifying question. |
 | Choropleth | Shading areas — electoral areas, neighbourhoods — by a value such as a count. |
 | Clarification | The assistant's second kind of answer: a question with a fixed set of options, shown as chips, used when it needs a place, a distance or an attribute value. |
+| Cold cache | A browser that holds nothing from an earlier visit, so every file is downloaded. The benchmark starts each repetition in a fresh browser context and fails if a response comes from the cache without an earlier download in the same repetition. |
 | colouring-core | The shared codebase that every Colouring Cities platform is copied from. |
 | Compiler (plan compiler) | The component that turns a query plan into instructions the engine can run. |
 | Completeness | For an attribute, how many buildings in scope have a value recorded versus how many are blank. |
@@ -112,8 +114,10 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Result view | The map state after a plan runs: neutral buildings except matches or a choropleth; the legend shows the result. |
 | Row group | A block of rows inside a GeoParquet file, with its own recorded bounding box. |
 | Schema | The formal description of a data structure — what fields exist and what type each is. |
+| Segment (path segment) | One step of the benchmark path (the initial load, a pan, one zoom level, a category switch, the selection) for which time and bytes are recorded together. |
 | Service worker | The browser component that lets a PWA work offline. |
 | Session token | A code the browser receives when the page loads, used to identify that session for rate limiting. |
+| Settled (map settled) | The moment the map has nothing left to do after a gesture: every tile loaded, no animation running, no request in flight. Time-to-interactive is measured to the first settle; each segment ends at its settle. |
 | Shapefile | An older but widespread GIS file format, usually shared as a zip. |
 | Sideloading | Installing a file by copying it directly (USB, local network) rather than downloading from the internet. |
 | Snapshot | A copy of the data taken at a known, recorded moment. |
@@ -126,12 +130,14 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Sync | Sending edits made offline to the server once a connection returns. |
 | Tile / tile cache | A small square of map; a cache keeps recently produced tiles so they need not be made again. |
 | Tile schema | The versioned list of properties carried by each building in the tile archive; packs and the core contribution rely on it. |
+| Time-to-interactive (map) | The time from starting to load the page until the map first settles, measured with a cold cache. NFR-1.4's target is set from the recorded Mapnik baseline. |
 | Tippecanoe | The command-line tool that turns exported shapes into a tile file. |
 | Turf.js / geos-wasm | Browser libraries for geometry operations. |
 | Uploaded layer | Data a user loads from their own device; it stays in the browser. |
 | Validator | The component that checks a plan is allowed and well-formed before it runs. |
 | Viewport | The part of the map currently visible on screen. |
 | WebAssembly (WASM) | Technology that lets full programs run inside a browser at near-native speed. |
+| Within-repetition reuse | A tile served from the browser cache because the same repetition already downloaded it (for example after zooming out and back in). Counted per segment, contributes no bytes and is left out of latency percentiles; it is not a cold-cache violation. |
 
 ## Canonical acceptance questions
 

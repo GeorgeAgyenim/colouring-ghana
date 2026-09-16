@@ -24,14 +24,27 @@ The path file is the same one the differential smoke test (ticket 10) reads.
 
 ## Acceptance criteria
 
-- [ ] Playwright added as a pinned dev dependency with an inventory row; the suite runs on demand, not in
+- [x] Playwright added as a pinned dev dependency with an inventory row; the suite runs on demand, not in
       `npm test`.
-- [ ] The script asserts a cold cache per repetition and fails if any response was served from cache.
+- [x] The script asserts a cold cache per repetition and fails if any response was served from cache.
 - [ ] `docs/benchmarks/<date>-map-before.md` recorded for runs A, B and C citing method v1, with bytes beside
       every timing and the targets written in.
-- [ ] Named laptop and Android phone recorded, or "Unknown — to be confirmed by the product owner".
-- [ ] Path file documented in the feature doc "How to test"; `CHANGELOG.md` updated.
+- [x] Named laptop and Android phone recorded, or "Unknown — to be confirmed by the product owner".
+- [x] Path file documented in the feature doc "How to test"; `CHANGELOG.md` updated.
 
 ## Blocked by
 
 - None (can start immediately). Must complete before ticket 12 flips the default.
+
+## Comments
+
+**2026-09-16 (implementation, `/implement`).** Harness, path file, benchmark script and result renderer are in
+`app/e2e/`; unit tests for the pure parts run in `npm test`; the browser suite runs with `npm run benchmark:map`.
+The script was verified end to end (runs A, B and C, including throttling and a remote-debugging connection)
+against the checked-in stand-in page (`npm run benchmark:map:selfcheck`), because the implementation machine has
+no credentials for a Colouring Ghana database. Code review (standards and spec axes) ran the same day; its
+findings led to the method clarifications appended to `docs/benchmarks/map-migration-method.md`. **Outstanding for the product owner:** run A, B and C against the dev server on the named laptop and
+phone (`docs/features/map-migration.md`, "How to reproduce results"), which writes
+`docs/benchmarks/<date>-map-before.md` with the targets; confirm the database has a footprint at the fixed
+building in `app/e2e/map-path.json` (the script fails clearly if not). The third acceptance criterion stays
+unticked until those runs are committed.

@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Colouring Ghana map stand-in (benchmark self-check)</title>
+<link rel="stylesheet" href="/leaflet.css">
+<style>
+body{margin:0} .header{height:76px;background:#eee}
+#sidebar.info-container{position:absolute;top:75px;left:0;bottom:0;width:470px;background:#fff;z-index:1001}
+.info-container-collapse{display:none}
+.map-container{position:absolute;top:0;left:470px;right:0;bottom:0}
+.leaflet-container{height:100%;width:100%}
+</style></head><body>
+<div class="header"></div>
+<div id="sidebar" class="info-container offscreen"><button class="info-container-collapse">t</button>
+ <a class="category-link background-location" href="/view/location">Location</a><br>
+ <a class="category-link background-age-history" href="/view/age-history">Age</a><br>
+ <a class="category-link background-construction-design" href="/view/construction-design">Construction</a>
+</div>
+<div class="map-container"><div id="map"></div></div>
+<script src="/leaflet.js"></script>
+<script>
+var tilesets = { 'location': 'location', 'age-history': 'date_year', 'construction-design': 'construction_core_material' };
+function categoryFromPath() { var m = /\/view\/([a-z-]+)/.exec(location.pathname); return m ? m[1] : 'age-history'; }
+setTimeout(function () {
+  var map = L.map('map', { center: [6.67137, -1.53958], zoom: 16, minZoom: 7, maxZoom: 19, doubleClickZoom: false, zoomControl: false });
+  L.control.zoom({ position: 'topright' }).addTo(map);
+  L.tileLayer('http://127.0.0.1:__BASEMAP_PORT__/{z}/{x}/{y}.png', { maxNativeZoom: 18, maxZoom: 19 }).addTo(map);
+  var data = L.tileLayer('/tiles/' + tilesets[categoryFromPath()] + '/{z}/{x}/{y}.png?rev=1', { minZoom: 9, maxZoom: 19 }).addTo(map);
+  document.querySelectorAll('a.category-link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault(); history.pushState({}, '', a.getAttribute('href'));
+      map.removeLayer(data);
+      data = L.tileLayer('/tiles/' + tilesets[categoryFromPath()] + '/{z}/{x}/{y}.png?rev=1', { minZoom: 9, maxZoom: 19 }).addTo(map);
+    });
+  });
+  map.on('click', function (e) {
+    fetch('/api/buildings/locate?lat=' + e.latlng.lat + '&lng=' + e.latlng.lng).then(function (r) { return r.json(); }).then(function (d) {
+      history.pushState({}, '', '/view/' + categoryFromPath() + '/' + d[0].building_id);
+      L.tileLayer('/tiles/highlight/{z}/{x}/{y}.png?highlight=' + d[0].building_id, { minZoom: 9, maxZoom: 19 }).addTo(map);
+    });
+  });
+}, 300);
+</script></body></html>

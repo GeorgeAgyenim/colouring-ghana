@@ -52,3 +52,28 @@ Five repetitions per run; report median and p95.
 "After" must be less than or equal to "before" on every metric in run B. The NFR-1.4 time-to-interactive
 target and a bytes target are set from the recorded baseline, not guessed; they are written into the
 "before" file and repeated in the "after" file with the result.
+
+## Clarifications recorded with the first script (2026-09-16; version stays 1)
+
+The script named above now exists (`app/e2e/benchmark/map-benchmark.e2e.ts`, ticket
+`docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md`). Writing it fixed four points
+the text left open. None changes the path coordinates, zoom steps, category pair, building, runs, repetitions
+or pass rule, and no result cites this method yet, so the version number is unchanged.
+
+1. **Getting to zoom 12.** The site opens at zoom 16 (`cc-config.json`), so step 2 pans to the first place at
+   zoom 16, zooms out to 12 there, and pans to the second place at zoom 12 before step 3 begins. The zoom-out
+   is recorded as its own segment, "Zoom out 16 to 12 (transition)", with bytes, and is part of the path for
+   both "before" and "after".
+2. **"Map idle" on Leaflet.** Leaflet has no idle event. The map counts as settled when every tile element has
+   loaded, no zoom animation is running, no request is in flight and the resource count has not changed for
+   500 ms; time-to-interactive is navigation start to the first settle. The "after" script must use the same
+   settle rule, taking MapLibre's `idle` event as its "tiles loaded" signal, so the two stacks are compared on
+   one definition. Navigation Timing values are kept in the raw JSON record.
+3. **Cold-cache rule, precisely.** A fresh browser context starts empty, so a cached response is a violation
+   when its URL was never fetched over the network earlier in the same repetition. A response reused from
+   the cache within a repetition (the same tile requested twice on the path) is counted per segment, adds no
+   bytes and is left out of latency percentiles. Inline `data:` and `blob:` URLs are not network responses.
+4. **Bytes for cross-origin responses.** The OSM basemap host sends no `Timing-Allow-Origin`, so its resource
+   entries report zero bytes; the script takes those byte counts from the DevTools Protocol instead and marks
+   the source in the record. CDN or proxy presence is an input to each run (`BENCHMARK_PROXY`, default
+   "none") and is printed in the result file.

@@ -1,0 +1,31 @@
+{
+    "format_version": 1,
+    "description": "Shared map path for the benchmark script (docs/benchmarks/map-migration-method.md v1) and the differential smoke test (ticket 10). Positions are [latitude, longitude] as in cc-config.json. Change this file only with a new method version.",
+    "start": {
+        "path": "/view/location",
+        "position": [6.67137, -1.53958],
+        "zoom": 16,
+        "note": "cc-config.json initialMapPosition and initialZoomLevel (Boadi, Oforikrom Municipal District). The Location category is opened first so that both category switches below change the tile layer."
+    },
+    "places": [
+        {
+            "name": "Ayeduase (Ayeduase Road, Oforikrom Municipal District)",
+            "position": [6.676, -1.556],
+            "zoom": 16
+        },
+        {
+            "name": "KNUST campus, Prempeh II Library",
+            "position": [6.6751426, -1.5730008],
+            "zoom": 12
+        }
+    ],
+    "zoom_steps": { "from": 12, "to": 19 },
+    "category_switches": [
+        { "name": "age", "category_slug": "age-history", "tileset": "date_year" },
+        { "name": "construction material", "category_slug": "construction-design", "tileset": "construction_core_material" }
+    ],
+    "building": {
+        "name": "Prempeh II Library, KNUST (OpenStreetMap way 378630226)",
+        "position": [6.6751426, -1.5730008]
+    }
+}
