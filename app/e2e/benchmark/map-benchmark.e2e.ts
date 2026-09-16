@@ -15,7 +15,7 @@
  * Implements NFR-1.4, NFR-1.5; see ADR-0027 and docs/tickets/map-migration/PRD.md (seam 5).
  * Ticket: docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md
  */
-import { expect, test, Browser, BrowserContext, chromium } from '@playwright/test';
+import { expect, test, Browser, Page, chromium } from '@playwright/test';
 import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
@@ -26,9 +26,9 @@ import { LatLng, loadMapPath, MAP_PATH_FILE, MapPath } from '../map-path';
 import { LeafletDriver } from './leaflet-driver';
 import { classifyResource, findColdCacheViolations, networkTileLatencies, ResourceClassifier, ResourceSample, summariseSegment } from './metrics';
 import { NetworkCapture } from './network-capture';
-import { drainResourceEntries, pageNowMs, prepareContextForMeasurement, readNavigationTiming, ResourceEntryLite } from './page-measure';
+import { drainResourceEntries, pageNowMs, preparePageForMeasurement, readNavigationTiming, readViewport, ResourceEntryLite } from './page-measure';
 import { renderReport } from './report';
-import { INITIAL_LOAD_SEGMENT_ID, RepetitionResult, RESULT_FORMAT_VERSION, RunResult, SegmentResult, METHOD_VERSION } from './results';
+import { INITIAL_LOAD_SEGMENT_ID, MeasuredViewport, RepetitionResult, RESULT_FORMAT_VERSION, RunResult, SegmentResult, METHOD_VERSION } from './results';
 import { describeRun, readRunConfig, RunConfig } from './run-config';
 import { pixelOffset, splitIntoDrags } from './web-mercator';
 
@@ -37,7 +37,7 @@ const REPO_DIR = resolve(APP_DIR, '..');
 /** Keeps every drag inside the map container on the laptop viewport. */
 const MAX_DRAG_PX = 300;
 /** Generous: a throttled zoom step at zoom 12 loads many tiles. */
-const SETTLE_TIMEOUT_MS = 180000;
+const SETTLE_TIMEOUT_MS = Number(process.env.BENCHMARK_SETTLE_TIMEOUT_MS ?? 180000);
 const SELECTION_TIMEOUT_MS = 60000;
 
 test('map benchmark run', async () => {
@@ -51,10 +51,13 @@ test('map benchmark run', async () => {
 
     const browser = await openBrowser(config);
     const repetitions: RepetitionResult[] = [];
+    let viewport: MeasuredViewport | null = null;
     try {
         for (let index = 1; index <= config.repetitions; index++) {
             console.log(`Run ${config.run}: repetition ${index} of ${config.repetitions}`);
-            repetitions.push(await runRepetition(browser, config, mapPath, classifier, index));
+            const outcome = await runRepetition(browser, config, mapPath, classifier, index);
+            repetitions.push(outcome.result);
+            viewport = viewport ?? outcome.viewport;
         }
     } finally {
         await browser.close();
@@ -73,7 +76,8 @@ test('map benchmark run', async () => {
         device: config.device,
         connection: config.connection,
         browser: { name: browser.browserType().name(), version: browser.version(), headless: config.headless },
-        viewport: config.viewport,
+        viewport,
+        coldCacheMethod: config.coldCacheMethod,
         baseUrl: config.baseUrl,
         cdnOrProxy: config.cdnOrProxy,
         throttle: config.throttle,
@@ -93,13 +97,35 @@ async function openBrowser(config: RunConfig): Promise<Browser> {
     return chromium.launch({ headless: config.headless });
 }
 
-async function runRepetition(browser: Browser, config: RunConfig, mapPath: MapPath, classifier: ResourceClassifier, index: number): Promise<RepetitionResult> {
-    const startedAt = new Date().toISOString();
-    const context: BrowserContext = await browser.newContext({ viewport: config.viewport });
-    try {
-        await prepareContextForMeasurement(context);
+/**
+ * A page with a cold cache for one repetition. A launched browser gets a fresh context
+ * (method v1, Controls). A browser reached over remote debugging (run C, Android Chrome)
+ * cannot create contexts, so it gets a new page in its default context with the cache
+ * and cookies cleared first; the cold-cache assertion checks the result either way.
+ */
+async function openColdPage(browser: Browser, config: RunConfig): Promise<{ page: Page; capture: NetworkCapture; close: () => Promise<void> }> {
+    if (config.cdpEndpoint) {
+        const context = browser.contexts()[0];
+        if (!context) {
+            throw new Error('The remote browser has no default context; open Chrome on the phone first');
+        }
         const page = await context.newPage();
+        await preparePageForMeasurement(page);
         const capture = await NetworkCapture.attach(page);
+        await capture.clearBrowserState();
+        return { page, capture, close: () => page.close() };
+    }
+    const context = await browser.newContext({ viewport: config.viewport });
+    const page = await context.newPage();
+    await preparePageForMeasurement(page);
+    const capture = await NetworkCapture.attach(page);
+    return { page, capture, close: () => context.close() };
+}
+
+async function runRepetition(browser: Browser, config: RunConfig, mapPath: MapPath, classifier: ResourceClassifier, index: number): Promise<{ result: RepetitionResult; viewport: MeasuredViewport }> {
+    const startedAt = new Date().toISOString();
+    const { page, capture, close } = await openColdPage(browser, config);
+    try {
         if (config.throttle) {
             await capture.throttle(config.throttle);
         }
@@ -121,9 +147,13 @@ async function runRepetition(browser: Browser, config: RunConfig, mapPath: MapPa
 
         const runSegment = async (id: string, name: string, action: () => Promise<void>): Promise<void> => {
             const startMs = await pageNowMs(page);
-            await action();
-            const settledMs = await driver.waitForSettled(SETTLE_TIMEOUT_MS);
-            await recordSegment(id, name, startMs, settledMs);
+            try {
+                await action();
+                const settledMs = await driver.waitForSettled(SETTLE_TIMEOUT_MS);
+                await recordSegment(id, name, startMs, settledMs);
+            } catch (error) {
+                throw new Error(`Segment "${id}" (repetition ${index}): ${(error as Error).message}`);
+            }
         };
 
         // 1. Initial viewport. Time-to-interactive is navigation start to the first settle.
@@ -132,6 +162,7 @@ async function runRepetition(browser: Browser, config: RunConfig, mapPath: MapPa
         await page.goto(`${config.baseUrl}${mapPath.start.path}`, { waitUntil: 'domcontentloaded' });
         const timeToInteractiveMs = await driver.waitForSettled(SETTLE_TIMEOUT_MS);
         const navigation = await readNavigationTiming(page);
+        const viewport = await readViewport(page);
         await recordSegment(INITIAL_LOAD_SEGMENT_ID, 'Initial load', 0, timeToInteractiveMs);
 
         // 2. Pan to the first named place at the start zoom.
@@ -192,9 +223,9 @@ async function runRepetition(browser: Browser, config: RunConfig, mapPath: MapPa
         }
         await capture.detach();
 
-        return { index, startedAt, timeToInteractiveMs, navigation, segments, coldCacheViolations };
+        return { result: { index, startedAt, timeToInteractiveMs, navigation, segments, coldCacheViolations }, viewport };
     } finally {
-        await context.close();
+        await close();
     }
 }
 

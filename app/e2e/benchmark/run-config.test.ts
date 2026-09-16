@@ -20,6 +20,7 @@ describe('readRunConfig', () => {
         expect(config.throttle).toBeNull();
         expect(config.viewport).toEqual(LAPTOP_VIEWPORT);
         expect(config.headless).toBe(true);
+        expect(config.coldCacheMethod).toBe('fresh-context');
         expect(config.outputDir).toBe('/repo/docs/benchmarks');
         expect(config.cdnOrProxy).toBe('none');
     });
@@ -36,6 +37,8 @@ describe('readRunConfig', () => {
         const config = readRunConfig({ BENCHMARK_RUN: 'C', BENCHMARK_CDP_ENDPOINT: 'http://127.0.0.1:9222' }, appDir, today);
         expect(config.viewport).toBeNull();
         expect(config.cdpEndpoint).toBe('http://127.0.0.1:9222');
+        expect(config.headless).toBe(false);
+        expect(config.coldCacheMethod).toBe('cleared-cache');
     });
 
     it('rejects an unknown run, label, repetition count or date', () => {

@@ -4,7 +4,7 @@
  *
  * Implements NFR-1.4, NFR-1.5 (benchmark method v1).
  */
-import { BrowserContext, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 /** Chrome keeps 250 resource entries by default; a throttled path has far more. */
 const RESOURCE_BUFFER_SIZE = 50000;
@@ -23,8 +23,8 @@ export interface NavigationTimingLite {
 }
 
 /** Must run before the first navigation so the buffer limit applies from the start. */
-export async function prepareContextForMeasurement(context: BrowserContext): Promise<void> {
-    await context.addInitScript(`performance.setResourceTimingBufferSize(${RESOURCE_BUFFER_SIZE});`);
+export async function preparePageForMeasurement(page: Page): Promise<void> {
+    await page.addInitScript(`performance.setResourceTimingBufferSize(${RESOURCE_BUFFER_SIZE});`);
 }
 
 /** Milliseconds since navigation start, as the page sees it. */
@@ -56,4 +56,9 @@ export async function readNavigationTiming(page: Page): Promise<NavigationTiming
             loadEventEndMs: navigation ? navigation.loadEventEnd : 0
         };
     });
+}
+
+/** The window size and device pixel ratio the map was rendered at. */
+export async function readViewport(page: Page): Promise<{ width: number; height: number; devicePixelRatio: number }> {
+    return page.evaluate(() => ({ width: window.innerWidth, height: window.innerHeight, devicePixelRatio: window.devicePixelRatio }));
 }

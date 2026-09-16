@@ -52,6 +52,16 @@ export class NetworkCapture {
         return capture;
     }
 
+    /**
+     * Empties the browser cache and cookies. Used where a fresh browser context cannot be
+     * created (Android Chrome over remote debugging refuses `Target.createBrowserContext`);
+     * the cold-cache assertion then proves the cache was empty.
+     */
+    async clearBrowserState(): Promise<void> {
+        await this.session.send('Network.clearBrowserCache');
+        await this.session.send('Network.clearBrowserCookies');
+    }
+
     async throttle(profile: ThrottleProfile): Promise<void> {
         await this.session.send('Network.emulateNetworkConditions', {
             offline: false,
@@ -64,6 +74,20 @@ export class NetworkCapture {
     /** Requests started but not yet finished or failed. */
     get inFlight(): number {
         return this.pending.size;
+    }
+
+    /** How the capture last saw a URL, for diagnostics: never requested, still in flight, or finished. */
+    describeUrl(url: string): string {
+        if (this.pendingUrls().includes(url)) {
+            return 'in flight';
+        }
+        const seen = this.records.filter(r => r.url === url);
+        return seen.length === 0 ? 'never requested' : `finished ${seen.length} time(s)${seen[seen.length - 1].fromCache ? ', from cache' : ''}`;
+    }
+
+    /** URLs of the requests still in flight, for diagnostics. */
+    pendingUrls(): string[] {
+        return Array.from(this.pending).map(id => this.urlByRequest.get(id) ?? id);
     }
 
     /** Bytes on the wire for the most recent network response of a URL; undefined if unknown. */

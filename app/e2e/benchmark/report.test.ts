@@ -44,7 +44,8 @@ function run(id: 'A' | 'B' | 'C', ttis: number[], scale = 1): RunResult {
         device: 'Unknown — to be confirmed by the product owner',
         connection: 'office',
         browser: { name: 'chromium', version: '153.0', headless: true },
-        viewport: { width: 1280, height: 800 },
+        viewport: { width: 1280, height: 800, devicePixelRatio: 1 },
+        coldCacheMethod: 'fresh-context',
         baseUrl: 'http://localhost:3000',
         cdnOrProxy: 'none',
         throttle: null,
@@ -84,7 +85,8 @@ describe('renderReport', () => {
         expect(text).toContain('| Time-to-interactive (navigation start to first map settle) | 1200 ms | 1400 ms | initial load: 1,100 B |');
         expect(text).toContain('NFR-1.4 time-to-interactive target: at most 2200 ms (median) and 2400 ms (p95)');
         expect(text).toContain('Bytes target (whole path, buildings tiles): at most 3,000 B (median)');
-        expect(text).toContain('cold-cache assertion passed');
+        expect(text).toContain('viewport 1280x800 at device pixel ratio 1');
+        expect(text).toContain('fresh browser context each; cold-cache assertion passed');
     });
 
     it('marks the targets unknown when run B is missing', () => {

@@ -10,6 +10,7 @@ import { RUN_B_THROTTLE, ThrottleProfile } from './throttle-profiles';
 
 export type RunId = 'A' | 'B' | 'C';
 export type RunLabel = 'before' | 'after';
+export type ColdCacheMethod = 'fresh-context' | 'cleared-cache';
 
 /** Wording required by docs/DOCUMENTATION.md rule 9 when a fact is not yet known. */
 export const UNKNOWN_DEVICE = 'Unknown — to be confirmed by the product owner';
@@ -33,7 +34,13 @@ export interface RunConfig {
     throttle: ThrottleProfile | null;
     /** null lets a remote (phone) browser keep its own window size. */
     viewport: { width: number; height: number } | null;
+    /** A remote (phone) browser is always headed; laptop runs are headless unless BENCHMARK_HEADED=1. */
     headless: boolean;
+    /**
+     * How each repetition starts cold: a fresh browser context, or (Android Chrome over remote
+     * debugging, which cannot create contexts) a new page after clearing the cache and cookies.
+     */
+    coldCacheMethod: ColdCacheMethod;
     /** Directory that receives `<date>-map-<label>/run-<X>.json` and `<date>-map-<label>.md`. */
     outputDir: string;
     /** What sits between the browser and the server (method v1, Controls); "none" in E0. */
@@ -87,7 +94,8 @@ export function readRunConfig(env: NodeJS.ProcessEnv, appDir: string, today: Dat
         cdpEndpoint,
         throttle: run === 'B' ? RUN_B_THROTTLE : null,
         viewport: run === 'C' ? null : LAPTOP_VIEWPORT,
-        headless: env.BENCHMARK_HEADED !== '1',
+        headless: run !== 'C' && env.BENCHMARK_HEADED !== '1',
+        coldCacheMethod: run === 'C' ? 'cleared-cache' : 'fresh-context',
         outputDir: resolve(appDir, env.BENCHMARK_OUTPUT_DIR ?? '../docs/benchmarks'),
         cdnOrProxy: nonEmpty(env.BENCHMARK_PROXY) ?? 'none'
     };

@@ -38,6 +38,7 @@ export class LeafletDriver {
         let settledAtPageMs = 0;
         let lastResourceCount = -1;
         let lastPending = -1;
+        let lastBusyReason = '';
 
         while (Date.now() < deadline) {
             const state = await this.page.evaluate(() => {
@@ -51,12 +52,19 @@ export class LeafletDriver {
                 };
             });
             const inFlight = this.capture.inFlight;
-            const busy = !state.mapPresent || state.pendingTiles > 0 || state.zooming || inFlight > 0
-                || state.resourceCount !== lastResourceCount || inFlight !== lastPending;
+            const reasons = [
+                !state.mapPresent && 'no map container',
+                state.pendingTiles > 0 && `${state.pendingTiles} tile(s) loading`,
+                state.zooming && 'zoom animation',
+                inFlight > 0 && `${inFlight} request(s) in flight (${this.capture.pendingUrls().slice(0, 3).join(', ')})`,
+                state.resourceCount !== lastResourceCount && `resource count ${lastResourceCount} -> ${state.resourceCount}`,
+                inFlight !== lastPending && `in-flight count ${lastPending} -> ${inFlight}`
+            ].filter((reason): reason is string => typeof reason === 'string');
             lastResourceCount = state.resourceCount;
             lastPending = inFlight;
 
-            if (busy) {
+            if (reasons.length > 0) {
+                lastBusyReason = reasons.join('; ');
                 quietSince = null;
             } else if (quietSince === null) {
                 quietSince = Date.now();
@@ -66,7 +74,10 @@ export class LeafletDriver {
             }
             await this.page.waitForTimeout(SETTLE_POLL_MS);
         }
-        throw new Error(`Map did not settle within ${timeoutMs} ms (tiles still loading or requests in flight)`);
+        const unloaded: string[] = await this.page.evaluate(() =>
+            Array.from(document.querySelectorAll('img.leaflet-tile:not(.leaflet-tile-loaded)')).slice(0, 3).map(img => (img as HTMLImageElement).src));
+        const detail = unloaded.map(url => `${url} (${this.capture.describeUrl(url)})`).join('; ');
+        throw new Error(`Map did not settle within ${timeoutMs} ms; last reason: ${lastBusyReason}${detail ? `; unloaded tiles: ${detail}` : ''}`);
     }
 
     /** Centre of the map container in viewport pixels. */

@@ -43,6 +43,25 @@ You can try out the Colouring Cities application by setting up your own developm
   
 _Last updated March 2022_
 
+#### Run Colouring Ghana locally (this fork)
+
+Recorded 16 September 2026 from the maintainer's workflow. The app reads the standard PostgreSQL variables
+(`PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`; see `app/src/db.ts`), so the database role must be
+given as `PGUSER`, not under another name. The role needs `SELECT` on every table the app reads (for example
+`building_properties` and `logs`); a role without them makes the building pages fail. Never commit the values.
+
+```bash
+cd app
+nvm use 18                       # the maintainer runs Node 18; the September 2026 audit ran the checks under Node 22
+export PGHOST=localhost PGPORT=5432 PGDATABASE=cgdb
+export PGUSER=<role> PGPASSWORD=<password>
+export APP_COOKIE_SECRET=<any string for local use>
+export TILECACHE_PATH=$PWD/tilecache
+npm start                        # http://localhost:3000
+```
+
+The map benchmark and the on-demand browser suite run against this server; see `docs/features/map-migration.md`.
+
 #### Create a production version of the application:
 
 We also have documentation on setting up a production environment here: [setup-production-environment](https://github.com/colouring-cities/ccrp-technical-manual/wiki/Setting-Up-A-Production-Environment).

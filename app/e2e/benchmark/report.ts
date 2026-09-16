@@ -63,12 +63,12 @@ function renderRun(run: RunResult): string[] {
     lines.push('');
     lines.push(`- Date: ${run.date} (recorded ${run.recordedAt})`);
     lines.push(`- Hardware: ${run.device}`);
-    lines.push(`- Browser: ${run.browser.name} ${run.browser.version}${run.browser.headless ? ' (headless)' : ''}${run.viewport ? `, viewport ${run.viewport.width}x${run.viewport.height}` : ', device viewport'}`);
+    lines.push(`- Browser: ${run.browser.name} ${run.browser.version}${run.browser.headless ? ' (headless)' : ''}${run.viewport ? `, viewport ${run.viewport.width}x${run.viewport.height} at device pixel ratio ${run.viewport.devicePixelRatio}` : ', viewport not measured'}`);
     lines.push(`- Connection: ${run.connection}`);
     lines.push(`- Throttle: ${run.throttle ? `${run.throttle.description} (latency ${run.throttle.latencyMs} ms, down ${run.throttle.downloadBytesPerSecond} B/s, up ${run.throttle.uploadBytesPerSecond} B/s)` : 'none'}`);
     lines.push(`- Server: ${run.baseUrl}; CDN or proxy in front: ${run.cdnOrProxy}`);
     lines.push(`- Stack: ${run.stack}; script commit ${run.scriptCommit}; path file \`${run.pathFile.path}\` sha256 ${run.pathFile.sha256}`);
-    lines.push(`- Repetitions: ${s.repetitions}, fresh browser context each; cold-cache assertion ${s.coldCacheOk ? 'passed' : 'FAILED'}`);
+    lines.push(`- Repetitions: ${s.repetitions}, ${run.coldCacheMethod === 'fresh-context' ? 'fresh browser context each' : 'new page each with the browser cache and cookies cleared first (Android Chrome cannot create contexts)'}; cold-cache assertion ${s.coldCacheOk ? 'passed' : 'FAILED'}`);
     if (s.unmeasuredResponses > 0) {
         lines.push(`- ${s.unmeasuredResponses} response(s) had no byte count available (counted as 0 bytes)`);
     }

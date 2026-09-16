@@ -6,13 +6,19 @@
  * Implements NFR-1.4, NFR-1.5 (benchmark method v1). No Playwright dependency.
  */
 import { median, percentile95, SegmentSummary } from './metrics';
-import { RunId, RunLabel } from './run-config';
+import { ColdCacheMethod, RunId, RunLabel } from './run-config';
 import { ThrottleProfile } from './throttle-profiles';
 
 export const RESULT_FORMAT_VERSION = 1;
 export const METHOD_VERSION = 1;
 /** The segment whose duration is the time-to-interactive. */
 export const INITIAL_LOAD_SEGMENT_ID = 'initial-load';
+
+export interface MeasuredViewport {
+    width: number;
+    height: number;
+    devicePixelRatio: number;
+}
 
 export interface SegmentResult {
     id: string;
@@ -47,7 +53,9 @@ export interface RunResult {
     device: string;
     connection: string;
     browser: { name: string; version: string; headless: boolean };
-    viewport: { width: number; height: number } | null;
+    /** Measured in the page on the first repetition (window size and device pixel ratio). */
+    viewport: MeasuredViewport | null;
+    coldCacheMethod: ColdCacheMethod;
     baseUrl: string;
     cdnOrProxy: string;
     throttle: ThrottleProfile | null;
