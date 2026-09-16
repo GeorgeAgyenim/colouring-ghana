@@ -27,7 +27,8 @@ import L from 'leaflet';
 
 /**
  * Zoom level used when re-centring the map on the user's position.
- * 17 is street level — close enough to identify individual buildings.
+ * 19 is the map's maximum zoom — close enough to pick out individual
+ * buildings in dense areas.
  */
 const RECENTER_ZOOM = 19;
 
