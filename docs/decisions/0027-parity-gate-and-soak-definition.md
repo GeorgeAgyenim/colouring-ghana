@@ -62,3 +62,10 @@ including at least one person on an Android phone on mobile data, works through 
 the old map could do, including editing a building end to end. When every item passes, the new map becomes
 the default for everyone, with the old one still available on request. If four weeks go by with nothing
 lost or broken, the old map is removed. The product owner signs off each step with a date.
+
+## Correction (appended 2026-09-16; body unchanged)
+
+The Decision section names the flag-removal ticket as
+`docs/tickets/map-migration/issues/01-remove-map-stack-flag.md`. `/to-tickets` regenerated the epic's tickets in
+dependency order on 2026-09-16, so that ticket is now
+`docs/tickets/map-migration/issues/13-remove-map-stack-flag.md`. Nothing else in the decision changes.
