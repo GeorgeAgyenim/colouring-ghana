@@ -21,7 +21,3 @@ hydrate(
     </BrowserRouter>,
     document.getElementById('root')
 );
-// TODO: This needs to be fixed. Since it is only for development, I am commenting it out as it is erroring on deployment
-//if (module.hot) {
-//    module.hot.accept();
-//}
