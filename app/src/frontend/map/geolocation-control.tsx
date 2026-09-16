@@ -1,7 +1,7 @@
 /**
  * GeolocationControl
  *
- * A self-contained real-time geolocation feature for Colouring Cities.
+ * Real-time geolocation for the map.
  *
  * Behaviour:
  *  - Starts tracking the user's position automatically when mounted.
@@ -10,13 +10,8 @@
  *    heading value supplied by the Geolocation API when unavailable.
  *  - Adds a "Go to my location" button below the Leaflet zoom controls.
  *    Clicking it re-centres the map to the user's current live position.
- *
- * Portability (for forks):
- *  1. Copy this file into your fork at app/src/frontend/map/geolocation-control.tsx
- *  2. Inside your map component (the one that renders <MapContainer>), add:
- *       import { GeolocationControl } from './map/geolocation-control';
- *     and place <GeolocationControl /> anywhere inside <MapContainer>.
- *  No other files need to be changed.
+ *  - If the position cannot be obtained (permission denied, no GPS fix), the
+ *    button is disabled and its tooltip explains why.
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -44,6 +39,8 @@ const WATCH_OPTIONS: PositionOptions = {
 
 /** Colour used consistently for the marker arrow and accuracy circle. */
 const MARKER_COLOUR = '#1a6de0';
+
+const LOCATE_BUTTON_TITLE = 'Go to my location';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -159,8 +156,9 @@ const GeolocationControl: React.FC = () => {
      *  always reads the live value without stale-closure issues. */
     const currentLatLngRef = useRef<L.LatLng | null>(null);
 
-    /** Most recent compass heading in degrees clockwise from north. */
-    const headingRef = useRef<number>(0);
+    /** Most recent compass heading in degrees clockwise from north, or null
+     *  until the device has reported one. */
+    const headingRef = useRef<number | null>(null);
 
     /**
      * Stable ref to the re-centre function. Because the Leaflet control button
@@ -170,6 +168,9 @@ const GeolocationControl: React.FC = () => {
      * latest version without recreating the Leaflet control on every render.
      */
     const recenterRef = useRef<() => void>(() => undefined);
+
+    /** The locate button element, so its enabled state and tooltip can reflect errors. */
+    const buttonRef = useRef<HTMLAnchorElement | null>(null);
 
     // ── React state (UI feedback only) ────────────────────────────────────────
 
@@ -233,7 +234,9 @@ const GeolocationControl: React.FC = () => {
     }, [upsertLocationLayer]);
 
     const onPositionError = useCallback((err: GeolocationPositionError): void => {
-        setLocationError(describePositionError(err));
+        const message = describePositionError(err);
+        console.warn('[GeolocationControl]', message);
+        setLocationError(message);
     }, []);
 
     // ── Device orientation (compass heading) ──────────────────────────────────
@@ -378,10 +381,11 @@ const GeolocationControl: React.FC = () => {
 
                 const button = L.DomUtil.create('a', '', container) as HTMLAnchorElement;
                 button.href  = '#';
-                button.title = 'Go to my location';
+                button.title = LOCATE_BUTTON_TITLE;
                 button.setAttribute('role',       'button');
-                button.setAttribute('aria-label', 'Go to my location');
+                button.setAttribute('aria-label', LOCATE_BUTTON_TITLE);
                 button.innerHTML = buttonIcon;
+                buttonRef.current = button;
 
                 // Prevent map drag/click events firing when the user interacts
                 // with the control.
@@ -401,6 +405,7 @@ const GeolocationControl: React.FC = () => {
         map.addControl(control);
 
         return () => {
+            buttonRef.current = null;
             map.removeControl(control);
         };
         // `map` is the only true dependency. The button handler deliberately
@@ -411,12 +416,23 @@ const GeolocationControl: React.FC = () => {
 
     // ── Error display ─────────────────────────────────────────────────────────
 
-    // Log errors in development. In production, wire this to your application's
-    // notification or toast system — e.g. replace the console.warn below with
-    // a call to your existing error-display utility.
-    if (locationError) {
-        console.warn('[GeolocationControl]', locationError);
-    }
+    // Reflect the error on the locate button: disabled with the reason as tooltip.
+    useEffect(() => {
+        const button = buttonRef.current;
+        if (!button) {
+            return;
+        }
+
+        if (locationError) {
+            button.classList.add('leaflet-disabled');
+            button.setAttribute('aria-disabled', 'true');
+            button.title = locationError;
+        } else {
+            button.classList.remove('leaflet-disabled');
+            button.removeAttribute('aria-disabled');
+            button.title = LOCATE_BUTTON_TITLE;
+        }
+    }, [locationError]);
 
     // This component has no React-rendered DOM output. All visible elements
     // (marker, accuracy circle, control button) are managed imperatively via
