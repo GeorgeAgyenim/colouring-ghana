@@ -1,63 +1,37 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 
 import { LayerEnablementState, MapTheme } from './config/map-config';
 
+type FormSwitch = (e: React.FormEvent<HTMLFormElement>) => void;
+
 interface DisplayPreferencesContextState {
-    showOverlayList: (e: React.FormEvent<HTMLFormElement>) => void;
-    hideOverlayList: (e: React.FormEvent<HTMLFormElement>) => void;
-    resetLayersAndHideTheirList: (e: React.FormEvent<HTMLFormElement>) => void;
-
-    vista: LayerEnablementState;
-    vistaSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    vistaSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
-    flood: LayerEnablementState;
-    floodSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    floodSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
+    showOverlayList: FormSwitch;
+    hideOverlayList: FormSwitch;
 
     region: LayerEnablementState;
-    regionSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    regionSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
+    regionSwitch: FormSwitch;
 
     district: LayerEnablementState;
-    districtSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    districtSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
-    creative: LayerEnablementState;
-    creativeSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    creativeSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
-    housing: LayerEnablementState;
-    housingSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    housingSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
-    conservation: LayerEnablementState;
-    conservationSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    conservationSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
-    parcel: LayerEnablementState;
-    parcelSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
-    parcelSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
-
+    districtSwitch: FormSwitch;
 
     historicData: LayerEnablementState;
-    historicDataSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    historicDataSwitch: FormSwitch;
     historicDataSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 
     historicMap: LayerEnablementState;
-    historicMapSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    historicMapSwitch: FormSwitch;
     historicMapSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 
     editableBuildings: LayerEnablementState;
-    editableBuildingsSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    editableBuildingsSwitch: FormSwitch;
     editableBuildingsSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 
     darkLightTheme: MapTheme;
-    darkLightThemeSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    darkLightThemeSwitch: FormSwitch;
     darkLightThemeSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 
     showLayerSelection: LayerEnablementState;
-    showLayerSelectionSwitch: (e: React.FormEvent<HTMLFormElement>) => void;
+    showLayerSelectionSwitch: FormSwitch;
     showLayerSelectionSwitchOnClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -68,40 +42,12 @@ const stub = (): never => {
 export const DisplayPreferencesContext = createContext<DisplayPreferencesContextState>({
     showOverlayList: stub,
     hideOverlayList: stub,
-    resetLayersAndHideTheirList: stub,
-
-    vista: undefined,
-    vistaSwitch: stub,
-    vistaSwitchOnClick: undefined,
-
-    flood: undefined,
-    floodSwitch: stub,
-    floodSwitchOnClick: undefined,
 
     region: undefined,
     regionSwitch: stub,
-    regionSwitchOnClick: undefined,
 
     district: undefined,
     districtSwitch: stub,
-    districtSwitchOnClick: undefined,
-
-    creative: undefined,
-    creativeSwitch: stub,
-    creativeSwitchOnClick: undefined,
-
-    housing: undefined,
-    housingSwitch: stub,
-    housingSwitchOnClick: undefined,
-
-    conservation: undefined,
-    conservationSwitch: stub,
-    conservationSwitchOnClick: undefined,
-
-    parcel: undefined,
-    parcelSwitch: stub,
-    parcelSwitchOnClick: undefined,
-
 
     historicData: undefined,
     historicDataSwitch: stub,
@@ -124,342 +70,113 @@ export const DisplayPreferencesContext = createContext<DisplayPreferencesContext
     showLayerSelectionSwitchOnClick: undefined,
 });
 
-const noop = () => {};
+function flip(state: LayerEnablementState): LayerEnablementState {
+    return state === 'enabled' ? 'disabled' : 'enabled';
+}
 
-export const DisplayPreferencesProvider: React.FC<{}> = ({children}) => {
-    const defaultVista = 'disabled'
-    const defaultFlood = 'disabled'
-    const defaultRegion = 'disabled'
-    const defaultDistrict = 'disabled'
-    const defaultCreative = 'disabled'
-    const defaultHousing = 'disabled'
-    const defaultParcel = 'disabled'
-    const defaultConservation = 'disabled'
-    const defaultHistoricData = 'disabled'
-    const defaultHistoricMap = 'disabled'
-    const defaultEditableBuildings = 'enabled'
-    const defaultShowLayerSelection = 'disabled'
-    const [vista, setVista] = useState<LayerEnablementState>(defaultVista);
-    const [flood, setFlood] = useState<LayerEnablementState>(defaultFlood);
-    const [region, setRegion] = useState<LayerEnablementState>(defaultRegion);
-    const [district, setDistrict] = useState<LayerEnablementState>(defaultDistrict);
-    const [creative, setCreative] = useState<LayerEnablementState>(defaultCreative);
-    const [housing, setHousing] = useState<LayerEnablementState>(defaultHousing);
-    const [parcel, setParcel] = useState<LayerEnablementState>(defaultParcel);
-    const [conservation, setConservation] = useState<LayerEnablementState>(defaultConservation);
-    const [historicData, setHistoricData] = useState<LayerEnablementState>(defaultHistoricData);
-    const [historicMap, setHistoricMap] = useState<LayerEnablementState>(defaultHistoricMap);
-    const [editableBuildings, setEditableBuildings] = useState<LayerEnablementState>(defaultEditableBuildings);
+export const DisplayPreferencesProvider: React.FC = ({children}) => {
+    const [region, setRegion] = useState<LayerEnablementState>('disabled');
+    const [district, setDistrict] = useState<LayerEnablementState>('disabled');
+    const [historicData, setHistoricData] = useState<LayerEnablementState>('disabled');
+    const [historicMap, setHistoricMap] = useState<LayerEnablementState>('disabled');
+    const [editableBuildings, setEditableBuildings] = useState<LayerEnablementState>('enabled');
     const [darkLightTheme, setDarkLightTheme] = useState<MapTheme>('night');
-    const [showLayerSelection, setShowLayerSelection] = useState<LayerEnablementState>(defaultShowLayerSelection);
+    const [showLayerSelection, setShowLayerSelection] = useState<LayerEnablementState>('disabled');
 
     const showOverlayList = useCallback(
-        (e) => {
-            setShowLayerSelection('enabled')
+        () => {
+            setShowLayerSelection('enabled');
         },
         []
-    )
+    );
 
     const hideOverlayList = useCallback(
-        (e) => {
-            setShowLayerSelection('disabled')
+        () => {
+            setShowLayerSelection('disabled');
         },
         []
-    )
-
-    const resetLayersAndHideTheirList = useCallback(
-        (e) => {
-            setVista(defaultVista);
-            setFlood(defaultFlood);
-            setRegion(defaultRegion);
-            setDistrict(defaultDistrict);
-            setCreative(defaultCreative);
-            setHousing(defaultHousing);
-            setParcel(defaultParcel);
-            setConservation(defaultConservation);
-            setHistoricData(defaultHistoricData);
-            setHistoricMap(defaultHistoricMap);
-            setEditableBuildings(defaultEditableBuildings)
-            setShowLayerSelection(defaultShowLayerSelection); // reset layers + hiding this panel is integrated into one action
-            //setDarkLightTheme('night'); // reset only layers
-    },
-        []
-    )
-
-    function anyLayerModifiedState() {
-        if(vista != defaultVista) {
-            return true;
-        }
-        if(flood != defaultFlood) {
-            return true;
-        }
-        if(region != defaultRegion) {
-            return true;
-        }
-        if(district != defaultDistrict) {
-            return true;
-        }
-        if(creative != defaultCreative) {
-            return true;
-        }
-        if(housing != defaultHousing) {
-            return true;
-        }
-        if(parcel != defaultParcel) {
-            return true;
-        }
-        if(conservation != defaultConservation) {
-            return true;
-        }
-        if(historicData != defaultHistoricData) {
-            return true;
-        }
-        if(historicMap != defaultHistoricMap) {
-            return true;
-        }
-        if(editableBuildings != defaultEditableBuildings) {
-            return true;
-        }
-        setEditableBuildings
-        //darkLightTheme not handled here
-        return false;
-    }
-
-    const vistaSwitch = useCallback(
-        (e) => {
-            e.preventDefault();
-            const newVista = (vista === 'enabled')? 'disabled' : 'enabled';
-            setVista(newVista);
-        },
-        [vista],
-    )
-
-    const vistaSwitchOnClick = (e) => {
-            e.preventDefault();
-            const newVista = (vista === 'enabled')? 'disabled' : 'enabled';
-            setVista(newVista);
-    }
-
-    const floodSwitch = useCallback(
-        (e) => {
-            e.preventDefault();
-            const newFlood = (flood === 'enabled')? 'disabled' : 'enabled';
-            setFlood(newFlood);
-        },
-        [flood],
-    )
-
-    const floodSwitchOnClick = (e) => {
-        e.preventDefault();
-        const newFlood = (flood === 'enabled')? 'disabled' : 'enabled';
-        setFlood(newFlood);
-    }
+    );
 
     const regionSwitch = useCallback(
         (e) => {
             e.preventDefault();
-            const newRegion = (region === 'enabled')? 'disabled' : 'enabled';
-            setRegion(newRegion);
+            setRegion(flip(region));
         },
         [region],
-    )
-
-    const regionSwitchOnClick = (e) => {
-        e.preventDefault();
-        const newRegion = (region === 'enabled')? 'disabled' : 'enabled';
-        setRegion(newRegion);
-    }
+    );
 
     const districtSwitch = useCallback(
         (e) => {
             e.preventDefault();
-            const newDistrict = (district === 'enabled')? 'disabled' : 'enabled';
-            setDistrict(newDistrict);
+            setDistrict(flip(district));
         },
         [district],
-    )
+    );
 
-    const districtSwitchOnClick = (e) => {
+    // Historic data and historic map are mutually exclusive overlays.
+    const flipHistoricData = (e) => {
         e.preventDefault();
-        const newDistrict = (district === 'enabled')? 'disabled' : 'enabled';
-        setDistrict(newDistrict);
-    }
-
-    const housingSwitch = useCallback(
-        (e) => {
-            e.preventDefault();
-            const newHousing = (housing === 'enabled')? 'disabled' : 'enabled';
-            setHousing(newHousing);
-        },
-        [housing],
-    )
-
-    const housingSwitchOnClick = (e) => {
+        setHistoricData(flip(historicData));
+    };
+    const flipHistoricMap = (e) => {
         e.preventDefault();
-        const newHousing = (housing === 'enabled')? 'disabled' : 'enabled';
-        setHousing(newHousing);
-    }
-
-    const creativeSwitch = useCallback(
-        (e) => {
-            e.preventDefault();
-            const newCreative = (creative === 'enabled')? 'disabled' : 'enabled';
-            setCreative(newCreative);
-        },
-        [creative],
-    )
-
-    const creativeSwitchOnClick = (e) => {
-        e.preventDefault();
-        const newCreative = (creative === 'enabled')? 'disabled' : 'enabled';
-        setCreative(newCreative);
-    }
-
-
-    const parcelSwitch = useCallback(
-        (e) => {
-            flipParcel(e)
-        },
-        [parcel],
-    )
-    const parcelSwitchOnClick = (e) => {
-        flipParcel(e)
-    }
-    function flipParcel(e) {
-        e.preventDefault();
-        const newParcel = (parcel === 'enabled')? 'disabled' : 'enabled';
-        setParcel(newParcel);
-    }
-
-    const conservationSwitch = useCallback(
-        (e) => {
-            flipConservation(e)
-        },
-        [conservation],
-    )
-    const conservationSwitchOnClick = (e) => {
-        flipConservation(e)
-    }
-    function flipConservation(e) {
-        e.preventDefault();
-        const newConservation = (conservation === 'enabled')? 'disabled' : 'enabled';
-        setConservation(newConservation);
-    }
+        setHistoricMap(flip(historicMap));
+    };
 
     const historicDataSwitch = useCallback(
         (e) => {
             if (historicMap === 'enabled') {
-                fliphistoricMap(e);
+                flipHistoricMap(e);
             }
             flipHistoricData(e);
         },
         [historicData, historicMap],
-    )
-    const historicDataSwitchOnClick = (e) => {
-        flipHistoricData(e)
-    }
-    function flipHistoricData(e) {
-        e.preventDefault();
-        const newHistoric = (historicData === 'enabled')? 'disabled' : 'enabled';
-        setHistoricData(newHistoric);
-    }
+    );
+    const historicDataSwitchOnClick = flipHistoricData;
 
     const historicMapSwitch = useCallback(
         (e) => {
             if (historicData === 'enabled') {
                 flipHistoricData(e);
             }
-            fliphistoricMap(e);
+            flipHistoricMap(e);
         },
         [historicMap, historicData],
-    )
-    const historicMapSwitchOnClick = (e) => {
-        fliphistoricMap(e)
-    }
-    function fliphistoricMap(e) {
-        e.preventDefault();
-        const newHistoric = (historicMap === 'enabled')? 'disabled' : 'enabled';
-        setHistoricMap(newHistoric);
-    }
+    );
+    const historicMapSwitchOnClick = flipHistoricMap;
 
-    const editableBuildingsSwitch = useCallback(
-        (e) => {
-            flipEditableBuildings(e)
-        },
-        [editableBuildings],
-    )
-    const editableBuildingsSwitchOnClick = (e) => {
-        flipEditableBuildings(e)
-    }
-    function flipEditableBuildings(e) {
+    const flipEditableBuildings = (e) => {
         e.preventDefault();
-        const newValue = (editableBuildings === 'enabled')? 'disabled' : 'enabled';
-        setEditableBuildings(newValue);
-    }
+        setEditableBuildings(flip(editableBuildings));
+    };
+    const editableBuildingsSwitch = useCallback(flipEditableBuildings, [editableBuildings]);
+    const editableBuildingsSwitchOnClick = flipEditableBuildings;
 
-    const darkLightThemeSwitch = useCallback(
-        (e) => {
-            flipDarkLightTheme(e)
-        },
-        [darkLightTheme],
-    )
-    const darkLightThemeSwitchOnClick = (e) => {
-        flipDarkLightTheme(e)
-    }
-    function flipDarkLightTheme(e) {
+    const flipDarkLightTheme = (e) => {
         e.preventDefault();
-        const newDarkLightTheme = (darkLightTheme === 'light')? 'night' : 'light';
-        setDarkLightTheme(newDarkLightTheme);
-    }
+        setDarkLightTheme(darkLightTheme === 'light' ? 'night' : 'light');
+    };
+    const darkLightThemeSwitch = useCallback(flipDarkLightTheme, [darkLightTheme]);
+    const darkLightThemeSwitchOnClick = flipDarkLightTheme;
 
-    const showLayerSelectionSwitch = useCallback(
-        (e) => {
-            flipShowLayerSelection(e)
-        },
-        [showLayerSelection],
-    )
-    const showLayerSelectionSwitchOnClick = (e) => {
-        flipShowLayerSelection(e)
-    }
-    function flipShowLayerSelection(e) {
+    const flipShowLayerSelection = (e) => {
         e.preventDefault();
-        const newShowLayerSelection = (showLayerSelection === 'enabled')? 'disabled' : 'enabled';
-        setShowLayerSelection(newShowLayerSelection);
-    }
-
+        setShowLayerSelection(flip(showLayerSelection));
+    };
+    const showLayerSelectionSwitch = useCallback(flipShowLayerSelection, [showLayerSelection]);
+    const showLayerSelectionSwitchOnClick = flipShowLayerSelection;
 
     return (
         <DisplayPreferencesContext.Provider value={{
             showOverlayList,
             hideOverlayList,
-            resetLayersAndHideTheirList,
 
-            vista,
-            vistaSwitch,
-            vistaSwitchOnClick,
-            flood,
-            floodSwitch,
-            floodSwitchOnClick,
             region,
             regionSwitch,
-            regionSwitchOnClick,
+
             district,
             districtSwitch,
-            districtSwitchOnClick,
-            creative,
-            creativeSwitch,
-            creativeSwitchOnClick,
-            housing,
-            housingSwitch,
-            housingSwitchOnClick,
-            conservation,
-            conservationSwitch,
-            conservationSwitchOnClick,
-            parcel,
-            parcelSwitch,
-            parcelSwitchOnClick,
-        
-        
+
             historicData,
             historicDataSwitch,
             historicDataSwitchOnClick,

@@ -12,16 +12,9 @@ import { Building } from '../models/building';
 
 import { CityBaseMapLayer } from './layers/city-base-map-layer';
 import { CityBoundaryLayer } from './layers/city-boundary-layer';
-import { ParcelBoundaryLayer } from './layers/parcel-boundary-layer';
 import { HistoricDataLayer } from './layers/historic-data-layer';
 import { HistoricMapLayer } from './layers/historic-map-layer';
-import { FloodBoundaryLayer } from './layers/flood-boundary-layer';
-import { RegionBoundaryLayer } from './layers/region-boundary-layer';
-import { DistrictBoundaryLayer } from './layers/district-boundary-layer';
-import { ConservationAreaBoundaryLayer } from './layers/conservation-boundary-layer';
-import { VistaBoundaryLayer } from './layers/vista-boundary-layer';
-import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
-import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
+import { RegionBoundaryLayer, DistrictBoundaryLayer } from './layers/admin-boundary-layer';
 import { BuildingBaseLayer } from './layers/building-base-layer';
 import { BuildingDataLayer } from './layers/building-data-layer';
 import { BuildingNumbersLayer } from './layers/building-numbers-layer';
@@ -32,16 +25,9 @@ import SearchBox, { SearchResult } from './search-box';
 import { SearchResultsLayer } from './search-results-layer';
 import ThemeSwitcher from './theme-switcher';
 import DataLayerSwitcher from './data-switcher';
-import { ParcelSwitcher } from './parcel-switcher';
-import { FloodSwitcher } from './flood-switcher';
-import { RegionSwitcher } from './region-switcher';
-import { DistrictSwitcher } from './district-switcher';
-import { ConservationAreaSwitcher } from './conservation-switcher';
+import { RegionSwitcher, DistrictSwitcher } from './boundary-switcher';
 import { HistoricDataSwitcher } from './historic-data-switcher';
 import { HistoricMapSwitcher } from './historic-map-switcher';
-import { VistaSwitcher } from './vista-switcher';
-import { CreativeSwitcher } from './creative-switcher';
-import { HousingSwitcher } from './housing-switcher';
 import { EditableBuildingsSwitcher } from './editable-buildings-switcher';
 import { BuildingMapTileset } from '../config/tileserver-config';
 import { useDisplayPreferences } from '../displayPreferences-context';
@@ -131,13 +117,6 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <BuildingBaseLayer theme={darkLightTheme} />
                 </Pane>
 
-                <Pane
-                    name='cc-overlay-pane-shown-behind-buildings'
-                    style={{zIndex: 199}}
-                >
-                    <ConservationAreaBoundaryLayer/>
-                </Pane>
-
                 {
                     mapColourScale &&
                         <BuildingDataLayer
@@ -153,13 +132,8 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <CityBoundaryLayer/>
                     <HistoricDataLayer revisionId={revisionId} />
                     <HistoricMapLayer revisionId={revisionId} />
-                    <ParcelBoundaryLayer/>
-                    <FloodBoundaryLayer/>
                     <RegionBoundaryLayer/>
                     <DistrictBoundaryLayer/>
-                    <VistaBoundaryLayer/>
-                    <HousingBoundaryLayer/>
-                    <CreativeBoundaryLayer/>
                     <BuildingNumbersLayer revisionId={revisionId} />
                     {
                         selectedBuildingId &&
@@ -196,16 +170,10 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                 {
                     (showLayerSelection == "enabled") ?
                     <>
-                        <ParcelSwitcher/>
-                        <FloodSwitcher/>
                         <RegionSwitcher/>
                         <DistrictSwitcher/>
-                        <ConservationAreaSwitcher/>
                         { /* <HistoricMapSwitcher/> */ }
                         { /* <HistoricDataSwitcher/> */ }
-                        <VistaSwitcher />
-                        <HousingSwitcher />
-                        <CreativeSwitcher />
                         <EditableBuildingsSwitcher />
                     </>
                     : <></>

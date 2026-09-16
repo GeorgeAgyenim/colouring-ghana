@@ -15,7 +15,6 @@ import InfoBox from '../../components/info-box';
 
 import { CategoryViewProps } from './category-view-props';
 import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-data-entry';
-import { useDisplayPreferences } from '../../displayPreferences-context';
 import PlanningDataOfficialDataEntry from '../data-components/planning-data-entry';
 import UserOpinionEntry from '../data-components/user-opinion-data-entry';
 import NumericDataEntryWithFormattedLink from '../data-components/numeric-data-entry-with-formatted-link';
@@ -80,8 +79,6 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
         props.onMapColourScale('community_local_significance_total')
     }
 
-    const { housing, housingSwitchOnClick, creative, creativeSwitchOnClick, vista, vistaSwitchOnClick, conservation, conservationSwitchOnClick, darkLightTheme } = useDisplayPreferences();
-    
     const communityLinkUrl = `/${props.mode}/${Category.Community}/${props.building.building_id}`;
     const currentYear = new Date().getFullYear();
 
@@ -315,9 +312,6 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         mode={props.mode}
                         disabled={true}
                     />
-                    <button className={`map-switcher-inline ${housing}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={housingSwitchOnClick}>
-                        {(housing === 'enabled')? 'Click to hide Housing Zones' : 'Click to see Housing Zones mapped'}
-                    </button>
                     <LogicalDataEntry
                         slug='planning_enterprise_zone'
                         title={dataFields.planning_enterprise_zone.title}
@@ -328,9 +322,6 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         mode={props.mode}
                         disabled={true}
                     />
-                    <button className={`map-switcher-inline ${creative}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={creativeSwitchOnClick}>
-                        {(creative === 'enabled')? 'Click to hide Creative Enterprise Zones' : 'Click to see Creative Enterprise Zones'}
-                    </button>
                     <LogicalDataEntry
                         slug='planning_protected_vista'
                         title={dataFields.planning_protected_vista.title}
@@ -341,9 +332,6 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         mode={props.mode}
                         disabled={true}
                     />
-                    <button className={`map-switcher-inline ${vista}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={vistaSwitchOnClick}>
-                        {(vista === 'enabled')? 'Click to hide Protected Vistas' : 'Click to see Protected Vistas'}
-                    </button>
                     {/*
                         <DataEntry
                         title={dataFields.planning_glher_url.title}
@@ -380,9 +368,6 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                     :
                     <></>
                 }
-                <button className={`map-switcher-inline ${conservation}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={conservationSwitchOnClick}>
-                    {(conservation === 'enabled')? 'Click to hide Conservation Areas' : 'Click to see Conservation Areas'}
-                </button>
                 <hr/>
                 <LogicalDataEntry
                     slug='planning_heritage_at_risk'

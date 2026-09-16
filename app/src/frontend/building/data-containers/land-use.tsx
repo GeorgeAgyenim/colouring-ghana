@@ -6,7 +6,6 @@ import SelectDataEntry from '../data-components/select-data-entry';
 import withCopyEdit from '../data-container';
 import { CategoryViewProps } from './category-view-props';
 import Verification from '../data-components/verification';
-import { useDisplayPreferences } from '../../displayPreferences-context';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import InfoBox from '../../components/info-box';
 
@@ -26,8 +25,6 @@ const LandUseView: React.FunctionComponent<CategoryViewProps> = (props) => {
     const queryParameters = new URLSearchParams(window.location.search);
     const subcat = queryParameters.get("sc");
 
-    const { parcel, parcelSwitchOnClick, darkLightTheme } = useDisplayPreferences();
-    
     return (
         <Fragment>
             <DataEntryGroup name="Current Land Use/s" collapsed={subcat==null || subcat!="1"}>
@@ -223,9 +220,6 @@ const LandUseView: React.FunctionComponent<CategoryViewProps> = (props) => {
                         placeholder="https://..."
                         isUrl={true}
                     />
-                    <button className={`map-switcher-inline ${parcel}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={parcelSwitchOnClick}>
-                        {(parcel === 'enabled')? 'Click to hide sample land parcel data' : 'Click to show sample land parcel data'}
-                    </button>
             </DataEntryGroup>
             <DataEntryGroup name="Original (Historical) Use" collapsed={subcat==null || subcat!="4"}>
                 {(props.mapColourScale != "original_landuse") ? 

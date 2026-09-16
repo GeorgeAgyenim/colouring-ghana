@@ -12,7 +12,6 @@ import { CategoryViewProps } from './category-view-props';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-data-entry';
-import { useDisplayPreferences } from '../../displayPreferences-context';
 
 
 /**
@@ -22,8 +21,6 @@ const WaterGreenInfrastructureView: React.FunctionComponent<CategoryViewProps> =
     
     const queryParameters = new URLSearchParams(window.location.search);
     const subcat = queryParameters.get("sc");
-
-    const { flood, floodSwitchOnClick, darkLightTheme } = useDisplayPreferences();
 
     return (
         <Fragment>
@@ -268,9 +265,6 @@ const WaterGreenInfrastructureView: React.FunctionComponent<CategoryViewProps> =
                     mode={props.mode}
                     disabled={true}
                 />
-                <button className={`map-switcher-inline ${flood}-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={floodSwitchOnClick}>
-                    {(flood === 'enabled')? 'Click to hide Flood Zones' : 'Click to see Flood Zones mapped'}
-                </button>
             </DataEntryGroup>
         </Fragment>
     );

@@ -9,7 +9,8 @@ export function CityBoundaryLayer() {
 
     useEffect(() => {
         apiGet('/geometries/boundary-detailed.geojson')
-            .then(data => setBoundaryGeojson(data as GeoJsonObject));
+            .then(data => setBoundaryGeojson(data as GeoJsonObject))
+            .catch(err => console.error('Failed to load city boundary layer', err));
     }, []);
 
     return boundaryGeojson &&

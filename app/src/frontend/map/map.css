@@ -29,7 +29,7 @@
     cursor: crosshair;
 }
 /* Zoom-dependent boundary name labels
-   (see region-boundary-layer.tsx / district-boundary-layer.tsx) */
+   (see layers/admin-boundary-layer.tsx) */
 .leaflet-tooltip.boundary-label {
     background: transparent;
     border: none;
