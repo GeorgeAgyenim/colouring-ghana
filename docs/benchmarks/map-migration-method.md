@@ -13,8 +13,8 @@ recorded with the bytes transferred for the same step, and the pass rule applies
 
 ## Path (identical for every run)
 
-A checked-in Playwright script (`app/benchmarks/map-path.ts`, to be written with the first baseline run)
-drives Chromium through:
+A checked-in Playwright script (to be written with the first baseline run) reads the shared path
+definition also used by the Playwright smoke test (grilling record, test seam 5) and drives Chromium through:
 
 1. Load the site at the initial viewport (`cc-config.json` position and zoom) with a fresh browser context.
 2. Pan to two named places (fixed coordinates in the script).
