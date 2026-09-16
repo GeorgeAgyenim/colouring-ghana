@@ -97,6 +97,9 @@
       "js",
       "json"
     ],
+    "moduleNameMapper": {
+      "^node:process$": "<rootDir>/jest/node-process-shim.js"
+    },
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}"
     ]

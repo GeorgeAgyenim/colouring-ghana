@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { EditHistoryEntry } from '../../../frontend/models/edit-history-entry';
 import * as editHistoryData from '../../dataAccess/editHistory'; // manually mocked
 import { ArgumentError } from '../../errors/general';

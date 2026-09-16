@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import _ from 'lodash';
 
 import { ArgumentError } from '../../../errors/general';
