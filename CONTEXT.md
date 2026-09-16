@@ -57,7 +57,9 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Edits-since overlay | The buildings changed after the nightly tile file was made, fetched as a short list and drawn on top of it so contributors see their edits at once. |
 | Engine | The software that actually runs a query plan: DuckDB-WASM in the browser. |
 | Export job | The scheduled task that reads the buildings table once and builds every published file (tiles, snapshot, manifest) from that single reading. |
+| Export role | The dedicated read-only database role the export job runs under; it can read buildings and reference layers but never contributor identities. |
 | Feature flag | A switch in the software that turns a capability on or off per environment or per user without changing the code. |
+| Feature state | A MapLibre mechanism for attaching a temporary flag (such as 'selected' or 'superseded') to one map feature by its id, so it can be restyled without refetching tiles. |
 | Fix (position fix) | The location reported by a device's location service, with an accuracy estimate. |
 | FlatGeobuf | A compact single-file format for map shapes, used as the export job's intermediate file. |
 | Footprint | The outline of a building as seen from above; the basic shape the platform stores for each building. |
@@ -68,6 +70,7 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | GIS | Geographic Information System: software and methods for working with map data. |
 | GPU | Graphics Processing Unit: the kind of processor that runs AI models quickly. |
 | Grounding | The reference material (definitions, layer lists, metric definitions) an AI assistant is given so its answers are consistent with the platform. |
+| Hit-test (local) | Finding which building is under a click by asking the map for the rendered shapes at that point, in the browser, instead of asking the server. |
 | Inference server | The program that runs an AI model and answers requests; examples include vLLM. |
 | IP address | The number identifying an internet connection; often shared by a whole office. |
 | JSON | A simple text format for structured data that both people and programs can read; query plans are written in it. |
@@ -77,6 +80,7 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Load test | Simulating many simultaneous users before they arrive for real. |
 | Local network (LAN) | The network within one building or room, which works without the wider internet. |
 | Manifest | A small file inside a pack listing what it contains, its 'as of' time and checksums. |
+| Map-stack flag | The feature flag that chooses between the old map (Leaflet and Mapnik) and the new one (MapLibre and PMTiles): an environment default, a `?map=` URL parameter, and a cookie that remembers the parameter. |
 | MapLibre GL | An open-source browser map library built for vector tiles. |
 | Mapnik | The server program that currently draws picture tiles; reported as slow. |
 | Martin / pg_tileserv | Programs that produce vector tiles directly from a PostGIS database. |
@@ -87,8 +91,9 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Origin-private file system | Private storage inside the browser for a website's own files; where packs and uploaded layers are kept. |
 | Pack | A downloadable bundle for one area — tiles, building data, reference layers, definitions, manifest — for offline use. |
 | Parity | The new map doing everything the old one did, checked against a written list. |
-| Parity defect | A difference found by the parity checklist. Blocking: a behaviour is lost or wrong. Cosmetic: it only looks different. |
 | Parity checklist | A written list of everything the old map does, used to confirm the new map does it too. |
+| Parity defect | A difference found by the parity checklist. Blocking: a behaviour is lost or wrong. Cosmetic: it only looks different. |
+| Path file (benchmark path) | One checked-in definition of the map journey (viewport, places, zoom steps, category pair, fixed building) that both the browser smoke test and the benchmark script read, so they cannot drift apart. |
 | Plan / query plan | The platform's structured description of a question: an ordered list of operations, written in JSON. |
 | Plan card | The on-screen form of a plan: a one-line summary, the steps beneath, and the actions Run, Edit in builder, Save, Share. |
 | PMTiles | A single file containing all the map tiles for an area, readable in small pieces without a tile server. |
@@ -116,11 +121,12 @@ An analytical layer for Colouring Ghana (a colouring-core fork): spatial questio
 | Space-filling curve | A way of ordering locations so that things near each other on the map are near each other in a file. |
 | Spatial relate / spatial join | Asking which buildings fall inside, touch, or are nearest to some other shapes. |
 | SQL / spatial SQL | The standard language for asking questions of databases; spatial SQL adds geographic functions. |
-| Style config | The one list of attribute-to-colour rules from which both the map colouring and the legend are generated. |
 | Structured output | Making an AI model answer in a fixed format (such as a JSON plan) rather than free text. |
+| Style config | The one list of attribute-to-colour rules from which both the map colouring and the legend are generated. |
 | Sync | Sending edits made offline to the server once a connection returns. |
-| Tippecanoe | The command-line tool that turns exported shapes into a tile file. |
 | Tile / tile cache | A small square of map; a cache keeps recently produced tiles so they need not be made again. |
+| Tile schema | The versioned list of properties carried by each building in the tile archive; packs and the core contribution rely on it. |
+| Tippecanoe | The command-line tool that turns exported shapes into a tile file. |
 | Turf.js / geos-wasm | Browser libraries for geometry operations. |
 | Uploaded layer | Data a user loads from their own device; it stays in the browser. |
 | Validator | The component that checks a plan is allowed and well-formed before it runs. |
