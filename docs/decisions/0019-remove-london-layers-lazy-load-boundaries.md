@@ -1,6 +1,6 @@
 # ADR-0019 — Remove the London map layers and lazy-load boundary GeoJSON
 
-Date: 2026-09-16. Status: accepted.
+Date: 2026-09-16. Status: accepted. Accepted by George (GeorgeAgyenim), product owner, 2026-09-16.
 Formerly `docs/adr/0001`; moved to `docs/decisions/` as ADR-0019 on 16 September 2026. Body unchanged.
 
 ## Context

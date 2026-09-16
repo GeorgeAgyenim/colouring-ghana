@@ -21,7 +21,13 @@ Seeded from the requirements dialogue of 15–16 September 2026 (the `/grill-wit
 | ADR-0015 | Analysis is a third sidebar mode, with the category tiles kept visible; The AI assistant lives in a floating bubble at the bottom-left of the map; The conversation stays where the person typed it; only 'Edit in builder' moves them; The plan card looks the same everywhere and is the hand-off between assistant and builder; Layers and uploads live in 'Show layer options'; packs in the Menu; status in the header; drawing in the map-corner tools | D18, D19, D20, D21, D27 | Accepted | 16 September 2026 |
 | ADR-0016 | A query result replaces the category colouring on the map; Clicking a building in result view shows a small popup with the values the plan used; Tables and charts are result cards that open full-size in a centred pop-up; there is no results drawer | D22, D23, D24 | Accepted | 16 September 2026 |
 | ADR-0017 | The assistant never assumes a location; it asks, and the answer chips are the consent; 'My location' is resolved on the device; the person always chooses between a named area and a radius | D25, D26 | Accepted | 16 September 2026 |
-| ADR-0018 | The map migration is its own project, delivered first, before the analytics work is stacked on it | D28 | Accepted | 16 September 2026 |
+| ADR-0018 | The map migration is its own project, delivered first, before the analytics work is stacked on it (gates defined in ADR-0027) | D28 | Accepted | 16 September 2026 |
 | ADR-0019 | Remove the London map layers and lazy-load boundary GeoJSON | — | Accepted | 16 September 2026 |
 | ADR-0020 | Shim `node:process` for jest 26 instead of upgrading jest | — | Accepted | 16 September 2026 |
 | ADR-0021 | Route every API call through `apiHelpers` | — | Accepted | 16 September 2026 |
+| ADR-0022 | Show recent edits with an edits-since overlay instead of a live vector-tile server | resolves OD-5 | Accepted | 16 September 2026 |
+| ADR-0023 | One PMTiles archive carrying every styled attribute, and one style config that drives both map colours and legend | — | Accepted | 16 September 2026 |
+| ADR-0024 | One nightly export transaction feeds both the tile archive and the analysis snapshot, and writes a manifest last | — | Accepted | 16 September 2026 |
+| ADR-0025 | GDAL (ogr2ogr) exports the buildings; tippecanoe builds the PMTiles archive | — | Accepted | 16 September 2026 |
+| ADR-0026 | Use @vis.gl/react-maplibre as the React binding for MapLibre GL | — | Accepted | 16 September 2026 |
+| ADR-0027 | The map migration's parity gate and soak period are defined as two staged gates signed off by the product owner | makes ADR-0018 concrete | Accepted | 16 September 2026 |

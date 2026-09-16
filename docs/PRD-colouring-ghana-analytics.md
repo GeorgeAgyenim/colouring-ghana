@@ -4,7 +4,7 @@
 | Field | Value |
 |---|---|
 | Document | PRD-CG-ANALYTICS-V1 |
-| Version | 0.4 (draft for review; map migration split into prerequisite epic E0, 2026-09-16) |
+| Version | 0.5 (draft for review; 2026-09-16: OD-5 closed, OD-11 opened, FR-9.3 and NFR-2.5/2.6 aligned with ADR-0022) |
 | Date | 2026-09-16 |
 | Status | Draft — decisions recorded from the requirements dialogue of 15–16 Sept 2026 |
 | Platform | Colouring Ghana (fork of colouring-cities/colouring-core), https://ngci.encs.concordia.ca/colouringghana/ |
@@ -246,7 +246,7 @@ _Rationale: because execution is local, a SQL editor carries no server risk. It 
 
 **FR-8.2 (M) Timestamp.** Each snapshot SHALL carry the database transaction time at which it was exported, exposed to the client and stamped on every output.
 
-**FR-8.3 (M) Refresh.** Snapshots SHALL be regenerated on a schedule (baseline: nightly) and additionally when edits since the last export exceed a configurable threshold. Generation SHALL run from a read replica or a low-priority connection with a statement timeout so it cannot block contributors (NFR-2.5).
+**FR-8.3 (M) Refresh.** Snapshots SHALL be regenerated on a schedule (baseline: nightly) and additionally when edits since the last export exceed a configurable threshold. Generation SHALL run from a read replica or a dedicated low-priority export role so it cannot block contributors (NFR-2.5).
 
 **FR-8.4 (M) Static delivery.** Snapshots, packs and tiles SHALL be served as static files supporting HTTP range requests and resumable downloads, and SHALL be cacheable by a CDN.
 
@@ -256,14 +256,14 @@ _Rationale: because execution is local, a SQL editor carries no server risk. It 
 
 ### 6.9 Map rendering
 
-> **Delivery note (2026-09-16).** FR-9 is delivered as a **separate prerequisite epic** with its own tracking issue, branch (`feature/<issue>-maplibre-migration`), `/to-spec` and tickets — not inside the analytics epic. It merges to `master` first, behind a feature flag, and goes to production with Mapnik retained as fallback until FR-9.5 passes. The analytics integration branch is rebased onto it once merged. Rationale: the migration is valuable on its own (rendering speed), is the riskiest change to existing View/Edit users, and is the piece `colouring-core` will scrutinise most, so it needs its own release and its own reviewable PR. See ADR-018 and Section 13.
+> **Delivery note (2026-09-16).** FR-9 is delivered as a **separate prerequisite epic** with its own tracking issue, branch (`feature/maplibre-migration`), `/to-spec` and tickets — not inside the analytics epic. It merges to `master` first, behind a feature flag, and goes to production with Mapnik retained as fallback until FR-9.5 passes. The analytics integration branch is rebased onto it once merged. Rationale: the migration is valuable on its own (rendering speed), is the riskiest change to existing View/Edit users, and is the piece `colouring-core` will scrutinise most, so it needs its own release and its own reviewable PR. See ADR-018 and Section 13.
 
 
 **FR-9.1 (M) Vector rendering.** The map SHALL move from Leaflet with Mapnik raster tiles to MapLibre GL with vector tiles, behind a feature flag that allows per-environment (and, during soak, per-user) switching between the two stacks. Mapnik SHALL be retired from the Ghana instance once parity (FR-9.5) is reached and the new stack has run in production for an agreed soak period.
 
 **FR-9.2 (M) Base tiles.** Building base tiles SHALL be published as PMTiles (single-file vector tile archives generated from the nightly export), served statically with range requests and included in packs.
 
-**FR-9.3 (S) Live tiles.** When online, a live vector-tile service (Martin or pg_tileserv over PostGIS, with a tile cache) MAY be layered over the PMTiles base so that recent edits appear promptly.
+**FR-9.3 (M) Edits-since overlay.** There is no live tile server (ADR-0022). When online, the client fetches from a read-only endpoint the buildings edited since the active manifest's snapshot timestamp (geometry and styled attributes only, result capped, short timeout) and draws them over the PMTiles base. The manifest is re-read at load and after each save. Offline, the overlay is absent and the pack's 'as of' applies.
 
 **FR-9.4 (M) Result rendering.** Query results (highlighted buildings, choropleths, buffers) SHALL be rendered from local engine data (deck.gl or MapLibre GeoJSON sources), never by a round-trip to the server.
 
@@ -370,8 +370,8 @@ Consequences adopted:
 | NFR-2.2 | Assistant: 50 concurrent plan requests complete with worst-case latency < 30 s, with queue position visible; validated by load test before the first training session; hardware sized to meet this. |
 | NFR-2.3 | Pack and snapshot delivery is static file serving; no per-request server computation. |
 | NFR-2.4 | Query execution imposes zero server load (browser-side). |
-| NFR-2.5 | Snapshot/tile generation never blocks contribution writes (read replica or low-priority connection with statement timeout). |
-| NFR-2.6 | Live tile service, if enabled, sits behind a tile cache. |
+| NFR-2.5 | Snapshot/tile export never blocks contribution writes: run from a read replica, or from a dedicated low-priority export role (nice/ionice, quiet window) with a generous timeout. A short statement timeout is not the mechanism — it would kill a full-table export as data grows. |
+| NFR-2.6 | The edits-since endpoint (FR-9.3) is capped in rows, has a short statement timeout (appropriate for a small indexed query), and is cacheable for a short TTL keyed on the manifest timestamp. |
 
 ### 7.3 Privacy and security
 
@@ -488,12 +488,13 @@ Accepted in principle by the product owner; **not part of this PRD**. Sketch for
 | OD-2 | Pack size hard cap and delta-update strategy | Cap per pack; row-group delta vs full replace | M4 |
 | OD-3 | Neighbourhood and major-road definitions and sources | Ghana Statistical Service units; OSM; assembly-supplied | M0 |
 | OD-4 | Extent disclosure default | Bounding box by default vs area-select by default (FR-6.3) | M2 |
-| OD-5 | Live tiles in V1 or V1.x | Martin vs pg_tileserv vs PMTiles-only | M1 |
+| OD-5 | ~~Live tiles in V1 or V1.x~~ **Resolved 2026-09-16 (ADR-0022):** no live tile server in V1; PMTiles base plus an edits-since overlay from a read-only endpoint | — | Closed |
 | OD-6 | Space-filling-curve and row-group sizing for the snapshot | Hilbert vs Z-order; row-group target size vs range-request overhead | M1 |
 | OD-7 | Anonymised activity view granularity | Per-attribute per-month vs per-edit-event | M2 |
 | OD-8 | Geometry library for operations beyond the engine's spatial extension | Turf.js vs geos-wasm; which operations | M2 |
 | OD-9 | Session download format | Plans + results bundle format and naming | M2 |
 | OD-10 | ~~Confirm whether the existing geolocation feature sends the device fix to the server~~ **Resolved 2026-09-16:** it does not; findings and consequences in FR-14.11 | — | Closed |
+| OD-11 | Self-hosted vector basemap for packs, low bandwidth and privacy. Opened 2026-09-16 during the E0 spec: E0 keeps the OSM raster basemap (a third-party host that already sees zoom-19 tile requests, so FR-14.11.c applies to it today and the M5 privacy notice must name it). Expected answer: a self-hosted Protomaps-style Ghana extract as one PMTiles file, styled light/dark; preview its look with planners during the E0 soak | Protomaps Ghana extract (expected) vs OpenFreeMap (hosted, third party) vs keep OSM raster (not pack-able under the OSMF tile policy) | M4 |
 
 ## 12. Risks
 
@@ -513,7 +514,7 @@ Accepted in principle by the product owner; **not part of this PRD**. Sketch for
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
-| **E0 — Map migration (prerequisite epic, own branch)** | FR-9: MapLibre GL, PMTiles pipeline, optional live tiles, feature flag, parity checklist (FR-9.5); benchmarks of the Mapnik baseline recorded before, new stack after | Merged to `master` behind flag; parity passes in production; soak period complete; Mapnik retired |
+| **E0 — Map migration (prerequisite epic, branch `feature/maplibre-migration`)** | FR-9: MapLibre GL, PMTiles pipeline, edits-since overlay, feature flag, parity checklist (FR-9.5); benchmarks of the Mapnik baseline recorded before, new stack after | Merged to `master` behind flag; parity passes in production; soak period complete; Mapnik retired |
 | **M0 — Foundations** | Reference-layer curation begins; ADRs for OD-3/OD-6; plan format v1 spec; documentation scaffold per `CLAUDE.md` | Specs published; district boundaries in production |
 | **M1 — Data delivery** | Snapshot exporter (GeoParquet, range-readable, timestamped); reference-layer delivery; anonymised activity view | Snapshot fetch benchmarks meet NFR-1; export never blocks writes (NFR-2.5) |
 | **M2 — Engine, builder, outputs** | DuckDB-WASM integration; compiler; validator; builder; number/dataset/chart outputs; uploaded layers; completeness. **Gated on E0:** result view, result rendering, building popup, draw tool | Q1–Q5 pass via builder (map output once E0 merged); privacy network test passes |

@@ -1,6 +1,6 @@
 # ADR-0021 — Route every API call through `apiHelpers`
 
-Date: 2026-09-16. Status: accepted.
+Date: 2026-09-16. Status: accepted. Accepted by George (GeorgeAgyenim), product owner, 2026-09-16.
 Formerly `docs/adr/0003`; moved to `docs/decisions/` as ADR-0021 on 16 September 2026. Body unchanged.
 
 ## Context

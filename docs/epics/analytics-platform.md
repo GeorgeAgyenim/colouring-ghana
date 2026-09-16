@@ -22,9 +22,9 @@ Read this when a ticket belongs to the analytics platform or the map migration. 
 
 ## Branches and gates (ADR-018)
 
-- Two epics, two tracking issues, two integration branches, same base:
-  - `feature/<issue>-maplibre-migration` — FR-9. Merges to `master` **first**, behind a feature flag; Mapnik retained until parity (FR-9.5) passes in production.
-  - `feature/<issue>-analytics-platform` — everything else.
+- Two epics, two tracking issues, two integration branches, same base. Names follow `CONTRIBUTING.md`'s `feature/description` form:
+  - `feature/maplibre-migration` — FR-9. Merges to `master` **first**, behind a feature flag; Mapnik retained until parity (FR-9.5) passes in production.
+  - `feature/analytics-platform` — everything else.
 - Do not start tickets gated by **FR-9.6** (result view, client-side result rendering, building popup in result view, draw tool, PMTiles in packs) until the migration has merged. After it merges, rebase the analytics branch onto `master` before continuing.
 - Specs are written **per feature group** with `/to-spec` (FR-1, FR-4, FR-7, FR-8, FR-9, FR-10, FR-13, FR-14…), each citing its FR IDs and ADRs.
 

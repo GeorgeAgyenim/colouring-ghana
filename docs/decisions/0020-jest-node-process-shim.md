@@ -1,6 +1,6 @@
 # ADR-0020 — Shim `node:process` for jest 26 instead of upgrading jest
 
-Date: 2026-09-16. Status: accepted.
+Date: 2026-09-16. Status: accepted. Accepted by George (GeorgeAgyenim), product owner, 2026-09-16.
 Formerly `docs/adr/0002`; moved to `docs/decisions/` as ADR-0020 on 16 September 2026. Body unchanged.
 
 ## Context
