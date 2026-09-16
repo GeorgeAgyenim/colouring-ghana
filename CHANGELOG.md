@@ -30,3 +30,9 @@ continuously rather than released. Entries cite the requirement IDs, ADRs and ti
   building in the markup; a node-environment jest test renders every data container through `StaticRouter`
   so the regression cannot return silently (NFR-1.4 evidence, since the benchmark selects a building;
   `docs/tickets/building-view/issues/01-server-render-building-route-window.md`).
+- The server skipped the building preload for any building URL carrying a query string
+  (`/view/<category>/<id>?sc=<n>`, the sub-category links), so the page answered 200 without the building in the
+  markup and the browser had to fetch it. `parseBuildingURL` and `parseCategoryURL` in `app/src/parse.ts` matched
+  against the full request URL; they now strip the query string and fragment first, and a unit test
+  (`app/src/__tests__/parse.test.ts`) covers the `?sc=2`, `/history?x=1` and plain cases
+  (`docs/tickets/building-view/issues/02-building-preload-drops-query-string.md`).
