@@ -80,6 +80,27 @@ or manual timing is recorded in the inventory row, and ADR-0027 fixes what the b
   `encodedDataLength` for the same URL; otherwise the response counts as 0 bytes and is reported as unmeasured.
 - **Run B profile as constants.** `throttle-profiles.ts` records the Chrome "Slow 4G" values (562.5 ms
   latency, 180,000 B/s down, 84,375 B/s up) rather than naming a browser preset that may be renamed.
+- **Run C without a fresh context.** Android Chrome over remote debugging cannot create browser contexts
+  (`Target.createBrowserContext` fails), so a run C repetition is a new page in the default context with the
+  cache and cookies cleared over the DevTools Protocol first. The record says which mechanism was used and the
+  cold-cache assertion applies either way (method v1, clarification 5).
+
+## Baseline recorded (2026-09-16)
+
+`docs/benchmarks/2026-09-16-map-before.md` (raw records in `docs/benchmarks/2026-09-16-map-before/`), method
+v1, script commit `8e6248f`, five repetitions per run, cold browser cache asserted on every repetition, Mapnik's
+server-side tile cache warm (method v1, clarification 7). Headline medians:
+
+| Run | Time-to-interactive | Per-tile latency p95 | Bytes, buildings tiles, whole path |
+|---|---|---|---|
+| A, laptop, unthrottled | 2,614 ms | 190 ms | 7,301,105 B |
+| B, laptop, slow-4G profile | 22,625 ms | 8,658 ms | 7,301,105 B |
+| C, OPPO CPH2819, 360x653 at 2x | 1,820 ms | 198 ms | 11,520,898 B |
+
+Targets for the "after" run (method v1 pass rule, run B): time-to-interactive at most 22,625 ms median and
+22,788 ms p95; buildings-tile bytes over the whole path at most 7,301,105 B median and 7,380,168 B p95; every
+segment no worse. Run C moves more bytes because the phone requests `@2x` tiles (clarification 6). The
+first repetition of run A was the slowest each time (dev-server warm-up); the p95 column carries it.
 
 ## Privacy and "as of" handling
 
@@ -165,14 +186,21 @@ BENCHMARK_RUN=A BENCHMARK_DEVICE="<laptop>" BENCHMARK_CONNECTION="<office connec
 BENCHMARK_RUN=B BENCHMARK_DEVICE="<laptop>" npm run benchmark:map
 ```
 
-For run C, plug in the named Android phone with USB debugging on, open Chrome on it, and:
+For run C, plug in the named Android phone with USB debugging on, then:
 
 ```bash
-adb forward tcp:9222 localabstract:chrome_devtools_remote
-# the phone must reach the dev server: use the laptop's LAN address, or `adb reverse tcp:3000 tcp:3000`
-BENCHMARK_RUN=C BENCHMARK_CDP_ENDPOINT=http://127.0.0.1:9222 BENCHMARK_BASE_URL=http://<laptop-lan-address>:3000 \
-  BENCHMARK_DEVICE="<phone make and model>" BENCHMARK_CONNECTION="mobile data, <network>" npm run benchmark:map
+adb shell am start -n com.android.chrome/com.google.android.apps.chrome.Main -d about:blank   # Chrome in front
+adb forward tcp:9222 localabstract:chrome_devtools_remote     # the phone's DevTools endpoint
+adb reverse tcp:3000 tcp:3000                                 # the dev server, as localhost:3000 on the phone
+adb reverse tcp:3001 tcp:3001                                 # razzle's client bundle port, also needed
+BENCHMARK_RUN=C BENCHMARK_CDP_ENDPOINT=http://127.0.0.1:9222 \
+  BENCHMARK_DEVICE="<phone make and model, Android and Chrome versions>" \
+  BENCHMARK_CONNECTION="site over USB (adb reverse); basemap over mobile data" npm run benchmark:map
 ```
+
+Chrome must stay in the foreground on the phone during the run. The 2026-09-16 records were produced exactly
+this way; the commands and variable values for each run are in the run records' `connection` and `device`
+fields.
 
 Each command writes `docs/benchmarks/<date>-map-before/run-<X>.json` and re-renders
 `docs/benchmarks/<date>-map-before.md`; commit both. The "after" runs (ticket 12) use the same commands with
@@ -182,4 +210,5 @@ Each command writes `docs/benchmarks/<date>-map-before/run-<X>.json` and re-rend
 
 | Date | Change | Ticket | ADR |
 |---|---|---|---|
-| 2026-09-16 | Playwright harness, shared path file, benchmark script and result renderer added; runs not yet recorded | `docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md` | ADR-0027 |
+| 2026-09-16 | Playwright harness, shared path file, benchmark script and result renderer added | `docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md` | ADR-0027 |
+| 2026-09-16 | Mapnik "before" runs A, B and C recorded on the named laptop and phone; run C cold-cache mechanism; harness diagnostics | `docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md` | ADR-0027 |

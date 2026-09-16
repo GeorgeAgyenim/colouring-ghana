@@ -27,7 +27,7 @@ The path file is the same one the differential smoke test (ticket 10) reads.
 - [x] Playwright added as a pinned dev dependency with an inventory row; the suite runs on demand, not in
       `npm test`.
 - [x] The script asserts a cold cache per repetition and fails if any response was served from cache.
-- [ ] `docs/benchmarks/<date>-map-before.md` recorded for runs A, B and C citing method v1, with bytes beside
+- [x] `docs/benchmarks/<date>-map-before.md` recorded for runs A, B and C citing method v1, with bytes beside
       every timing and the targets written in.
 - [x] Named laptop and Android phone recorded, or "Unknown — to be confirmed by the product owner".
 - [x] Path file documented in the feature doc "How to test"; `CHANGELOG.md` updated.
@@ -48,3 +48,10 @@ phone (`docs/features/map-migration.md`, "How to reproduce results"), which writ
 `docs/benchmarks/<date>-map-before.md` with the targets; confirm the database has a footprint at the fixed
 building in `app/e2e/map-path.json` (the script fails clearly if not). The third acceptance criterion stays
 unticked until those runs are committed.
+
+**2026-09-16 (baseline recorded).** Runs A, B and C recorded against the dev server and a local database copy
+on the named laptop (ASUS Vivobook 16 V3607VU) and phone (OPPO CPH2819): `docs/benchmarks/2026-09-16-map-before.md`,
+script commit `8e6248f`. Recording exposed three things now fixed in the harness: Android Chrome cannot create
+browser contexts (run C clears the cache instead and says so), razzle serves the client bundle from port 3001
+(also forwarded to the phone), and a read-only database role without `SELECT` on `building_properties` and
+`logs` breaks the building page (grant applied locally). All acceptance criteria are met; the ticket can close.

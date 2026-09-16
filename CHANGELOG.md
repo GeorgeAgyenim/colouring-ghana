@@ -16,4 +16,7 @@ continuously rather than released. Entries cite the requirement IDs, ADRs and ti
   "before" runs are recorded by the product owner (NFR-1.4, NFR-1.5; ADR-0027;
   `docs/tickets/map-migration/issues/09-playwright-path-and-mapnik-baseline.md`).
 - `@playwright/test` 1.63.0 pinned as a development dependency (`docs/tools/inventory.md`).
+- Mapnik "before" benchmark recorded on 2026-09-16 for runs A, B and C (`docs/benchmarks/2026-09-16-map-before.md`),
+  setting the NFR-1.4 and bytes targets for the migration (NFR-1.4, NFR-1.5; ADR-0027).
+- README: how to run the app locally (standard PostgreSQL variables, Node 18, tile cache path).
 - Feature document `docs/features/map-migration.md` (FR-9).

@@ -77,3 +77,17 @@ or pass rule, and no result cites this method yet, so the version number is unch
    entries report zero bytes; the script takes those byte counts from the DevTools Protocol instead and marks
    the source in the record. CDN or proxy presence is an input to each run (`BENCHMARK_PROXY`, default
    "none") and is printed in the result file.
+5. **Cold cache on the phone (run C).** Android Chrome reached over remote debugging refuses to create a new
+   browser context, so each run C repetition is a new page in Chrome's default context after the browser
+   cache and cookies are cleared over the DevTools Protocol; the cold-cache rule (point 3) is asserted the
+   same way and the result file states which mechanism was used. The site reaches the phone over USB
+   (`adb reverse` for the dev server's two ports, 3000 and 3001); only the basemap travels over mobile data.
+6. **Tile size differs by device.** The tile URL carries Leaflet's `{r}` placeholder, so a high-density screen
+   (the phone, device pixel ratio above 1) requests `@2x` tiles, which are larger than the laptop's. This is
+   what a visitor on that device receives; runs are compared with themselves (A with A, B with B, C with C)
+   and the pass rule is judged on run B.
+7. **Server-side tile cache.** The Mapnik stack caches rendered tiles on disk (`TILECACHE_PATH`); that cache is
+   part of the "before" stack, as it is in production. The 2026-09-16 records were taken with the cache
+   already holding the path's tiles from earlier runs the same day, so they measure a warm server cache and a
+   cold browser cache. The script does not record the server cache state; the result file's companion feature
+   doc states it.
