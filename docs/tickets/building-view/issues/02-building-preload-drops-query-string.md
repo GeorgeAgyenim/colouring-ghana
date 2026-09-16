@@ -35,11 +35,11 @@ parser is correct on its own and `parseCategoryURL` benefits too. Add a unit tes
 
 ## Acceptance criteria
 
-- [ ] `parseBuildingURL('/view/age-history/95?sc=2')` returns 95; `/view/age-history/95/history?sc=2` returns 95.
-- [ ] `GET /view/age-history/<existing id>?sc=2` on the dev server carries the preloaded building and the
+- [x] `parseBuildingURL('/view/age-history/95?sc=2')` returns 95; `/view/age-history/95/history?sc=2` returns 95.
+- [x] `GET /view/age-history/<existing id>?sc=2` on the dev server carries the preloaded building and the
       rendered groups, with the `sc` group expanded (ticket 01's test covers the expansion once the building
       is present).
-- [ ] `CHANGELOG.md` entry under Fixed.
+- [x] `CHANGELOG.md` entry under Fixed.
 
 ## How to reproduce
 
