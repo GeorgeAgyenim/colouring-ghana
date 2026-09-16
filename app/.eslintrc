@@ -10,7 +10,6 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "eslint:recommended",
     "plugin:jest/recommended",
     "plugin:react/recommended"
   ],
@@ -22,7 +21,7 @@
     "jest": true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2020,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -30,6 +29,7 @@
   },
   "rules": {
     "no-console": "off",
+    "no-unused-vars": "off",
     "strict": ["error", "global"],
     "curly": "warn",
     "quotes": ["warn", "single"],
