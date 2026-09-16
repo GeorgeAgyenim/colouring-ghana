@@ -16,6 +16,7 @@ import Verification from '../data-components/verification';
 import withCopyEdit from '../data-container';
 import PlanningDataOfficialDataEntry from '../data-components/planning-data-entry';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { Category } from '../../config/categories-config';
 import { useDisplayPreferences } from '../../displayPreferences-context';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
@@ -25,8 +26,7 @@ import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-e
 */
 const UrbanInfrastructureView: React.FunctionComponent<CategoryViewProps> = (props) => {
     
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>

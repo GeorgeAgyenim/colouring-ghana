@@ -6,6 +6,7 @@ import SelectDataEntry from '../data-components/select-data-entry';
 import withCopyEdit from '../data-container';
 import Verification from '../data-components/verification';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import InfoBox from '../../components/info-box';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
@@ -88,8 +89,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
         construction_length = Math.max(construction_length, 1);
     }
 
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>

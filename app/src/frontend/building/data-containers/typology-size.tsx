@@ -9,6 +9,7 @@ import Verification from '../data-components/verification';
 import withCopyEdit from '../data-container';
 
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import InfoBox from '../../components/info-box';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
@@ -50,8 +51,7 @@ const TypologySizeView: React.FunctionComponent<CategoryViewProps> = (props) => 
         total_floors += props.building.size_storeys_basement;
     }
 
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>
