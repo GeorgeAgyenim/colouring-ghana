@@ -881,7 +881,7 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     construction_structural_system: {
         category: Category.PlanningConservation,
         title: "What type of structural system does the building appear to have?",
-        tooltip: null,
+        tooltip: undefined,
         example: "Solid masonry walls supporting the roof",
         items: [
             "Solid masonry walls supporting the roof",
@@ -905,7 +905,7 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     construction_foundation: {
         category: Category.PlanningConservation,
         title: "What is the foundation system thought to be",
-        tooltip: null,
+        tooltip: undefined,
         example: "Deep Foundations with lateral support",
         items: [
             "Shallow foundations with no lateral support",
@@ -931,7 +931,7 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     construction_roof_shape: {
         category: Category.PlanningConservation,
         title: "What kind of roof shape does the building have?",
-        tooltip: null,
+        tooltip: undefined,
         example: "Pitched with gable ends",
         items: [
             "Flat",
@@ -2248,14 +2248,14 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     building_condition_source_type: {
         category: Category.RetrofitCondition,
         title: "Source type",
-        tooltip: null,
+        tooltip: undefined,
         example: "",
         items: commonSourceTypes
     },
     building_condition_source_links: {
         category: Category.RetrofitCondition,
         title: "Source link(s)",
-        tooltip: null,
+        tooltip: undefined,
         example: ["", "", ""],
     },
     age_historical_raster_map_links: {
