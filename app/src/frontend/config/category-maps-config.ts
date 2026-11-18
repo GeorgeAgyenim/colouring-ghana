@@ -44,15 +44,32 @@ export const ageLegend = [
 export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = {
     [Category.AgeHistory]: [
         {
+            mapStyle: 'age_amalgamated',
+            legend: {
+                disclaimer: 'This map prioritises crowdsourced age data, provided mainly by local historians. It also uses automatically inferred data, and official data to fill in gaps.',
+                title: 'Age (Amalgamated methods)',
+                elements: ageLegend,
+            },
+        },
+        {
             mapStyle: 'date_year',
             legend: {
-                title: 'Age',
+                title: 'Age (Crowdsourced)',
+                elements: ageLegend,
+            },
+        },
+        {
+            mapStyle: 'age_inferred',
+            legend: {
+                disclaimer: 'This map shows age data that has been automatically inferred from other kinds of data. For example, for London, historical street networks data are used.',
+                title: 'Age (Automatically inferred)',
                 elements: ageLegend,
             },
         },
         /*{
             mapStyle: 'typology_style_period',
             legend: {
+                disclaimer: 'This shows data automatically derived from our "Age (Amalgamated methods)" map, and grouped into historical periods. Contributors can also directly choose an historical period to represent the age of a given building if the exact date is not known.',
                 title: 'Historical Period',
                 elements: [
                     { color: '#fae269', text: '2000-2025 (Early C21)' },
@@ -114,7 +131,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: "#f5d96b", text: "Brick" },
                     { color: "#beffe8", text: "Steel" },
                     { color: "#fca89d", text: "Reinforced Concrete" },
-                    { color: "#5c8970", text: "Other Metal" },
+                    { color: "#8fc3a0", text: "Other Metal" },
                     { color: "#96613b", text: "Other Natural Material" },
                     { color: "#c48a85", text: "Other Man-Made Material" }
                 ]
@@ -187,12 +204,25 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: "#f5d96b", text: "Brick" },
                     { color: "#beffe8", text: "Steel" },
                     { color: "#fca89d", text: "Reinforced Concrete" },
-                    { color: "#5c8970", text: "Other Metal" },
+                    { color: "#8fc3a0", text: "Other Metal" },
                     { color: "#96613b", text: "Other Natural Material" },
                     { color: "#c48a85", text: "Other Man-Made Material" }
                 ]
             },
         },*/
+        {
+            mapStyle: 'construction_material_window_frame',
+            legend: {
+                title: 'Window frame material',
+                elements: [
+                    { color: "#b5a859", text: "Wood" },
+                    { color: "#8fc3a0", text: "Metal" },
+                    { color: "#ff3939", text: "Plastic" },
+                    { color: "#8080ff", text: "Other" },
+                    { color: "#ffffff", text: "No windows" }
+                ]
+            },
+        },
         /*{
             mapStyle: 'team',
             legend: {
@@ -232,7 +262,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
         {
             mapStyle: 'sust_aggregate_estimate_epc',
             legend: {
-                title: 'Energy rating (EPC)',
+                title: 'Energy rating (residential)',
                 description: 'Residential energy rating (EPC Rating)',
                 disclaimer: 'This map shows official 2025 EPC data, required for new, sold and rented buildings. Please note EPC ratings may be out-of-date, as retrofit may have occurred since certification.',
                 elements: [
@@ -243,15 +273,15 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: "#f7af1d", text: 'E' },
                     { color: "#ed6823", text: 'F' },
                     { color: "#e31d23", text: 'G' },
-                    { color: "#c0c0c0", text: 'No EPC identified' },
+                    { color: "#909090", text: 'No EPC identified or non-residential.' },
                 ]
             },
         },
         {
             mapStyle: 'sust_dec',
             legend: {
-                title: 'Energy rating (DEC)',
-                description: 'Non-domestic energy rating (DEC Rating)',
+                title: 'Energy rating (non-residential)',
+                description: 'Non-residential energy rating (DEC Rating)',
                 elements: [
                     { color: "#007f3d", text: 'A' },
                     { color: "#2c9f29", text: 'B' },
@@ -351,8 +381,18 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: '#ffbea1', text: 'Grade II Listed'},
                     { color: '#85ffd4', text: 'Heritage at Risk'},
                     { color: '#858ed4', text: 'Locally Listed'},
-                    { color: '#858eff', text: 'In World Heritage Site'},
+                    { color: '#0bbf12', text: 'In World Heritage Site'},
                     { color: '#8500d4', text: 'In Archaeological Priority Area'},
+                ]
+            },
+        },
+        {
+            mapStyle: 'planning_world_heritage_buildings',
+            legend: {
+                title: 'Buildings in World Heritage Sites (official and crowdsourced data)',
+                disclaimer: 'All data relating to designated buildings should be checked against the National Heritage List for England and local authority websites. Designation data is currently incomplete.',
+                elements: [
+                    { color: '#0bbf12', text: 'In World Heritage Site'},
                 ]
             },
         },
@@ -388,6 +428,24 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
         },
     }],
     [Category.Community]: [
+        {
+            mapStyle: 'count_crowdsourced',
+            legend: {
+                title: 'Community help',
+                description: 'crowdsourced entries',
+                elements: [
+                    { color: '#ff006e', text: '9+' },
+                    { color: '#fb5607', text: '8' },
+                    { color: '#ff9500', text: '7' },
+                    { color: '#ffbe0b', text: '6' },
+                    { color: '#ffe566', text: '5' },
+                    { color: '#caffbf', text: '4' },
+                    { color: '#9bf6ff', text: '3' },
+                    { color: '#74b9ff', text: '2' },
+                    { color: '#a29bfe', text: '1' },
+                ]
+            },
+        },
         /*
         {
             mapStyle: 'likes',

@@ -17,6 +17,7 @@ import { HistoricDataLayer } from './layers/historic-data-layer';
 import { HistoricMapLayer } from './layers/historic-map-layer';
 import { FloodBoundaryLayer } from './layers/flood-boundary-layer';
 import { ConservationAreaBoundaryLayer } from './layers/conservation-boundary-layer';
+import { WorldHeritageSitesLayer } from './layers/world-heritage-sites-layer';
 import { VistaBoundaryLayer } from './layers/vista-boundary-layer';
 import { HousingBoundaryLayer } from './layers/housing-boundary-layer';
 import { CreativeBoundaryLayer } from './layers/creative-boundary-layer';
@@ -32,6 +33,7 @@ import DataLayerSwitcher from './data-switcher';
 import { ParcelSwitcher } from './parcel-switcher';
 import { FloodSwitcher } from './flood-switcher';
 import { ConservationAreaSwitcher } from './conservation-switcher';
+import { WorldHeritageSitesSwitcher } from './world-heritage-sites-switcher';
 import { HistoricDataSwitcher } from './historic-data-switcher';
 import { HistoricMapSwitcher } from './historic-map-switcher';
 import { VistaSwitcher } from './vista-switcher';
@@ -43,7 +45,7 @@ import { useDisplayPreferences } from '../displayPreferences-context';
 import { CategoryMapDefinition } from '../config/category-maps-config';
 
 interface ColouringMapProps {
-    selectedBuildingId: number;
+    selectedBuildingId?: number;
     mode: 'basic' | 'view' | 'edit' | 'multi-edit';
     revisionId: string;
     onBuildingAction: (building: Building) => void;
@@ -114,6 +116,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     style={{zIndex: 199}}
                 >
                     <ConservationAreaBoundaryLayer/>
+                    <WorldHeritageSitesLayer/>
                 </Pane>
 
                 {
@@ -170,6 +173,7 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                         <ParcelSwitcher/>
                         <FloodSwitcher/>
                         <ConservationAreaSwitcher/>
+                        <WorldHeritageSitesSwitcher/>
                         { /* <HistoricMapSwitcher/> */ }
                         { /* <HistoricDataSwitcher/> */ }
                         <VistaSwitcher />
