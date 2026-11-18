@@ -209,11 +209,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                     { color: "#c48a85", text: "Other Man-Made Material" }
                 ]
             },
-<<<<<<< HEAD
         },*/
-        /*{
-=======
-        },
         {
             mapStyle: 'construction_material_window_frame',
             legend: {
@@ -227,8 +223,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
                 ]
             },
         },
-        {
->>>>>>> upstream/master
+        /*{
             mapStyle: 'team',
             legend: {
                 title: 'Team',
@@ -660,27 +655,7 @@ export const categoryMapsConfig: {[key in Category]: CategoryMapDefinition[]} = 
         },
     ],
     [Category.TypologySize]: [
-<<<<<<< HEAD
         
-=======
-        {
-            mapStyle: 'typology_classification',
-            legend: {
-                title: 'Block/Density Classification',
-                elements: [
-                    { color: '#0311AB', text: '1-3 storeys: Detached' },
-                    { color: '#3845D4', text: '1-3 storeys: Tightly grouped' },
-                    { color: '#6D79FD', text: '1-3 storeys: Loosely grouped' },
-                    { color: '#FF5D00', text: '4-7 storeys: Detached' },
-                    { color: '#FF8000', text: '4-7 storeys: Tightly grouped' },
-                    { color: '#FFA200', text: '4-7 storeys: Loosely grouped' },
-                    { color: '#AB1303', text: '8+ storeys: Detached' },
-                    { color: '#D43A29', text: '8+ storeys: Tightly grouped' },
-                    { color: '#FC604F', text: '8+ storeys: Loosely grouped' },
-                ]
-            }
-        },
->>>>>>> upstream/master
         /*{
             mapStyle: 'typology_style_period',
             legend: {

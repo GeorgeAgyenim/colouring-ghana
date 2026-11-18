@@ -645,20 +645,9 @@
             <LineSymbolizer stroke="#beffe8" stroke-width="2.0"/>
         </Rule>
         <Rule>
-<<<<<<< HEAD
             <Filter>[construction_roof_covering] = "Roofing Tiles"</Filter>
             <PolygonSymbolizer fill="#5c8970" />
             <LineSymbolizer stroke="#5c8970" stroke-width="2.0"/>
-=======
-            <Filter>[construction_roof_covering] = "Iron or Steel"</Filter>
-            <PolygonSymbolizer fill="#fca89d" />
-            <LineSymbolizer stroke="#fca89d" stroke-width="2.0"/>
-        </Rule>
-        <Rule>
-            <Filter>[construction_roof_covering] = "Other Metal"</Filter>
-            <PolygonSymbolizer fill="#8fc3a0" />
-            <LineSymbolizer stroke="#8fc3a0" stroke-width="2.0"/>
->>>>>>> upstream/master
         </Rule>
         <Rule>
             <Filter>[construction_roof_covering] = "Other Natural Material"</Filter>

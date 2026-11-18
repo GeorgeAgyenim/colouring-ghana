@@ -707,21 +707,13 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
         category: Category.ConstructionDesign,
         title: "Ground floor area (m²)",
         example: 1245.6,
-<<<<<<< HEAD
         tooltip: "The size of the building’s footprint — only the ground-level floor.",
-=======
-        tooltip: undefined,
->>>>>>> upstream/master
     },
     size_floor_area_total: {
         category: Category.ConstructionDesign,
         title: "Total floor area (m²)",
         example: 2001.7,
-<<<<<<< HEAD
         tooltip: "The sum of all floors inside the building (ground floor + upper floors).",
-=======
-        tooltip: undefined,
->>>>>>> upstream/master
     },
     size_floor_area_source_type: {
         category: Category.EnergyPerformance,
@@ -1180,13 +1172,8 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     sust_retrofit_date: {
         category: Category.WaterGreenInfrastructure,
         title: "Date of last significant retrofit",
-<<<<<<< HEAD
-        tooltip: null,
-        example: 2010,
-=======
         tooltip: undefined,
-        example: 1920,
->>>>>>> upstream/master
+        example: 2010,
     },
     sust_retrofit_source_type: {
         category: Category.EnergyPerformance,
@@ -2356,8 +2343,7 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
     typology_style_period: {
         category: Category.TypologySize,
         title: "Which description best suits the building's historical period?",
-<<<<<<< HEAD
-        tooltip: null,
+        tooltip: undefined,
         example: "1874–1957 (British Colonial Era)",
         items: [
             'Pre-1400 (Indigenous Traditional Settlements)',
@@ -2368,22 +2354,6 @@ export const dataFields = { /* eslint-disable @typescript-eslint/camelcase */
             '1981–1999 (Late 20th Century / Structural Adjustment Era)',
             '2000–2010 (Early 21st Century Urban Expansion)',
             '2011–present (Contemporary Architecture)',
-=======
-        tooltip: undefined,
-        example: "Georgian (1714-1837)",
-        items: [
-            '43AD-410 (Roman)',
-            '410-1485 (Medieval)',
-            '1485-1603 (Tudor)',
-            '1603-1714 (Stuart)',
-            '1714-1837 (Georgian)',
-            '1837-1901 (Victorian)',
-            '1901-1914 (Edwardian)',
-            '1914-1945 (WWI-WWII)',
-            '1946-1979 (Post war)',
-            '1980-1999 (Late 20th Century)',
-            '2000-2025 (Early 21st Century)',
->>>>>>> upstream/master
         ]
     },
     typology_style_period_source_type: {
