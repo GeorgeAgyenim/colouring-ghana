@@ -2337,7 +2337,7 @@
     </Style>
     <Style name="typology_classification">
         <Rule>
-            <Filter>[typology_classification] = "Low-rise: Not part of a group/cluster (1-3 core floors- excluding extensions)"</Filter>
+            <Filter>[typology_classification] = "Low-rise: Not part of a group/cluster (1-2 core floors- excluding extensions)"</Filter>
             <PolygonSymbolizer fill="#0311AB" />
             <LineSymbolizer stroke="#0311AB" stroke-width="2.0"/>
         </Rule>
@@ -2352,7 +2352,7 @@
             <LineSymbolizer stroke="#6D79FD" stroke-width="2.0"/>
         </Rule>
         <Rule>
-            <Filter>[typology_classification] = "Mid-rise: Not part of a group/cluster (4-7 core floors)"</Filter>
+            <Filter>[typology_classification] = "Mid-rise: Not part of a group/cluster (3-5 core floors)"</Filter>
             <PolygonSymbolizer fill="#FF5D00" />
             <LineSymbolizer stroke="#FF5D00" stroke-width="2.0"/>
         </Rule>
@@ -2372,7 +2372,7 @@
             <LineSymbolizer stroke="#AB1303" stroke-width="2.0"/>
         </Rule>
         <Rule>
-            <Filter>[typology_classification] = "High-rise: Part of group of densely spaced blocks (8 + core floors)"</Filter>
+            <Filter>[typology_classification] = "High-rise: Part of group of densely spaced blocks (6 + core floors)"</Filter>
             <PolygonSymbolizer fill="#D43A29" />
             <LineSymbolizer stroke="#D43A29" stroke-width="2.0"/>
         </Rule>
