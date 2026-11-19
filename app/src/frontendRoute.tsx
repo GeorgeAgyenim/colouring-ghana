@@ -1,4 +1,5 @@
 import express from 'express';
+import _ from 'lodash';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
@@ -20,6 +21,16 @@ import asyncController from './api/routes/asyncController';
 import { CCConfig } from './cc-config';
 let config: CCConfig = require('./cc-config.json')
 
+// What a shared link's preview shows, from the city settings and the welcome page's own words
+// (src/frontend/pages/welcome.tsx). Escaped, as they are written into the page's HTML.
+// docs/tickets/location-search/issues/18-london-leftovers.md
+const siteName = _.escape(`Colouring ${config.cityName}`);
+const siteUrl = _.escape(config.siteUrl);
+const siteDescription = _.escape(
+    `Colouring ${config.cityName} is a research-led, free public resource, providing open spatial data on ` +
+    `${config.cityName}'s buildings and natural environment. It is managed by ${config.institution} and ` +
+    'forms part of the Colouring Cities Research Programme.'
+);
 
 // reference packed assets
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -104,25 +115,25 @@ function renderHTML(context, data, req, res) {
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta charset="utf-8" />
 
-        <meta property="og:url"                content="https://colouring.london" />
+        <meta property="og:url"                content="${siteUrl}" />
         <meta property="og:type"               content="website" />
-        <meta property="og:title"              content="Colouring ${config.cityName}" />
-        <meta property="og:description"        content="Colouring ${config.cityName} is a knowledge exchange platform collecting information on every building in London, to help make the city more sustainable. We’re building it at The Bartlett Centre for Advanced Spatial Analysis, University College London." />
+        <meta property="og:title"              content="${siteName}" />
+        <meta property="og:description"        content="${siteDescription}" />
         <meta property="og:locale"             content="en_GB" />
-        <meta property="og:image"              content="https://colouring.london/images/logo-cl-square.png" />
+        <meta property="og:image"              content="${siteUrl}/images/logo-cc.jpg" />
 
         <link rel="manifest" href="${process.env.SUBDIRECTORY??''}/site.webmanifest">
 
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="Colouring ${config.cityName}">
+        <meta name="apple-mobile-web-app-title" content="${siteName}">
         <link rel="apple-touch-icon" href="${process.env.SUBDIRECTORY??''}/icon-192x192.png">
 
         <meta name="mobile-web-app-capable" content="yes">
         <link rel="icon" href="${process.env.SUBDIRECTORY??''}/favicon.ico">
         <link rel="icon" sizes="192x192" href="${process.env.SUBDIRECTORY??''}/icon-192x192.png">
 
-        <title>Colouring ${config.cityName}</title>
+        <title>${siteName}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <style>
           @font-face {

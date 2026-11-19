@@ -10,6 +10,7 @@
     display: inline-block;
     padding: 0 0.25em;
     vertical-align: middle;
+    max-width: 100%;
 }
 .logo-list a {
     opacity: 1;
@@ -21,7 +22,11 @@
     opacity: 0.6;
     outline: none;
 }
+/* the KNUST logo is wider than a phone's column at this height: shrink it to fit, without stretching
+   (docs/tickets/location-search/issues/18-london-leftovers.md) */
 .logo-list img {
     width: auto;
     height: 5.25rem;
+    max-width: 100%;
+    object-fit: contain;
 }
