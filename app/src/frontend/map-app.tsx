@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import loadable from '@loadable/component';
 
@@ -11,7 +11,7 @@ import { useUrlModeParam } from './nav/use-url-mode-param';
 import BuildingView from './building/building-view';
 import Categories from './building/categories';
 import { EditHistory } from './building/edit-history/edit-history';
-import MultiEdit from './building/multi-edit';
+import MultiEdit, { PasteResult } from './building/multi-edit';
 import Sidebar from './building/sidebar';
 import { Building, UserVerified } from './models/building';
 import Welcome from './pages/welcome';
@@ -69,6 +69,17 @@ function useStateWithOptions<T>(defaultValue: T, options: T[]): [T, (x: T) => vo
     return [effectiveValue, handleChange];
 }
 
+/** Turns what `sendBuildingUpdate` throws into the result shown on the paste panel */
+function pasteResultFromError(error: unknown): PasteResult {
+    if(typeof error !== 'string') {
+        // not an answer from the API: the request itself failed (for example, no connection)
+        return { status: 'failed' };
+    }
+    return error === 'No change provided' ?
+        { status: 'unchanged' } :
+        { status: 'refused', reason: error };
+}
+
 export const MapApp: React.FC<MapAppProps> = props => {
     const { user } = useAuth();
     const [categoryUrlParam] = useUrlCategoryParam();
@@ -93,6 +104,17 @@ export const MapApp: React.FC<MapAppProps> = props => {
     
     const [multiEditData, multiEditError] = useMultiEditData();
 
+    // The paste panel shows the result of the latest click only. Each click takes the next number,
+    // so an answer that arrives for an earlier click is recognised and dropped.
+    const [pasteResult, setPasteResult] = useState<PasteResult>();
+    const latestPasteClick = useRef(0);
+
+    // a result belongs to one visit to the paste panel: forget it when the person leaves
+    useEffect(() => {
+        latestPasteClick.current++;
+        setPasteResult(undefined);
+    }, [mode]);
+
     const selectBuilding = useCallback((selectedBuilding: Building) => {
         const currentId = selectedBuildingId;
         updateBuilding(selectedBuilding);
@@ -101,16 +123,38 @@ export const MapApp: React.FC<MapAppProps> = props => {
 
     const colourBuilding = useCallback(async (building: Building) => {
         const buildingId = building?.building_id;
+        const click = ++latestPasteClick.current;
+        setPasteResult(undefined);
 
         if(buildingId != undefined && multiEditData != undefined && multiEditError == undefined) {
+            let result: PasteResult;
             try {
                 const updatedBuilding = await sendBuildingUpdate(buildingId, multiEditData);
                 updateRevisionId(updatedBuilding.revision_id);
+                result = { status: 'updated' };
             } catch(error) {
                 console.error({ error });
+                result = pasteResultFromError(error);
+            }
+            if(click === latestPasteClick.current) {
+                setPasteResult(result);
             }
         }
     }, [multiEditError, multiEditData, currentCategory]);
+
+    // The map tells the app as soon as it is clicked, before it has looked up the building:
+    // the previous click's message goes at once, and anything still on its way for it is dropped.
+    const pasteLookupStarted = useCallback(() => {
+        latestPasteClick.current++;
+        setPasteResult(undefined);
+    }, []);
+
+    // The map looks the building up before a paste can start. When that fails (no connection),
+    // nothing was changed and the person needs to know, the same as when the paste itself fails.
+    const pasteLookupFailed = useCallback(() => {
+        latestPasteClick.current++;
+        setPasteResult({ status: 'failed' });
+    }, []);
 
     const handleBuildingUpdate = useCallback((buildingId: number, updatedData: Building) => {
         // only update current building data if the IDs match
@@ -145,7 +189,7 @@ export const MapApp: React.FC<MapAppProps> = props => {
                         <Welcome />
                     </Route>
                     <Route exact path="/multi-edit/:cat">
-                        <MultiEdit category={displayCategory} />
+                        <MultiEdit category={displayCategory} pasteResult={pasteResult} />
                     </Route>
                     <Route path="/:mode/:cat">
                         <Categories mode={mode || 'view'} building_id={selectedBuildingId} />
@@ -177,6 +221,8 @@ export const MapApp: React.FC<MapAppProps> = props => {
                 mode={mode || 'basic'}
                 revisionId={revisionId}
                 onBuildingAction={mode === 'multi-edit' ? colourBuilding : selectBuilding}
+                onBuildingLookupStarted={mode === 'multi-edit' ? pasteLookupStarted : undefined}
+                onBuildingLookupFailed={mode === 'multi-edit' ? pasteLookupFailed : undefined}
                 mapColourScale={mapColourScale}
                 onMapColourScale={setMapColourScale}
                 categoryMapDefinitions={categoryMapDefinitions}
