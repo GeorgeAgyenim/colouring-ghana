@@ -57,6 +57,13 @@ const frontendRoute = asyncController(async (req: express.Request, res: express.
         data.building = building;
         data.user_verified = userVerified;
         if (data.building != null) {
+            // the visitor's own answers sit beside the building's values, as the browser puts them when it reads
+            // the building from the API (src/frontend/api-data/use-building-data.ts)
+            // docs/tickets/location-search/issues/16-server-draws-the-default-category.md
+            Object.assign(data.building, data.building.user_attributes);
+            delete data.building.user_attributes;
+        }
+        if (data.building != null) {
             data.building.uprns = uprns;
         }
         if (data.building != null) {

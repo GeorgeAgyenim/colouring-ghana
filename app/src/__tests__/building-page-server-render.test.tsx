@@ -2,12 +2,13 @@
  * @jest-environment node
  */
 /*
- * Ticket: docs/tickets/location-search/issues/14-building-pages-fail-on-the-server.md
+ * Tickets: docs/tickets/location-search/issues/14-building-pages-fail-on-the-server.md
+ *          docs/tickets/location-search/issues/16-server-draws-the-default-category.md
  *
  * A building's address opened directly (a shared link, a bookmark, a reload) is answered by the server with
  * the whole page: the building's data and its form are in the HTML it sends, with or without `?sc=` in the
- * address. The server's own page route (src/frontendRoute.tsx) is used; the database is replaced, so nothing
- * here can reach one.
+ * address, in the category and mode the address names. The server's own page route (src/frontendRoute.tsx) is
+ * used; the database is replaced, so nothing here can reach one.
  */
 import { Request, Response } from 'express';
 
@@ -24,8 +25,20 @@ const building = {
     verified: {},
 };
 
+// What the signed-in visitor has answered themselves (kept per person, not on the building).
+const visitorsOwnAnswers = { community_building_hominess: 4 };
+
 jest.mock('../api/services/building/base', () => ({
-    getBuildingById: (id: number) => Promise.resolve(id === 1 ? { ...building } : undefined),
+    // as the real service: the visitor's own answers come under user_attributes when asked for
+    getBuildingById: (id: number, options?: { userDataOptions?: { userAttributes?: boolean } }) => {
+        if (id !== 1) {
+            return Promise.resolve(undefined);
+        }
+        if (options?.userDataOptions?.userAttributes) {
+            return Promise.resolve({ ...building, user_attributes: { ...visitorsOwnAnswers } });
+        }
+        return Promise.resolve({ ...building });
+    },
     getBuildingUPRNsById: () => Promise.resolve([]),
     getBuildingPlanningDataById: () => Promise.resolve([]),
     getLatestRevisionId: () => Promise.resolve('1'),
@@ -108,8 +121,6 @@ describe('a building page opened directly, as the server sends it', () => {
         );
     });
 
-    // The server draws the form as in view mode: the page reads the mode and category from the address only
-    // after it has been drawn (src/frontend/nav/use-url-param.ts), so "Save edits" comes with the script.
     test('/edit/age-history/1 for a signed-in visitor answers 200 with the building\'s data and its form', async () => {
         const page = await openPage('/edit/age-history/1', true);
 
@@ -119,6 +130,44 @@ describe('a building page opened directly, as the server sends it', () => {
         const drawn = drawnPage(page.html);
         expect(drawn).toContain('value="1923"');
         expect(drawn).toContain('<form method="POST"');
+        // drawn in edit mode, as the address says
+        expect(drawn).toContain('Save edits');
+    });
+
+    test('/view/age-history/1 is drawn in view mode, without the edit buttons', async () => {
+        const drawn = drawnPage((await openPage('/view/age-history/1', true)).html);
+
+        expect(drawn).toContain('<form method="POST"');
+        expect(drawn).not.toContain('Save edits');
+    });
+
+    test('/view/location/1 draws the Location category, not the default one', async () => {
+        const page = await openPage('/view/location/1', false);
+
+        expect(loggedErrors).not.toHaveBeenCalled();
+        expect(page.status).toBe(200);
+        const drawn = drawnPage(page.html);
+        expect(drawn).toContain('<section id="location" class="data-section">');
+        expect(drawn).toContain('Street name');
+        expect(drawn).not.toContain('<section id="age-history"');
+        expect(drawn).not.toContain('Historical Period/Description');
+    });
+
+    test('/view/location/1?sc=1 opens the first section of Location', async () => {
+        const drawn = drawnPage((await openPage('/view/location/1?sc=1', false)).html);
+
+        expect(drawn).toContain('<section id="location" class="data-section">');
+        expect(drawn).toMatch(
+            /Individual Building\/Property Address<\/span><\/div><div class="data-entry-group-body ">/
+        );
+    });
+
+    test('the page drawn for a signed-in visitor shows their own answers', async () => {
+        const drawn = drawnPage((await openPage('/view/community/1', true)).html);
+
+        expect(drawn).toContain('<section id="community" class="data-section">');
+        // their score for how homey the building feels (React puts an empty comment between the two texts)
+        expect(drawn).toContain('Your score: <!-- -->4<!-- -->');
     });
 
     test('the page drawn for a signed-in visitor shows what they have verified', async () => {
