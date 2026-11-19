@@ -1,6 +1,7 @@
 import './community.css';
 import '../../map/map-button.css';
 import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import withCopyEdit from '../data-container';
 import UserOpinionEntry from '../data-components/user-opinion-data-entry';
 import { MultiSelectDataEntry } from '../data-components/multi-select-data-entry';
@@ -321,7 +322,7 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                 />
                 <hr/>
                 <div className={`alert alert-dark`} role="alert" style={{ fontSize: 14, backgroundColor: "#f6f8f9" }}>
-                    <i className="source-url">Click <a href={"/"+props.mode+"/"+Category.PlanningConservation+"/"+props.building.building_id}>here</a> for 'Planning Controls' to see status of planning applications or to record if you think this building is likely to be demolished/significantly altered.</i>
+                    <i className="source-url">Click <Link to={"/"+props.mode+"/"+Category.PlanningConservation+"/"+props.building.building_id}>here</Link> for 'Planning Controls' to see status of planning applications or to record if you think this building is likely to be demolished/significantly altered.</i>
                 </div>
                 {/* <label className='average-score'>
                     Average neuroaesthetic score for this building: <span className='float-right'><strong>{props.building.community_building_neuroaesthetic_avg}</strong></span>

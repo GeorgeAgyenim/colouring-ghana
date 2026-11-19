@@ -371,7 +371,7 @@ const withCopyEdit: (wc: React.ComponentType<CategoryViewProps>) => DataContaine
                 {
                         this.props.building != undefined ?
                             <form
-                                action={`/edit/${this.props.cat}/${this.props.building.building_id}`}
+                                action={`${process.env.SUBDIRECTORY??''}/edit/${this.props.cat}/${this.props.building.building_id}`}
                                 method="POST"
                                 onSubmit={this.handleSubmit}>
                                     {/* this disabled button prevents form submission on enter - see https://stackoverflow.com/a/51507806/1478817 */}

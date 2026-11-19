@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 import { commonSourceTypes, dataFields } from '../../config/data-fields-config';
 import { Category } from '../../config/categories-config';
@@ -310,7 +311,7 @@ const TypologySizeView: React.FunctionComponent<CategoryViewProps> = (props) => 
                     />
                     <div className={`alert alert-dark`} role="alert" style={{ fontSize: 14, backgroundColor: "#f6f8f9" }}>
                         <i className="source-url">To see the data mapped, please go to&nbsp;
-                        <a href={"/"+props.mode+"/" + Category.AgeHistory + "/"+props.building.building_id+"?sc=2"}>Age & History</a>.</i>
+                        <Link to={"/"+props.mode+"/" + Category.AgeHistory + "/"+props.building.building_id+"?sc=2"}>Age & History</Link>.</i>
                     </div>
                 </DataEntryGroup>
                 <DataEntryGroup name="Building Subdivision" collapsed={subcat==null || subcat!="4"}>
