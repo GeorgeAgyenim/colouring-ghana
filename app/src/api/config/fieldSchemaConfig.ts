@@ -1,8 +1,12 @@
-import { JSONSchemaType } from 'ajv';
-import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
+import { SchemaObject } from 'ajv';
 import { allAttributesConfig } from './dataFields';
 
-export const fieldSchemaConfig: { [key in keyof typeof allAttributesConfig]?: SomeJSONSchema} = { /*eslint-disable @typescript-eslint/camelcase */
+/*
+ * Typed as ajv's plain SchemaObject, not JSONSchemaType/SomeJSONSchema: those
+ * typed-schema helpers only work with strictNullChecks, which this project's
+ * tsconfig does not enable. ajv still validates the schemas when compiling them.
+ */
+export const fieldSchemaConfig: { [key in keyof typeof allAttributesConfig]?: SchemaObject} = {
     
     demolished_buildings:  {
         type: 'array',
@@ -50,18 +54,7 @@ export const fieldSchemaConfig: { [key in keyof typeof allAttributesConfig]?: So
             },
             additionalProperties: false,
         }
-    } as JSONSchemaType<{
-        year_constructed: {
-            min: number;
-            max: number;
-        };
-        year_demolished: {
-            min: number;
-            max: number;
-        }
-        overlap_present: string;
-        links: string[];
-    }[]>,
+    },
 
     community_type_worth_keeping_reasons: {
         type: 'object',
@@ -84,11 +77,6 @@ export const fieldSchemaConfig: { [key in keyof typeof allAttributesConfig]?: So
             }
         },
         additionalProperties: false
-    } as JSONSchemaType<{
-        external_design?: boolean,
-        internal_design?: boolean,
-        adaptable?: boolean,
-        other?: boolean
-    }>
+    }
 
 } as const;
