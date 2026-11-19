@@ -479,6 +479,7 @@ export MAIL_SERVER_HOST=smtp.example.com
 export MAIL_SERVER_PORT=587
 export MAIL_SERVER_USER=user
 export MAIL_SERVER_PASSWORD=password
+export MAIL_FROM=no-reply@example.com   # address emails are sent from; if unset, MAIL_SERVER_USER is used
 ```
 
 **Step 4 — Create tile cache directory:**
