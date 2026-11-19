@@ -1,4 +1,5 @@
 import db from '../../../db';
+import { logErrorSafely } from '../../logError';
 
 export async function queryBuildingsAtPoint(lng: number, lat: number) {
     try {
@@ -21,7 +22,7 @@ export async function queryBuildingsAtPoint(lng: number, lat: number) {
             [lng, lat]
         );
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to query buildings at point:', error);
         return undefined;
     }
 }
@@ -58,7 +59,7 @@ export async function queryBuildingsByReference(key: string, ref: string) {
             return { error: 'Key must be UPRN or TOID' };
         }
     } catch(err) {
-        console.error(err);
+        logErrorSafely('Failed to query buildings by reference:', err);
         return undefined;
     }
 }

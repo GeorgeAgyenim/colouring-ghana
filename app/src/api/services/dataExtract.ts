@@ -1,6 +1,7 @@
 import path from 'path';
 
 import db from '../../db';
+import { logErrorSafely } from '../logError';
 
 interface DataExtractRow {
     extract_id: number;
@@ -25,7 +26,7 @@ async function listDataExtracts(): Promise<DataExtract[] | undefined> {
 
         return extractRecords.map(getDataExtractFromRow);
     } catch (err) {
-        console.error('Error:', err);
+        logErrorSafely('Error listing data extracts:', err);
         return undefined;
     }
 }
@@ -41,7 +42,7 @@ async function getDataExtractById(extractId: number): Promise<DataExtract | unde
 
         return getDataExtractFromRow(extractRecord);
     } catch (err) {
-        console.error('Error:', err);
+        logErrorSafely('Error getting data extract:', err);
         return undefined;
     }
 }

@@ -16,7 +16,7 @@ export async function getBuildingVerifiedAttributes(buildingId: number): Promise
             [buildingId]
         );
     } catch(error) {
-        throw new DatabaseError(error.detail);
+        throw new DatabaseError(error);
     }
 }
 
@@ -37,7 +37,7 @@ export async function getBuildingUserVerifiedAttributes(buildingId: number, user
         );
         return asVerified(verifications)
     } catch(error) {
-        throw new DatabaseError(error.detail);
+        throw new DatabaseError(error);
     }
 }
 
@@ -50,7 +50,6 @@ function asVerified(verifications){
 }
 
 export async function updateBuildingUserVerifiedAttribute(buildingId: number, userId: string, attribute: string, value: any): Promise<void> {
-    console.log(typeof value, value)
     try {
         if (typeof value === 'string'){
             // cast strings to text explicitly - otherwise Postgres fails to cast to jsonb directly
@@ -75,12 +74,12 @@ export async function updateBuildingUserVerifiedAttribute(buildingId: number, us
             );
         }
     } catch(error) {
-        console.error(error)
         if(error.detail?.includes('already exists')) {
             const msg = 'User already verified that attribute for this building'
             throw new InvalidOperationError(msg);
         } else {
-            throw new DatabaseError(error.detail);
+            // logged once, safely, by the API's error handler, which receives the whole error
+            throw new DatabaseError(error);
         }
     }
 }
@@ -98,6 +97,6 @@ export async function removeBuildingUserVerifiedAttribute(buildingId: number, us
             [buildingId, userId, attribute]
         );
     } catch(error) {
-        throw new DatabaseError(error.detail);
+        throw new DatabaseError(error);
     }
 }

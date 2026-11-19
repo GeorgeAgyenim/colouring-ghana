@@ -1,6 +1,7 @@
 import express from 'express';
 
 import asyncController from '../routes/asyncController';
+import { logErrorSafely } from '../logError';
 import * as passwordResetService from '../services/passwordReset';
 import { TokenVerificationError } from '../services/passwordReset';
 import * as userService from '../services/user';
@@ -30,7 +31,7 @@ const createUser = asyncController(async (req: express.Request, res: express.Res
             res.send({ error: result.error });
         }
     } catch(err) {
-        console.error(err);
+        logErrorSafely('Failed to create user:', err);
         res.send(err);
     }
 });
@@ -52,7 +53,8 @@ const deleteCurrentUser = asyncController(async (req: express.Request, res: expr
     if (!req.session.user_id) {
         return res.send({ error: 'Must be logged in' });
     }
-    console.log(`Deleting user ${req.session.user_id}`);
+    // the user id is not logged: it says who the person is
+    console.log('Deleting user account');
 
     try {
         await userService.deleteUser(req.session.user_id);

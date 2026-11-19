@@ -1,6 +1,7 @@
 import express from 'express';
 
 import asyncController from "../routes/asyncController";
+import { logErrorSafely } from '../logError';
 import * as leadersService from '../services/leaderboard';
 
 const getLeaders = asyncController(async (req: express.Request, res: express.Response) => {
@@ -12,7 +13,7 @@ const getLeaders = asyncController(async (req: express.Request, res: express.Res
             leaders: result
         });
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get leaderboard:', error);
         res.send({ error: 'Database error' });
     }
 });

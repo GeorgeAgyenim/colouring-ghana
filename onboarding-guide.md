@@ -589,11 +589,18 @@ DatabaseError        → HTTP 500, internal detail hidden from users
 2. Controller catches it and re-throws as `ApiUserError` (preserving the message)
 3. `asyncController` wrapper passes unhandled rejections to `next(err)`
 4. Global handler in `api.ts` sends the response:
-   - `ApiUserError` → HTTP 400 `{ error: "Problem with parameter X: message" }`
+   - `ApiUserError` → HTTP 400 `{ error: "message" }`, or `{ error: "Problem with parameter X: message" }` for an `ApiParamError`
+   - A request body that is not valid JSON → HTTP 400 `{ error: "Request body is not valid JSON" }` (not logged)
    - `DatabaseError` → HTTP 500 `{ error: "Database error" }`
    - Anything else → HTTP 500 `{ error: "Server error" }`
 
-**Logging:** No structured logging library — everything uses `console.log` and `console.error` directly. In production, view logs via PM2:
+**Logging:** No structured logging library; logs go to the console. Never log a value a person sent,
+coordinates they clicked, text they searched for, or anything that identifies them (username, email, user
+id, session, API key). Log an error with `logErrorSafely(context, error)` from `app/src/api/logError.ts`,
+never `console.error(error)`: errors from the database carry the failed query with its values, and errors
+from reading a request carry its body. The helper logs only the error's name, its database code, constraint
+and table, where in the code it was raised, and the message of the project's own error classes, so never put
+a sent value into the message of a `UserError` or `ApiUserError`. In production, view logs via PM2:
 
 ```bash
 pm2 logs

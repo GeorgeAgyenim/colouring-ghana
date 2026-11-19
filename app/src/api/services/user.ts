@@ -7,6 +7,7 @@ import { errors } from 'pg-promise';
 import { promisify } from 'util';
 
 import db from '../../db';
+import { logErrorSafely } from '../logError';
 import { validatePassword, validateUsername, ValidationError } from '../validation';
 
 
@@ -41,9 +42,10 @@ async function createUser(user) {
             ]
         );
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error creating user:', error);
 
-        if (error.detail.includes('already exists')) {
+        // not every database failure has a detail text (a lost connection has none)
+        if (typeof error.detail === 'string' && error.detail.includes('already exists')) {
             if (error.detail.includes('username')) {
                 return { error: 'Username already registered' };
             } else if (error.detail.includes('email')) {
@@ -81,7 +83,8 @@ async function authUser(username: string, password: string) {
         }
         return { user_id: user.user_id };
     } else {
-        console.error(`Authentication failed for user ${username}`);
+        // the username is not logged: it says who the person is
+        console.error('Authentication failed');
         return { error: 'Username / password pair not recognised' };
     }
 }
@@ -100,7 +103,7 @@ async function getUserById(id: string) {
             ]
         );
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error getting user by id:', error);
         return undefined;
     }
 }
@@ -117,7 +120,7 @@ async function getUserByEmail(email: string) {
             `, [email]
         );
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error getting user by email:', error);
         return undefined;
     }
 }
@@ -138,7 +141,7 @@ async function getNewUserAPIKey(id: string) {
             ]
         );
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error generating API key:', error);
         return { error: 'Failed to generate new API key.' };
     }
 }
@@ -159,7 +162,7 @@ async function authAPIUser(key: string): Promise<string | undefined> {
 
         return user_id;
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error authenticating API user:', error);
         return undefined;
     }
 }
@@ -179,7 +182,7 @@ async function deleteUser(id: string) {
             `, [id]
         );
     } catch(error) {
-        console.error('Error:', error);
+        logErrorSafely('Error deleting user:', error);
         return {error: 'Database error'};
     }
 }

@@ -3,6 +3,7 @@ import express from 'express';
 import { ApiUserError } from '../errors/api';
 import { UserError } from '../errors/general';
 import { parseBooleanExact } from '../../helpers';
+import { logErrorSafely } from '../logError';
 import { parsePositiveIntParam, processParam } from '../parameters';
 import asyncController from '../routes/asyncController';
 import * as buildingService from '../services/building/base';
@@ -19,7 +20,7 @@ const getBuildingsByLocation = asyncController(async (req: express.Request, res:
         const result = await buildingService.queryBuildingsAtPoint(Number(lng), Number(lat));
         res.send(result);
     } catch (error) {
-        console.error(error);
+        logErrorSafely('Failed to get buildings by location:', error);
         res.send({ error: 'Database error' });
     }
 });
@@ -31,7 +32,7 @@ const getBuildingsByReference = asyncController(async (req: express.Request, res
         const result = await buildingService.queryBuildingsByReference(String(key), String(id));
         res.send(result);
     } catch (error) {
-        console.error(error);
+        logErrorSafely('Failed to get buildings by reference:', error);
         res.send({ error: 'Database error' });
     }
 });
@@ -50,7 +51,7 @@ const getBuildingById = asyncController(async (req: express.Request, res: expres
                 req.query.api_key && await userService.authAPIUser(String(req.query.api_key))
             );
         } catch(error) {
-            console.error(error);
+            logErrorSafely('Failed to authenticate API user:', error);
         }
 
         if(!userId) {
@@ -63,7 +64,7 @@ const getBuildingById = asyncController(async (req: express.Request, res: expres
         const result = await buildingService.getBuildingById(buildingId, { userDataOptions });
         res.send(result);
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building:', error);
         res.send({ error: 'Database error' });
     }
 });
@@ -77,7 +78,7 @@ const updateBuildingById = asyncController(async (req: express.Request, res: exp
             req.query.api_key && await userService.authAPIUser(String(req.query.api_key))
         );
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to authenticate API user:', error);
     }
 
     if(!userId) {
@@ -120,7 +121,7 @@ const getBuildingUPRNsById = asyncController(async (req: express.Request, res: e
         }
         res.send({uprns: result});
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building UPRNs:', error);
         res.send({ error: 'Database error' });
     }
 });
@@ -137,7 +138,7 @@ const getBuildingPlanningDataById = asyncController(async (req: express.Request,
         }
         res.send({data: result, buildingId: buildingId});
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building planning data:', error);
         res.send({ error: 'Database error' });
     }
 });

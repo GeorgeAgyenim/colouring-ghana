@@ -59,6 +59,16 @@ describe('validateFieldChange() for the GhanaPost GPS address', () => {
         expect(error).toHaveProperty('message', 'Invalid format of data sent');
     });
 
+    it('does not write the name of a field that does not exist to the server log', () => {
+        // the name is whatever the request sent, so it can be any text
+        captureError(() => validateFieldChange('kwame mensah lives at GA-183-9385', 1));
+
+        const logged = JSON.stringify((console.log as jest.Mock).mock.calls);
+        expect(logged).toContain('Field does not exist');
+        expect(logged).not.toContain('kwame');
+        expect(logged).not.toContain('GA-183-9385');
+    });
+
     it('does not write a rejected address to the server log', () => {
         // what a contributor typed can be a real location even when its format is wrong
         captureError(() => validateFieldChange('location_gps_address', 'ga-183-9385'));

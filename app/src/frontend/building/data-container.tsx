@@ -257,6 +257,8 @@ const withCopyEdit: (wc: React.ComponentType<CategoryViewProps>) => DataContaine
 
                 if (data.error) {
                     this.setState({error: data.error});
+                    // refused: nothing more to save, and saving would clear the message
+                    return;
                 } else {
                     if (verify) {
                         Confetti({
@@ -272,6 +274,7 @@ const withCopyEdit: (wc: React.ComponentType<CategoryViewProps>) => DataContaine
                 }
             } catch(err) {
                 this.setState({error: err});
+                return;
             }
             
             if (slug == 'current_landuse_group'){

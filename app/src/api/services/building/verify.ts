@@ -2,10 +2,11 @@ import { buildingAttributesConfig } from '../../config/dataFields';
 import { BaseBuilding } from '../../models/building';
 import * as buildingDataAccess from '../../dataAccess/building';
 import * as verifyDataAccess from '../../dataAccess/verify';
-import { DatabaseError } from '../../errors/general';
+import { DatabaseError, InvalidFieldError, InvalidOperationError, UserError } from '../../errors/general';
 
 function canVerify(key: string) {
-    return buildingAttributesConfig[key].verify === true;
+    // a key that is not a building attribute cannot be verified either
+    return buildingAttributesConfig[key]?.verify === true;
 }
 
 export async function verifyBuildingAttributes(buildingId: number, userId: string, patch: object) {
@@ -24,10 +25,14 @@ export async function verifyBuildingAttributes(buildingId: number, userId: strin
                     await verifyDataAccess.updateBuildingUserVerifiedAttribute(buildingId, userId, key, building[key]);
                     verified[key] = building[key];
                 } catch (error) {
+                    // user already verified this attribute for this building:
+                    // a refusal to tell the person about, not a database failure
+                    if(error instanceof UserError) {
+                        throw error;
+                    }
                     // possible reasons:
                     // - not a building
                     // - not a user
-                    // - user already verified this attribute for this building
                     throw new DatabaseError(error);
                 }
             } else {
@@ -35,14 +40,15 @@ export async function verifyBuildingAttributes(buildingId: number, userId: strin
                     await verifyDataAccess.removeBuildingUserVerifiedAttribute(buildingId, userId, key);
                 } else {
                     // not verifying current value
-                    const msg = `Attribute "${key}" with value "${value}" did not match latest saved value "${building[key]}"`;
-                    throw new DatabaseError(msg);
+                    // the message holds neither value (they are what a person typed) nor the field's internal name
+                    const msg = 'The value sent does not match the saved value, so it was not verified. Reload the building and try again.';
+                    throw new InvalidOperationError(msg);
                 }
             }
         } else {
             // not a valid attribute
-            const msg = `Attribute ${key} not recognised.`;
-            throw new DatabaseError(msg);
+            // the key is not put in the message: it is whatever the request sent
+            throw new InvalidFieldError('Field cannot be verified', key);
         }
     }
     return verified;

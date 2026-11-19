@@ -1,4 +1,5 @@
 import db from '../../../db';
+import { logErrorSafely } from '../../logError';
 
 /**
  * Keep a building's search index rows (name / GhanaPost GPS) in sync with its
@@ -42,6 +43,6 @@ export async function syncBuildingSearchLocations(buildingId: number): Promise<v
             );
         });
     } catch (error) {
-        console.error(`Failed to sync search_locations for building ${buildingId}:`, error);
+        logErrorSafely(`Failed to sync search_locations for building ${buildingId}:`, error);
     }
 }

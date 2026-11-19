@@ -7,6 +7,7 @@
  *   data
  */
 import db from '../../db';
+import { logErrorSafely } from '../logError';
 
 function queryLocation(term) {
     const limit = 5;
@@ -21,7 +22,7 @@ function queryLocation(term) {
         LIMIT $2;`,
         [term, limit]
     ).catch((error) => {
-        console.error(error);
+        logErrorSafely('Location search failed:', error);
         return undefined;
     });
 }

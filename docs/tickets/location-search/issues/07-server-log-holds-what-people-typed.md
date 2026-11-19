@@ -1,9 +1,9 @@
 # The server log holds what people typed and who they are
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
-Feature doc: none
+Feature doc: none; onboarding-guide.md (Error flow, Logging); decision record docs/decisions/0005 (local)
 Requirements: none recorded on this branch
 Branch: `fix/location-search-07-server-log-privacy` off `feature/location-search`
 Source: found while building issues 02 to 04, 19 November 2026; facts checked in the code the same day
@@ -48,15 +48,49 @@ and for verifying twice.
 
 ## Acceptance criteria
 
-- [ ] Test: saving an edit and verifying a value write neither the value nor the user id to the log.
-- [ ] Test: a failed login does not log the username; deleting an account does not log the user id.
-- [ ] Test: the safe log function, given a database error carrying a query, values and `detail`, logs
+- [x] Test: saving an edit and verifying a value write neither the value nor the user id to the log.
+- [x] Test: a failed login does not log the username; deleting an account does not log the user id.
+- [x] Test: the safe log function, given a database error carrying a query, values and `detail`, logs
       none of them, and does log the error code and constraint.
-- [ ] Test: through the real API router, a database failure while creating an account logs no username,
+- [x] Test: through the real API router, a database failure while creating an account logs no username,
       email or password; a failed API-key lookup logs no key.
-- [ ] Test: verifying a value that does not match gets HTTP 400 with a message that does not contain the
+- [x] Test: verifying a value that does not match gets HTTP 400 with a message that does not contain the
       value, and nothing about it is logged; the same for an attribute that cannot be verified.
-- [ ] Test: a body that is not valid JSON gets HTTP 400 and none of its text is logged.
-- [ ] `grep` over `app/src/api` finds no `console.log` or `console.error` that is passed a whole error
+- [x] Test: a body that is not valid JSON gets HTTP 400 and none of its text is logged.
+- [x] `grep` over `app/src/api` finds no `console.log` or `console.error` that is passed a whole error
       object, a request body, a field value, a username, an email or a user id.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Change: the log lines that recorded every saved value and every verified value are gone; a failed log-in
+  and an account deletion are logged as events without the username or user id. Every place in
+  `app/src/api`, `app/src/tiles` and `app/src/frontendRoute.tsx` that logged a whole error now uses
+  `logErrorSafely` (`app/src/api/logError.ts`). Its rule, which goes slightly beyond the ticket's wording:
+  an error's message is logged only for the project's own error classes, because the database's own messages
+  can repeat a value (`invalid input syntax for type uuid: "<the key sent>"`); and the stack's "at …" lines
+  are logged so an unexpected error can still be found. Recorded in decision record 0005 (local) and in
+  `onboarding-guide.md`.
+- Verification refusals are now HTTP 400 with plain messages, not 500 "Database error", and are not logged:
+  "The value sent does not match the saved value, so it was not verified. Reload the building and try
+  again.", "Field cannot be verified", and "User already verified that attribute for this building". The
+  form shows them in its error box. A refused verification of current land use or original use no longer
+  saves `…_verified` or clears the message.
+- A body that is not valid JSON gets HTTP 400 "Request body is not valid JSON" and is not logged.
+- Also: the name of a field that does not exist is no longer logged (it is whatever the request sent);
+  `parseJsonOrDefault` no longer logs its parse error (it reads the paste data from the page address);
+  creating an account answers "Database error" instead of `{}` when the database gives no detail; the global
+  handler writes to the error stream.
+- Tests: `api/__tests__/logError.test.ts` (17), `api/__tests__/log-privacy.test.ts` (20, the real API router
+  with the database faked: each checks that the value or identity really reached the faked database and is
+  not in the log), `src/__tests__/helpers.test.ts` (2), `validateUpdate.test.ts` (+1),
+  `building/__tests__/edit-form-refused-verification.test.tsx` (2). They failed before the change.
+- Whole suite: 131 tests pass (90 before). `npm run typecheck` passes. No new lint errors.
+- Remaining `console` calls in `app/src/api`: fixed texts, a field name that is known to the app, a
+  password-reset token's error code, and the helper itself.
+- Not checked against a real database: the shapes of database errors were taken from the installed pg,
+  pg-protocol and pg-promise code. Proxy access logs, which hold query strings, are outside the repository.
+- Left for issue 15: answers that send the raw error to the caller, and errors that reach Express's own
+  handler (which prints the stack and message) from outside the API.

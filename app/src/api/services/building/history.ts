@@ -1,4 +1,5 @@
 import db from '../../../db';
+import { logErrorSafely } from '../../logError';
 
 export async function getLatestRevisionId() {
     try {
@@ -7,7 +8,7 @@ export async function getLatestRevisionId() {
         );
         return data == undefined ? undefined : data.max;
     } catch(err) {
-        console.error(err);
+        logErrorSafely('Failed to get latest revision id:', err);
         return undefined;
     }
 }
@@ -22,7 +23,7 @@ export async function getBuildingEditHistory(id: number) {
             [id]
         );
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building edit history:', error);
         return [];
     }
 }
