@@ -13,6 +13,7 @@ import {
     faCheckDouble,
     faEye,
     faInfoCircle,
+    faLayerGroup,
     faPaintBrush,
     faQuestionCircle,
     faSearch,
@@ -37,7 +38,8 @@ library.add(
     faCaretRight,
     faSearch,
     faEye,
-    faSpinner
+    faSpinner,
+    faLayerGroup
 );
 
 const HelpIcon = () => (
@@ -96,6 +98,10 @@ const SearchIcon = () => (
     <FontAwesomeIcon icon="search" />
 );
 
+const LayersIcon = (): JSX.Element => (
+    <FontAwesomeIcon icon="layer-group" />
+);
+
 const SpinnerIcon: React.FC<{spin?: boolean}> = ({spin=true}) => (
     <FontAwesomeIcon icon="spinner" spin={spin} />
 );
@@ -115,5 +121,6 @@ export {
     RightIcon,
     SearchIcon,
     VerifyIcon,
-    SpinnerIcon
+    SpinnerIcon,
+    LayersIcon
 };

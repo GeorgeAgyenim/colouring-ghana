@@ -68,12 +68,6 @@
     background-color: transparent;
     background-image: none;
 }
-@media (max-width: 990px){
-    .map-button {
-        visibility: hidden;
-    }
-}
-
 .theme-switcher .btn {
     min-width: 340px;
 }
@@ -86,6 +80,69 @@
     position: absolute;
     top: 120px;
     right: 0px;
+}
+
+/* The map buttons on narrow screens (phones, small tablets): one small layers button below the zoom and
+   locate buttons opens a list with the theme switch and the layer switches. From 990px wide everything is
+   as before: the theme switch shows above the options button and the buttons are full width.
+   map.tsx renders a theme switch for each width; the classes below show one.
+   Ticket: docs/tickets/location-search/issues/19-layer-buttons-on-phones.md */
+@media (min-width: 990px) {
+    .switchers-of-layers-map-menu .narrow-screen-only {
+        display: none;
+    }
+}
+@media (max-width: 989.98px) {
+    .switchers-of-layers-map-menu .wide-screen-only {
+        display: none;
+    }
+
+    .switchers-of-layers-map-menu {
+        /* Leaflet's zoom buttons (10px margin, 63px tall) and the locate button (10px margin, 34px tall)
+           end 117px down: start 10px below them, right-aligned with them 10px from the edge. Issue 12's
+           "Could not load ..." message keeps the right 4rem clear, so the closed button (44px wide)
+           sits beside it. */
+        top: 127px;
+        right: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        /* Stop above the legend (bottom right, 3.5rem up, up to about 8.5rem tall while collapsed, as it
+           is below 768px wide); a longer list scrolls inside itself. On a map too short for that, still
+           leave room for the button and a row of the list. The first line is for browsers without max(). */
+        max-height: calc(100% - 127px - 12rem);
+        max-height: max(calc(100% - 127px - 12rem), 7.5rem);
+    }
+
+    .switchers-of-layers-map-menu .map-button {
+        float: none;
+        right: 0;
+    }
+
+    /* At least 44 by 44 CSS pixels to tap, and only as wide as the words need. */
+    .switchers-of-layers-map-menu .map-button .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .map-layer-options {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        min-height: 0;
+        overflow-y: auto;
+        /* Room for the buttons' focus ring, which the scrolling box would otherwise cut off; the negative
+           margin keeps the buttons lined up with the options button. */
+        padding: 0.25rem;
+        margin: -0.25rem -0.25rem 0;
+    }
+    /* Closed: nothing in it, so take no room and no taps from the map. */
+    .map-layer-options:empty {
+        display: none;
+    }
 }
 
 .map-switcher-inline {

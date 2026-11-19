@@ -24,7 +24,7 @@ import { Legend } from './legend';
 import SearchBox, { SearchResult } from './search-box';
 import { SearchResultsLayer } from './search-results-layer';
 import ThemeSwitcher from './theme-switcher';
-import DataLayerSwitcher from './data-switcher';
+import DataLayerSwitcher, { LAYER_OPTIONS_LIST_ID } from './data-switcher';
 import { RegionSwitcher, DistrictSwitcher } from './boundary-switcher';
 import { HistoricDataSwitcher } from './historic-data-switcher';
 import { HistoricMapSwitcher } from './historic-map-switcher';
@@ -190,20 +190,29 @@ export const ColouringMap : FC<ColouringMapProps> = ({
                     <Legend mapColourScaleDefinitions={categoryMapDefinitions} mapColourScale={mapColourScale} onMapColourScale={onMapColourScale}/>
                 </>
             }
+            {/*
+                Below 990px wide only the options button shows until it is pressed, and the theme switch moves
+                into the list; from 990px the theme switch sits above the options button, as before. Both theme
+                switches are rendered and the stylesheet shows one (map-button.css), so the page is the same on
+                the server and in the browser, and at each width the keyboard order matches what is seen.
+                Ticket: docs/tickets/location-search/issues/19-layer-buttons-on-phones.md
+            */}
             <div className="switchers-of-layers-map-menu">
-                <ThemeSwitcher onSubmit={darkLightThemeSwitch} currentTheme={darkLightTheme} />
+                <ThemeSwitcher onSubmit={darkLightThemeSwitch} currentTheme={darkLightTheme} className="wide-screen-only" />
                 <DataLayerSwitcher />
-                {
-                    (showLayerSelection == "enabled") ?
-                    <>
-                        <RegionSwitcher/>
-                        <DistrictSwitcher/>
-                        { /* <HistoricMapSwitcher/> */ }
-                        { /* <HistoricDataSwitcher/> */ }
-                        <EditableBuildingsSwitcher />
-                    </>
-                    : <></>
-                }
+                <div id={LAYER_OPTIONS_LIST_ID} className="map-layer-options">
+                    {
+                        showLayerSelection === 'enabled' &&
+                            <>
+                                <ThemeSwitcher onSubmit={darkLightThemeSwitch} currentTheme={darkLightTheme} className="narrow-screen-only" />
+                                <RegionSwitcher/>
+                                <DistrictSwitcher/>
+                                { /* <HistoricMapSwitcher/> */ }
+                                { /* <HistoricDataSwitcher/> */ }
+                                <EditableBuildingsSwitcher />
+                            </>
+                    }
+                </div>
             </div>
             <SearchBox
                 onResults={handleSearchResults}
