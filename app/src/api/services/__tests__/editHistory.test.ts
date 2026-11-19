@@ -1,3 +1,9 @@
+/**
+ * @jest-environment node
+ *
+ * Server-side code: run under Node, not jsdom. pg >= 8.9 (via pg-promise 11)
+ * uses TextEncoder at import time, which the jsdom environment lacks.
+ */
 import { EditHistoryEntry } from '../../../frontend/models/edit-history-entry';
 import * as editHistoryData from '../../dataAccess/editHistory'; // manually mocked
 import { ArgumentError } from '../../errors/general';
