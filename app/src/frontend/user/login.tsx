@@ -39,7 +39,7 @@ export const Login: React.FC = () => {
                     <a href={issuesURL}>report issues or problems</a>.
                 </InfoBox>
                 {error && <ErrorBox msg={error} />}
-                <form onSubmit={onSubmit}>
+                <form method="POST" onSubmit={onSubmit}>
                     <label htmlFor="username">Username*</label>
                     <input name="username" id="username"
                         className="form-control" type="text"

@@ -45,7 +45,7 @@ export const SignUp: React.FC = () => {
                     Create an account to start colouring in.
                 </p>
                 {error && <ErrorBox msg={error} />}
-                <form onSubmit={onSubmit}>
+                <form method="POST" onSubmit={onSubmit}>
                     <label htmlFor="username">Username*</label>
                     <input name="username" id="username"
                         className="form-control" type="text"

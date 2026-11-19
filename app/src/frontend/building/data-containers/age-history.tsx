@@ -92,7 +92,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
         <Fragment>
             <DataEntryGroup name="Historical Period/Description" collapsed={subcat==null || subcat!="1"}>
                 {(props.mapColourScale != "typology_style_period") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToHistoricalPeriodMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToHistoricalPeriodMapStyle}>
                         Click to show historical period.
                     </button>
                 :
@@ -148,7 +148,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
             </DataEntryGroup>
             <DataEntryGroup name="Building Age/Construction Date (Crowdsourced)" collapsed={subcat==null || subcat!="2"}>
                 {(props.mapColourScale != "date_year") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeMapStyle}>
                             Click to show building age.
                         </button>
                 :
@@ -248,7 +248,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
             </DataEntryGroup>
             <DataEntryGroup name="Inferred Data" collapsed={subcat==null || subcat!="3"}>
             {(props.mapColourScale != "age_inferred") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeInferredMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeInferredMapStyle}>
                             Click to show inferred building age.
                         </button>
                 :
@@ -319,7 +319,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
             </DataEntryGroup>
             <DataEntryGroup name="Cladding, Extensions & Retrofits" collapsed={subcat==null || subcat!="5"}>
                 {(props.mapColourScale != "cladding_year") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeCladdingMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeCladdingMapStyle}>
                             Click to show cladding date.
                         </button>
                 :
@@ -376,7 +376,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                 }
                 <hr/>
                 {(props.mapColourScale != "extension_year") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeExtensionMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeExtensionMapStyle}>
                             Click to show extension date.
                         </button>
                 :
@@ -433,7 +433,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                 }
                 <hr/>
                 {(props.mapColourScale != "retrofit_year") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeRetrofitMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeRetrofitMapStyle}>
                             Click to show retrofit date.
                         </button>
                 :
@@ -580,20 +580,20 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </i>
                 </div>
                 {(historicMap === "enabled") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToAgeMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToAgeMapStyle}>
                         Click to hide the 1890s OS historical map.
                     </button>
                 :
-                    <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToSurvivalMapStyle}>
+                    <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToSurvivalMapStyle}>
                         Click to show the 1890s OS historical map.
                     </button>
                 }
                 {(historicData === "enabled") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToAgeMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToAgeMapStyle}>
                         Click to hide the 1890s OS historical map with modern footprints.
                     </button>
                 :
-                    <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToSurvivalDataStyle}>
+                    <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark ${darkLightTheme}`} onClick={switchToSurvivalDataStyle}>
                         Click to show the 1890s OS historical map with modern footprints.
                     </button>
                 }

@@ -55,7 +55,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
             <DataEntryGroup name="Construction" collapsed={subcat==null || subcat!="1"}>
                 <DataEntryGroup name="Structural system" collapsed={subcat==null || subcat!="1"}>
                     {(props.mapColourScale != "construction_structural_system") ? 
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStructuralSystemMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStructuralSystemMapStyle}>
                             {"Click to view structural system data."}
                         </button>
                         :
@@ -110,7 +110,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
                         }
                         <hr/>
                         {(props.mapColourScale != "construction_foundation") ? 
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToFoundationsMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToFoundationsMapStyle}>
                                 {"Click to view foundation data."}
                             </button>
                             :
@@ -165,7 +165,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
                         }
                         <hr/>
                         {(props.mapColourScale != "construction_roof_shape") ? 
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToRoofShapeMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToRoofShapeMapStyle}>
                                 {"Click to view roof shape data."}
                             </button>
                             :
@@ -269,7 +269,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
                     </DataEntryGroup>
                     <DataEntryGroup name="Materials" collapsed={subcat==null || subcat!="2"}>
                         {props.mapColourScale != "construction_core_material" ?
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToCoreMaterialMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToCoreMaterialMapStyle}>
                                 {'Click to view core material data'}
                             </button>
                             :
@@ -468,7 +468,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
                         }
                         <hr/>
                         {(props.mapColourScale != "construction_roof_covering") ? 
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToRoofCoveringsMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToRoofCoveringsMapStyle}>
                                 {"Click to view roof covering data."}
                             </button>
                             :
@@ -524,7 +524,7 @@ const ConstructionDesignView: React.FunctionComponent<CategoryViewProps> = (prop
 
                         <hr/>
                         {(props.mapColourScale != "construction_material_window_frame") ? 
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToWindowFrameMaterialMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToWindowFrameMaterialMapStyle}>
                                 {"Click to view window frame data."}
                             </button>
                             :

@@ -62,7 +62,7 @@ export const MyAccountPage: React.FC = () => {
                         <a href="https://github.com/colouring-cities/manual/wiki/F2.-PROTOCOLS-&-CODES-OF-CONDUCT#ccrp-contributor--data-user-data-accuracy--ethical-use-agreement">contributor & data user data accuracy & ethical use agreement</a>
                     </p>
                     {error && <ErrorBox msg={error} />}
-                    <form onSubmit={handleLogout}>
+                    <form method="POST" onSubmit={handleLogout}>
                         <div className="buttons-container">
                             <Link to="/edit/age-history" className="btn btn-warning"><h1>Start colouring</h1></Link>
                             <input className="btn btn-secondary" type="submit" value="Log out"/>
@@ -84,7 +84,7 @@ export const MyAccountPage: React.FC = () => {
                     <p>Are you a software developer? If so, you might be interested in these.</p>
                     <h3 className="h3">API key</h3>
                     <p>{user.api_key || '-'}</p>
-                    <form onSubmit={handleGenerateKey} className="form-group mb-3">
+                    <form method="POST" onSubmit={handleGenerateKey} className="form-group mb-3">
                         <input className="btn btn-secondary" type="submit" value="Generate API key"/>
                     </form>
 
@@ -95,6 +95,7 @@ export const MyAccountPage: React.FC = () => {
 
                     <h2 className="h2">Account actions</h2>
                     <form
+                        method="POST"
                         onSubmit={e => {
                             e.preventDefault();
                             setShowDeleteConfirm(true);
