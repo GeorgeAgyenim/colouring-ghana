@@ -6,8 +6,9 @@
     z-index: 1000;
     /* Below the search box (top 0.5rem, 2.4rem tall). On a phone the tab that
        opens the side panel sits on the map's left edge (2rem wide), so start
-       to the right of it, and stop short of the zoom and locate buttons on
-       the right, even on a 320px screen. */
+       to the right of it, and stop short of the zoom and locate buttons and
+       the layers button below them (all within 4rem of the right edge), even
+       on a 320px screen. */
     top: 3.4rem;
     left: 2.5rem;
     /* the first line is for browsers without min() */
@@ -16,8 +17,8 @@
     cursor: default;
 }
 @media (min-width: 990px) {
-    /* From this width the layer buttons are shown, down the right-hand side
-       from 120px and up to 350px wide, and would be covered on a narrow map.
+    /* From this width the layer buttons are full width, down the right-hand
+       side from 120px and up to 350px wide, and would be covered on a narrow map.
        Sit bottom left instead: above the attribution, like the legend, and
        left of the legend (14rem wide, bottom right). */
     .boundary-load-failures {

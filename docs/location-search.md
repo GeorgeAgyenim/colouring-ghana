@@ -96,6 +96,17 @@ variants), and `pg_trgm` fuzzy matching absorbs typos.
 on touch; the hover "pop-out" is a pointer-only enhancement (mouse-enter events are inert on
 touch), so no separate mobile interaction exists.
 
+## Map layer controls on phones
+
+`app/src/frontend/map/map.tsx`, `map-button.css`, `data-switcher.tsx`.
+
+Below 990px wide the map shows one layers button under the zoom and locate buttons. It opens a
+list with the light/dark map, Regions, Districts and Editable Buildings switches (each at least
+44 by 44 CSS pixels; each says "on" or "off" in its own words, which a screen reader reads too).
+From 990px the controls are laid out as before. Before 19 November 2026 these controls were
+hidden on narrow screens, so a phone could not switch Regions or Districts on. A boundary file
+that fails to download is reported by its own message (see Failure modes).
+
 ## Town editing (autofill)
 
 The building `location_town` field is an **autofill dropdown** sourced from GeoNames
