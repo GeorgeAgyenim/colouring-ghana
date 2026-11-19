@@ -14,7 +14,7 @@ import NumericDataEntry from '../data-components/numeric-data-entry';
 import { useDisplayPreferences } from '../../displayPreferences-context';
 import { DynamicsBuildingPane, DynamicsDataEntry } from './dynamics/dynamics-data-entry';
 import { FieldRow } from '../data-components/field-row';
-import { MapTileset } from '../../config/tileserver-config';
+import { BuildingMapTileset } from '../../config/tileserver-config';
 
 /**
 * Age & History view/edit section
@@ -58,6 +58,10 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
         switchToMapStyleHideHistoricMaps(event, 'date_year')
     }
 
+    const switchToAgeInferredMapStyle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        switchToMapStyleHideHistoricMaps(event, 'age_inferred')
+    }
+
     const switchToAgeCladdingMapStyle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         switchToMapStyleHideHistoricMaps(event, 'cladding_year')
     }
@@ -70,7 +74,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
         switchToMapStyleHideHistoricMaps(event, 'retrofit_year')
     }
 
-    const switchToMapStyleHideHistoricMaps = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, map_style: MapTileset) => {
+    const switchToMapStyleHideHistoricMaps = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, map_style: BuildingMapTileset) => {
         event.preventDefault();
         if (historicData === 'enabled') {
             historicDataSwitchOnClick(event);
@@ -81,19 +85,12 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
         props.onMapColourScale(map_style);
     }
 
-    let construction_length = null;
-
-    if (props.building.date_year != null && props.building.date_year_completed != null) {
-        construction_length = props.building.date_year_completed - props.building.date_year;
-        construction_length = Math.max(construction_length, 1);
-    }
-
     const queryParameters = new URLSearchParams(window.location.search);
     const subcat = queryParameters.get("sc");
 
     return (
         <Fragment>
-            <DataEntryGroup name="National Historical Description" collapsed={subcat==null || subcat!="2"}>
+            <DataEntryGroup name="Historical Period/Description" collapsed={subcat==null || subcat!="1"}>
                 {(props.mapColourScale != "typology_style_period") ? 
                     <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToHistoricalPeriodMapStyle}>
                         Click to show historical period.
@@ -149,7 +146,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </>
                 }
             </DataEntryGroup>
-            <DataEntryGroup name="Building Age/Construction Date" collapsed={subcat==null || subcat!="1"}>
+            <DataEntryGroup name="Building Age/Construction Date (Crowdsourced)" collapsed={subcat==null || subcat!="2"}>
                 {(props.mapColourScale != "date_year") ? 
                         <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeMapStyle}>
                             Click to show building age.
@@ -196,18 +193,6 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     user_verified={props.user_verified.hasOwnProperty("date_year_completed")}
                     user_verified_as={props.user_verified.date_year_completed}
                     verified_count={props.building.verified.date_year_completed}
-                    />
-                <NumericDataEntry
-                    title="Estimated duration of construction (years)"
-                    slug="size_total_floors"
-                    value={construction_length}
-                    mode={props.mode}
-                    copy={props.copy}
-                    tooltip="Length of building construction (calculated from above values)."
-                    onChange={props.onChange}
-                    step={1}
-                    min={0}
-                    disabled={true}
                     />
                 <hr/>
                 <NumericDataEntry
@@ -261,7 +246,78 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </>
                 }
             </DataEntryGroup>
-            <DataEntryGroup name="Cladding, Extensions & Retrofits" collapsed={subcat==null || subcat!="3"}>
+            <DataEntryGroup name="Inferred Data" collapsed={subcat==null || subcat!="3"}>
+            {(props.mapColourScale != "age_inferred") ? 
+                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeInferredMapStyle}>
+                            Click to show inferred building age.
+                        </button>
+                :
+                    <></>
+                }
+                <NumericDataEntry
+                    title={dataFields.date_year_inferred.title}
+                    slug="date_year_inferred"
+                    value={props.building.date_year_inferred}
+                    mode={props.mode}
+                    copy={props.copy}
+                    onChange={props.onChange}
+                    step={1}
+                    min={1}
+                    max={props.building.date_year_inferred}
+                    tooltip={dataFields.date_year_inferred.tooltip}
+                    disabled={true}
+                    />
+                <Verification
+                    slug="date_year_inferred"
+                    allow_verify={props.user !== undefined && props.building.date_year_inferred !== null && !props.edited}
+                    onVerify={props.onVerify}
+                    user_verified={props.user_verified.hasOwnProperty("date_year_inferred")}
+                    user_verified_as={props.user_verified.date_year_inferred}
+                    verified_count={props.building.verified.date_year_inferred}
+                    />
+                <NumericDataEntry
+                    title={dataFields.date_year_inferred_lower.title}
+                    slug="date_year_inferred_lower"
+                    value={props.building.date_year_inferred_lower}
+                    mode={props.mode}
+                    copy={props.copy}
+                    onChange={props.onChange}
+                    step={1}
+                    min={1}
+                    tooltip={dataFields.date_year_inferred_lower.tooltip}
+                    disabled={true}
+                    />
+                <Verification
+                    slug="date_year_inferred_lower"
+                    allow_verify={props.user !== undefined && props.building.date_year_inferred_lower !== null && !props.edited}
+                    onVerify={props.onVerify}
+                    user_verified={props.user_verified.hasOwnProperty("date_year_inferred_lower")}
+                    user_verified_as={props.user_verified.date_year_inferred_lower}
+                    verified_count={props.building.verified.date_year_inferred_lower}
+                    />
+                <NumericDataEntry
+                    title={dataFields.date_year_inferred_upper.title}
+                    slug="date_year_inferred_upper"
+                    value={props.building.date_year_inferred_upper}
+                    mode={props.mode}
+                    copy={props.copy}
+                    onChange={props.onChange}
+                    step={1}
+                    tooltip={dataFields.date_year_inferred_upper.tooltip}
+                    disabled={true}
+                    />
+                <Verification
+                    slug="date_year_inferred_upper"
+                    allow_verify={props.user !== undefined && props.building.date_year_inferred_upper !== null && !props.edited}
+                    onVerify={props.onVerify}
+                    user_verified={props.user_verified.hasOwnProperty("date_year_inferred_upper")}
+                    user_verified_as={props.user_verified.date_year_inferred_upper}
+                    verified_count={props.building.verified.date_year_inferred_upper}
+                    />
+            </DataEntryGroup>
+            <DataEntryGroup name="Official Data and CCRP Bulk Upload Data" collapsed={subcat==null || subcat!="4"}>
+            </DataEntryGroup>
+            <DataEntryGroup name="Cladding, Extensions & Retrofits" collapsed={subcat==null || subcat!="5"}>
                 {(props.mapColourScale != "cladding_year") ? 
                         <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAgeCladdingMapStyle}>
                             Click to show cladding date.
@@ -433,8 +489,8 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </>
                 }
             </DataEntryGroup>
-            <DataEntryGroup name="Lifespan & Site History" collapsed={subcat==null || subcat!="4"}>
-                <DataEntryGroup name="Constructions & Demolitions on this Site" collapsed={subcat==null || subcat!="4"}>
+            <DataEntryGroup name="Lifespan & Site History" collapsed={subcat==null || subcat!="6"}>
+                <DataEntryGroup name="Constructions & Demolitions on this Site" collapsed={subcat==null || subcat!="6"}>
                     <DynamicsBuildingPane>
                         <label>Current building (building age data editable above)</label>
                         <FieldRow>
@@ -516,7 +572,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     }
                 </DataEntryGroup>
             </DataEntryGroup>
-            <DataEntryGroup name="Survival Tracking" collapsed={subcat==null || subcat!="5"}>
+            <DataEntryGroup name="Survival Tracking" collapsed={subcat==null || subcat!="7"}>
                 <div className={`alert alert-dark`} role="alert" style={{ fontSize: 13, backgroundColor: "#f6f8f9" }}>
                     <i>
                         Can you help us create a map that shows how many buildings in this area have survived since the 1890s? 
@@ -580,7 +636,7 @@ const AgeHistoryView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </>
                 }
             </DataEntryGroup>
-            <DataEntryGroup name="Historical Map Data Options" collapsed={subcat==null || subcat!="6"}>
+            <DataEntryGroup name="Historical Map Data Options" collapsed={subcat==null || subcat!="8"}>
                 <div className={`alert alert-dark`} role="alert" style={{ fontSize: 13, backgroundColor: "#f6f8f9" }}>
                     <i>
                         This section provides links to open digitised historical maps/mapping data that we are using in the Colouring Cities platform.
