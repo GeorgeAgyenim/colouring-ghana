@@ -18,11 +18,18 @@ the username and password that were typed; for others, user ids and emails. Expr
 into `{}` in some cases and into its fields in others, so the browser either shows nothing useful or shows
 internals.
 
+Separately, an error that escapes the API's handler (headers already sent), the session store, the page
+route or the tile server reaches Express's built-in handler, which prints the error's stack, message
+included, outside issue 07's safe logging.
+
 ## What to build
 
 Each of those routes answers a failure with `{ error: '<plain message>' }` (for a database failure:
 "Database error", as the rest of the API does) and logs the failure with `logErrorSafely` from issue 07.
 Refusals the person can act on keep their existing messages.
+
+`app/src/server.tsx` ends with an error handler that logs with `logErrorSafely` and answers 500 (or closes
+the connection when the answer has already started), so nothing reaches Express's own handler.
 
 ## Acceptance criteria
 
@@ -31,4 +38,5 @@ Refusals the person can act on keep their existing messages.
 - [ ] Test: a wrong username or password at log-in still gets the message it gets today.
 - [ ] `grep` over `app/src/api` finds no `res.send(error)`, `res.send(err)` or `{ error: err }` that sends a
       thrown value.
+- [ ] Test: an error thrown by the page route reaches the server's own handler and is logged without its message.
 - [ ] `npm test` and `npm run typecheck` pass.
