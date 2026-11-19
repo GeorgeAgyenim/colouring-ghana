@@ -77,7 +77,7 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
 
 1. User submits a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
-   (deliberately distinct from the geolocation control's directional-arrow marker).
+   (deliberately distinct from the geolocation control's blue location dot).
 3. A **results dropdown** lists the region-qualified labels. **Hovering** a row pops out its
    pin (larger, darker, raised); **clicking** flies the map to that place at its stored zoom
    and clears the other pins.

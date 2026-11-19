@@ -5,9 +5,9 @@
  *
  * Behaviour:
  *  - Starts tracking the user's position automatically when mounted.
- *  - Renders a directional arrow marker with an accuracy circle on the map.
- *  - Uses the DeviceOrientation API for compass heading; falls back to the
- *    heading value supplied by the Geolocation API when unavailable.
+ *  - Renders a dot with an accuracy circle on the map. There is no direction
+ *    arrow: a compass heading is not reliable across phones, and a dot is
+ *    never wrong (docs/tickets/location-search/issues/05-location-marker-plain-dot.md).
  *  - Adds a "Go to my location" button below the Leaflet zoom controls.
  *    Clicking it re-centres the map to the user's current live position.
  *  - If the position cannot be obtained (permission denied, no GPS fix), the
@@ -37,80 +37,48 @@ const WATCH_OPTIONS: PositionOptions = {
     timeout:    10_000,  // give up and fire onError after 10 s without a fix
 };
 
-/** Colour used consistently for the marker arrow and accuracy circle. */
+/** Colour used consistently for the location dot and accuracy circle. */
 const MARKER_COLOUR = '#1a6de0';
 
 const LOCATE_BUTTON_TITLE = 'Go to my location';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Icon ─────────────────────────────────────────────────────────────────────
+
+/** Side of the square icon box, in pixels. The dot sits in its centre. */
+const DOT_ICON_SIZE = 32;
+/** Radius of the dot and width of its white outline, in pixels. */
+const DOT_RADIUS = 8;
+const DOT_OUTLINE_WIDTH = 3;
 
 /**
- * DeviceOrientationEvent extended with the non-standard webkitCompassHeading
- * property that iOS Safari exposes.
+ * The location dot: a filled circle with a white outline. It never changes,
+ * so one icon is shared by every update.
  */
-interface DeviceOrientationEventWithCompass extends DeviceOrientationEvent {
-    webkitCompassHeading?: number;
-}
-
-/**
- * DeviceOrientationEvent constructor extended with the iOS 13+ static
- * requestPermission method.
- */
-interface DeviceOrientationEventConstructorWithPermission {
-    new(type: string, eventInitDict?: DeviceOrientationEventInit): DeviceOrientationEvent;
-    requestPermission?(): Promise<'granted' | 'denied'>;
-}
-
-// ─── Icon factory ─────────────────────────────────────────────────────────────
-
-/**
- * Build a Leaflet DivIcon containing an SVG directional arrow.
- *
- * The arrow always points "up" in SVG space. A CSS transform rotates the
- * wrapping div to align the arrow with the supplied compass heading (degrees
- * clockwise from true north).
- */
-function buildArrowIcon(headingDeg: number): L.DivIcon {
-    const SIZE   = 32;
-    const CENTRE = SIZE / 2;
-
-    // The arrowhead points north (up). The tail widens slightly to suggest
-    // direction clearly even at small sizes.
-    const arrowSvg = `
+const LOCATION_DOT_ICON: L.DivIcon = L.divIcon({
+    // Replaces Leaflet's default white-box class.
+    className: 'location-dot',
+    html: `
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="${SIZE}"
-            height="${SIZE}"
-            viewBox="0 0 ${SIZE} ${SIZE}"
+            width="${DOT_ICON_SIZE}"
+            height="${DOT_ICON_SIZE}"
+            viewBox="0 0 ${DOT_ICON_SIZE} ${DOT_ICON_SIZE}"
+            aria-hidden="true"
+            focusable="false"
         >
-            <polygon
-                points="${CENTRE},3 ${CENTRE - 7},${SIZE - 5} ${CENTRE},${SIZE - 11} ${CENTRE + 7},${SIZE - 5}"
+            <circle
+                cx="${DOT_ICON_SIZE / 2}"
+                cy="${DOT_ICON_SIZE / 2}"
+                r="${DOT_RADIUS}"
                 fill="${MARKER_COLOUR}"
                 stroke="#ffffff"
-                stroke-width="1.5"
-                stroke-linejoin="round"
+                stroke-width="${DOT_OUTLINE_WIDTH}"
             />
         </svg>
-    `.trim();
-
-    return L.divIcon({
-        // Empty string suppresses Leaflet's default white-box background class.
-        className: '',
-        html: `
-            <div style="
-                width:            ${SIZE}px;
-                height:           ${SIZE}px;
-                transform:        rotate(${headingDeg}deg);
-                transform-origin: center center;
-                will-change:      transform;
-            ">
-                ${arrowSvg}
-            </div>
-        `.trim(),
-        iconSize:   [SIZE, SIZE],
-        iconAnchor: [CENTRE, CENTRE],
-    });
-}
+    `.trim(),
+    iconSize:   [DOT_ICON_SIZE, DOT_ICON_SIZE],
+    iconAnchor: [DOT_ICON_SIZE / 2, DOT_ICON_SIZE / 2],
+});
 
 // ─── Error helper ─────────────────────────────────────────────────────────────
 
@@ -143,7 +111,7 @@ const GeolocationControl: React.FC = () => {
     // keeps Leaflet's own internal state as the single source of truth for the
     // map layer.
 
-    /** The directional arrow marker currently on the map, if any. */
+    /** The location dot currently on the map, if any. */
     const markerRef = useRef<L.Marker | null>(null);
 
     /** The accuracy circle currently on the map, if any. */
@@ -153,21 +121,8 @@ const GeolocationControl: React.FC = () => {
     const watchIdRef = useRef<number | null>(null);
 
     /** Most recent position, kept in a ref so the Leaflet button callback
-     *  always reads the live value without stale-closure issues. */
+     *  always reads the live value. */
     const currentLatLngRef = useRef<L.LatLng | null>(null);
-
-    /** Most recent compass heading in degrees clockwise from north, or null
-     *  until the device has reported one. */
-    const headingRef = useRef<number | null>(null);
-
-    /**
-     * Stable ref to the re-centre function. Because the Leaflet control button
-     * is created imperatively (outside React's render cycle), it cannot receive
-     * updated props or hook values. Storing the function in a ref and calling
-     * recenterRef.current() instead ensures the button always invokes the
-     * latest version without recreating the Leaflet control on every render.
-     */
-    const recenterRef = useRef<() => void>(() => undefined);
 
     /** The locate button element, so its enabled state and tooltip can reflect errors. */
     const buttonRef = useRef<HTMLAnchorElement | null>(null);
@@ -179,25 +134,24 @@ const GeolocationControl: React.FC = () => {
     // ── Marker management ─────────────────────────────────────────────────────
 
     /**
-     * Create or update the arrow marker and accuracy circle on the map.
+     * Create or update the location dot and accuracy circle on the map.
      * Creating on first call; mutating on subsequent calls avoids flicker.
      */
     const upsertLocationLayer = useCallback((
         latlng:          L.LatLng,
         accuracyMetres:  number,
-        headingDeg:      number,
     ): void => {
         currentLatLngRef.current = latlng;
 
-        // ── Arrow marker ──────────────────────────────────────────────────────
+        // ── Location dot ──────────────────────────────────────────────────────
         if (markerRef.current) {
             markerRef.current.setLatLng(latlng);
-            markerRef.current.setIcon(buildArrowIcon(headingDeg));
         } else {
             markerRef.current = L.marker(latlng, {
-                icon:         buildArrowIcon(headingDeg),
+                icon:         LOCATION_DOT_ICON,
                 zIndexOffset: 1000,
                 interactive:  false,  // clicks pass through to the map
+                keyboard:     false,  // not a focus stop: it has no action
             }).addTo(map);
         }
 
@@ -220,44 +174,17 @@ const GeolocationControl: React.FC = () => {
     // ── Geolocation callbacks ─────────────────────────────────────────────────
 
     const onPosition = useCallback((position: GeolocationPosition): void => {
-        const { latitude, longitude, accuracy, heading: geoHeading } = position.coords;
+        const { latitude, longitude, accuracy } = position.coords;
         const latlng = L.latLng(latitude, longitude);
 
-        // Prefer the device-orientation heading (updated continuously by the
-        // compass); fall back to the heading the Geolocation API provides
-        // (only meaningful when the device is physically moving).
-        const heading = headingRef.current
-            ?? (geoHeading !== null ? geoHeading : 0);
-
         setLocationError(null);
-        upsertLocationLayer(latlng, accuracy, heading);
+        upsertLocationLayer(latlng, accuracy);
     }, [upsertLocationLayer]);
 
     const onPositionError = useCallback((err: GeolocationPositionError): void => {
         const message = describePositionError(err);
         console.warn('[GeolocationControl]', message);
         setLocationError(message);
-    }, []);
-
-    // ── Device orientation (compass heading) ──────────────────────────────────
-
-    const onDeviceOrientation = useCallback((evt: DeviceOrientationEventWithCompass): void => {
-        // iOS Safari provides webkitCompassHeading: degrees clockwise from north (0-360).
-        // Android provides alpha: degrees anticlockwise from north, so we invert it.
-        const heading: number | null = evt.webkitCompassHeading != null
-            ? evt.webkitCompassHeading
-            : evt.alpha != null
-                ? (360 - evt.alpha) % 360
-                : null;
-
-        if (heading === null) return;
-
-        headingRef.current = heading;
-
-        // Rotate the existing marker icon in place — no position update needed.
-        if (markerRef.current) {
-            markerRef.current.setIcon(buildArrowIcon(heading));
-        }
     }, []);
 
     // ── Re-centre logic ───────────────────────────────────────────────────────
@@ -268,13 +195,7 @@ const GeolocationControl: React.FC = () => {
         }
     }, [map]);
 
-    // Keep the stable ref pointing at the latest version of recenter so the
-    // imperatively-created Leaflet button always calls the current map instance.
-    useEffect(() => {
-        recenterRef.current = recenter;
-    }, [recenter]);
-
-    // ── Start geolocation + orientation tracking ──────────────────────────────
+    // ── Start geolocation tracking ────────────────────────────────────────────
 
     useEffect(() => {
         if (!navigator.geolocation) {
@@ -289,42 +210,6 @@ const GeolocationControl: React.FC = () => {
             WATCH_OPTIONS,
         );
 
-        // Attach the device-orientation listener.
-        // iOS 13+ requires an explicit permission request, which must originate
-        // from a user gesture. We piggyback on the first recenter button click.
-        const DeviceOrientation = DeviceOrientationEvent as unknown as
-            DeviceOrientationEventConstructorWithPermission;
-
-        const attachOrientationListener = (): void => {
-            window.addEventListener('deviceorientation', onDeviceOrientation as EventListener, true);
-        };
-
-        if (typeof DeviceOrientation.requestPermission === 'function') {
-            // iOS 13+: wrap the current recenter function so that the first
-            // click both requests permission and re-centres the map.
-            const originalRecenter = recenterRef.current;
-
-            recenterRef.current = (): void => {
-                originalRecenter();
-
-                DeviceOrientation.requestPermission!()
-                    .then(result => {
-                        if (result === 'granted') attachOrientationListener();
-                    })
-                    .catch(() => {
-                        // Permission denied or API error — heading gracefully
-                        // falls back to the GPS-supplied value.
-                    })
-                    .finally(() => {
-                        // Restore the plain recenter for all subsequent clicks.
-                        recenterRef.current = originalRecenter;
-                    });
-            };
-        } else {
-            // All other browsers: attach the listener directly.
-            attachOrientationListener();
-        }
-
         // ── Cleanup on unmount ────────────────────────────────────────────────
         return () => {
             if (watchIdRef.current !== null) {
@@ -332,15 +217,13 @@ const GeolocationControl: React.FC = () => {
                 watchIdRef.current = null;
             }
 
-            window.removeEventListener('deviceorientation', onDeviceOrientation as EventListener, true);
-
             markerRef.current?.remove();
             markerRef.current = null;
 
             accuracyCircleRef.current?.remove();
             accuracyCircleRef.current = null;
         };
-    }, [onPosition, onPositionError, onDeviceOrientation]);
+    }, [onPosition, onPositionError]);
 
     // ── Add Leaflet control button ────────────────────────────────────────────
 
@@ -393,8 +276,7 @@ const GeolocationControl: React.FC = () => {
 
                 L.DomEvent.on(button, 'click', (e: Event) => {
                     L.DomEvent.preventDefault(e);
-                    // Always call via the ref so we never hold a stale closure.
-                    recenterRef.current();
+                    recenter();
                 });
 
                 return container;
@@ -408,11 +290,8 @@ const GeolocationControl: React.FC = () => {
             buttonRef.current = null;
             map.removeControl(control);
         };
-        // `map` is the only true dependency. The button handler deliberately
-        // calls recenterRef.current (not recenter directly) to avoid this
-        // effect re-running — and recreating the Leaflet control — whenever
-        // the recenter callback reference changes.
-    }, [map]);
+        // `recenter` only changes when `map` does, so the control is built once per map.
+    }, [map, recenter]);
 
     // ── Error display ─────────────────────────────────────────────────────────
 

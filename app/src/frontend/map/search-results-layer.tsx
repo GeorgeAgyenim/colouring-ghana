@@ -6,7 +6,7 @@
  * list. Clicking a pin selects that result (same as clicking the list item).
  *
  * Markers use a distinct teardrop "drop pin" so they are not confused with the
- * geolocation control's directional arrow. Leaflet objects are managed
+ * geolocation control's location dot. Leaflet objects are managed
  * imperatively via refs (mirroring geolocation-control.tsx) to avoid re-render
  * churn.
  */
@@ -16,7 +16,7 @@ import L from 'leaflet';
 
 import { SearchResult } from './search-box';
 
-/** Colour for search drop-pins — deliberately different from the geolocation arrow (#1a6de0). */
+/** Colour for search drop-pins — deliberately different from the geolocation dot (#1a6de0). */
 const PIN_COLOUR = '#e8590c';
 const PIN_COLOUR_HIGHLIGHT = '#c92a2a';
 

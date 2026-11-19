@@ -1,6 +1,6 @@
 # Location marker: a plain dot, no direction arrow
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: docs/location-search.md
@@ -50,10 +50,24 @@ Update the two comments in `app/src/frontend/map/search-results-layer.tsx` and t
 
 ## Acceptance criteria
 
-- [ ] Test: a position shows one dot containing a circle, with no rotation.
-- [ ] Test: a second position moves the same dot.
-- [ ] Test: nothing listens for device orientation.
-- [ ] Test: "Go to my location" centres the map on the position.
-- [ ] Test: removing the control from a live map removes the dot and stops the watch.
-- [ ] In the running app: dot with accuracy circle, the button re-centres, no arrow.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] Test: a position shows one dot containing a circle, with no rotation.
+- [x] Test: a second position moves the same dot.
+- [x] Test: nothing listens for device orientation.
+- [x] Test: "Go to my location" centres the map on the position.
+- [x] Test: removing the control from a live map removes the dot and stops the watch.
+- [x] In the running app: dot with accuracy circle, the button re-centres, no arrow.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Tests: `app/src/frontend/map/__tests__/geolocation-control.test.tsx`, 5 tests. They failed against the
+  arrow code (it threw where the browser has no device-orientation support) and pass now. The clean-up test
+  was checked by deleting the line that removes the dot: it fails without it.
+- Whole suite: 60 tests pass (55 before). `npm run typecheck` passes. No lint errors in the changed files.
+- Running app, Chrome on Linux with location allowed: one blue dot with its accuracy circle; "Go to my
+  location" puts the dot at the centre of the map at the closest zoom; no rotation; not a keyboard stop; no
+  console errors.
+- Not checked: how the dot looks on an iPhone or an Android phone.
+- `geolocation-control.tsx` went from 443 to 322 lines.
