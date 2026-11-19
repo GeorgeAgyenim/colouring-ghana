@@ -83,9 +83,12 @@ class TileCache {
         return readFile(location.fname);
     }
 
+    /**
+     * Store a tile. A tile outside the cache's domain is not stored, and that is not an error.
+     */
     async put(im: Image, tileParams: TileParams): Promise<void> {
         if (!this.shouldUseCache(tileParams)) {
-            throw new Error(`Skip cache put ${formatParams(tileParams)}`);
+            return;
         }
         
         const location = this.cacheLocation(tileParams);
