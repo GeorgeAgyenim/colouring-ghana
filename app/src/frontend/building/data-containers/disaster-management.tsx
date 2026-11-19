@@ -7,6 +7,7 @@ import SelectDataEntry from '../data-components/select-data-entry';
 import withCopyEdit from '../data-container';
 import Verification from '../data-components/verification';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { useDisplayPreferences } from '../../displayPreferences-context';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import DataPickerDateEntry from '../data-components/date-picker-data-entry';
@@ -16,8 +17,7 @@ import DataPickerDateEntry from '../data-components/date-picker-data-entry';
 */
 const DisasterManagementView: React.FunctionComponent<CategoryViewProps> = (props) => {
     
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     const switchToIsSeverityMapStyle = (e) => {
         e.preventDefault();

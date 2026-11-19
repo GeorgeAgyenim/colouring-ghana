@@ -3,6 +3,7 @@ import { dataFields } from '../../config/data-fields-config';
 import NumericDataEntry from '../data-components/numeric-data-entry';
 import withCopyEdit from '../data-container';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import SelectDataEntry from '../data-components/select-data-entry';
@@ -13,8 +14,7 @@ import Verification from '../data-components/verification';
 */
 const RetrofitConditionView: React.FunctionComponent<CategoryViewProps> = (props) => {
 
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     const currentYear = new Date().getFullYear();
 

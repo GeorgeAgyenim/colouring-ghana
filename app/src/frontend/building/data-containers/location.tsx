@@ -7,6 +7,7 @@ import Verification from '../data-components/verification';
 import withCopyEdit from '../data-container';
 import { PatternDataEntry } from '../data-components/pattern-data-entry';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import SelectDataEntry from '../data-components/select-data-entry';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
@@ -21,8 +22,7 @@ let config: CCConfig = require('../../../cc-config.json')
 const LocationView: React.FunctionComponent<CategoryViewProps> = (props) => {
     const osm_url = "www.openstreetmap.org/way/"+props.building.ref_osm_id;
     
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>
