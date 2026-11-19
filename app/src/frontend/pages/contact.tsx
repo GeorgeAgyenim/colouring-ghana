@@ -30,7 +30,7 @@ const ContactPage = () => (
             </code></p>
             <hr />
             <p>
-                <img className="d-block mx-auto" src="images/logo-cc.jpg"></img>
+                <img className="d-block mx-auto" src={`${process.env.SUBDIRECTORY??''}/images/logo-cc.jpg`}></img>
             </p>
         </section>
     </article>

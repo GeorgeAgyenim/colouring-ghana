@@ -37,14 +37,14 @@ const Welcome = () => (
             Start Colouring Here!
         </Link>
         <div className="image-row">
-            <img className="cl-logo" src="images/logo-cc.jpg" alt="Colouring Cities Research Programme"></img>
-            <img className="knust-logo" src="images/knustlogo.png" alt="Kwame Nkrumah University of Science and Technology"></img>
+            <img className="cl-logo" src={`${process.env.SUBDIRECTORY??''}/images/logo-cc.jpg`} alt="Colouring Cities Research Programme"></img>
+            <img className="knust-logo" src={`${process.env.SUBDIRECTORY??''}/images/knustlogo.png`} alt="Kwame Nkrumah University of Science and Technology"></img>
         </div>
         <div className="image-row">
-            <img src="images/supporter-logos.png" alt="Colouring Cities collaborating organisations: The Bartlett UCL, Ordnance Survey, Historic England, Greater London Authority" />
+            <img src={`${process.env.SUBDIRECTORY??''}/images/supporter-logos.png`} alt="Colouring Cities collaborating organisations: The Bartlett UCL, Ordnance Survey, Historic England, Greater London Authority" />
         </div>
         <div className="image-row">
-            <img src="images/logo-loughborough.png" alt="Colouring Cities collaborating organisations: Loughborough University" />
+            <img src={`${process.env.SUBDIRECTORY??''}/images/logo-loughborough.png`} alt="Colouring Cities collaborating organisations: Loughborough University" />
         </div>
     </div>
 );
