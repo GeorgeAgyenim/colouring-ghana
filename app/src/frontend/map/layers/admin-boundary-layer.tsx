@@ -1,7 +1,11 @@
 import { GeoJsonObject } from 'geojson';
+import L from 'leaflet';
 import type { GeoJSON as LeafletGeoJSON, PathOptions } from 'leaflet';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { GeoJSON, useMap, useMapEvent } from 'react-leaflet';
+
+import './admin-boundary-layer.css';
 
 import { apiGet } from '../../apiHelpers';
 import { LayerEnablementState } from '../../config/map-config';
@@ -16,8 +20,32 @@ const REGION_LABEL_MAX_ZOOM = 11;
 // appear once zoomed in far enough that just a handful are in view.
 const DISTRICT_LABEL_MIN_ZOOM = 12;
 
+const FAILURE_BOX_CLASS = 'boundary-load-failures';
+
+/**
+ * The box over the map that holds the "could not load" messages. Every
+ * boundary layer on a map shares it, so two messages sit one above the other.
+ * It is a plain element in the map's container, not a map layer, so it stays
+ * put when the map is moved. It is made the first time a message is needed
+ * and stays with the map; while empty it takes up no room.
+ */
+function getFailureBox(map: L.Map): HTMLElement {
+    const mapContainer = map.getContainer();
+    let box = mapContainer.querySelector<HTMLElement>(`.${FAILURE_BOX_CLASS}`);
+    if (box === null) {
+        box = L.DomUtil.create('div', FAILURE_BOX_CLASS, mapContainer);
+        // Pressing "Try again" must not also click the map underneath, which
+        // would select a building. Same for dragging and scrolling on the box.
+        L.DomEvent.disableClickPropagation(box);
+        L.DomEvent.disableScrollPropagation(box);
+    }
+    return box;
+}
+
 interface AdminBoundaryLayerProps {
     enabled: LayerEnablementState;
+    /** How the failure message names the layer. */
+    layerName: 'region' | 'district';
     /** Path (under public/) of the GeoJSON file to draw. */
     geometryUrl: string;
     /** Feature property holding the name shown as a label. */
@@ -34,9 +62,14 @@ interface AdminBoundaryLayerProps {
  * state, so the multi-megabyte files are never downloaded for visitors who
  * never turn the layer on. A response that arrives while the layer is switched
  * off is kept too, so switching it back on draws it without a second download.
+ *
+ * If the download fails, or the answer is not boundary data, the layer says so
+ * in a message over the map with a "Try again" button, for as long as it is
+ * switched on. Switching it off and on again also tries again.
  */
 function AdminBoundaryLayer({
     enabled,
+    layerName,
     geometryUrl,
     nameProperty,
     labelClassName,
@@ -44,8 +77,13 @@ function AdminBoundaryLayer({
     style,
 }: AdminBoundaryLayerProps) {
     const [boundaryGeojson, setBoundaryGeojson] = useState<GeoJsonObject>(null);
+    const [failed, setFailed] = useState(false);
+    // true while a download is on its way; "Try again" says so instead of starting another
+    const [downloading, setDownloading] = useState(false);
     const requestedRef = useRef(false);
     const mountedRef = useRef(true);
+    // whether the layer is switched on now, read when a download fails
+    const enabledRef = useRef(enabled);
     const layerRef = useRef<LeafletGeoJSON>(null);
 
     const map = useMap();
@@ -59,24 +97,56 @@ function AdminBoundaryLayer({
         return () => { mountedRef.current = false; };
     }, []);
 
-    useEffect(() => {
-        if (enabled !== 'enabled' || requestedRef.current) {
+    // Starts the download unless one is on its way or the file is already
+    // here. Used when the layer is switched on and by the "Try again" button.
+    const download = useCallback(() => {
+        if (requestedRef.current) {
             return;
         }
         requestedRef.current = true;
+        // The message, if shown, stays until the outcome is known: the button
+        // keeps the keyboard focus, and a second failure needs no new message.
+        setDownloading(true);
 
         apiGet(geometryUrl)
             .then(data => {
+                // apiGet does not look at the HTTP status, so an error written
+                // as JSON arrives here as well. Only boundary data is kept.
+                if (data?.type !== 'FeatureCollection' || !Array.isArray(data.features)) {
+                    throw new Error('The answer is not a GeoJSON feature collection');
+                }
                 if (mountedRef.current) {
                     setBoundaryGeojson(data as GeoJsonObject);
+                    setFailed(false);
+                    setDownloading(false);
                 }
             })
             .catch(err => {
-                // Allow a retry on the next enable rather than staying blank for good.
+                // Allow another try rather than staying blank for good.
                 requestedRef.current = false;
                 console.error(`Failed to load boundary layer ${geometryUrl}`, err);
+                if (mountedRef.current) {
+                    setDownloading(false);
+                    // A failure while the layer is switched off is not shown:
+                    // switching it on tries again anyway.
+                    if (enabledRef.current === 'enabled') {
+                        setFailed(true);
+                    }
+                }
             });
-    }, [enabled, geometryUrl]);
+    }, [geometryUrl]);
+
+    useEffect(() => {
+        enabledRef.current = enabled;
+        if (enabled === 'enabled') {
+            download();
+        } else {
+            // A failure belongs to the switch-on it happened in. Forgetting it
+            // when the layer is switched off means the old message is not put
+            // back on the map, and announced again, at the next switch-on.
+            setFailed(false);
+        }
+    }, [enabled, download]);
 
     // Permanent tooltips auto-open whenever their layer is added to the map,
     // so re-sync them with the zoom rule after every render that could
@@ -91,7 +161,28 @@ function AdminBoundaryLayer({
         });
     }, [enabled, boundaryGeojson, showLabels]);
 
-    if (enabled !== 'enabled' || boundaryGeojson === null) {
+    if (enabled !== 'enabled') {
+        return null;
+    }
+
+    if (failed) {
+        return ReactDOM.createPortal(
+            <div className="boundary-load-failure alert alert-warning" role="alert">
+                Could not load the {layerName} boundaries. Check your connection.
+                <button
+                    className="btn btn-sm btn-outline-dark"
+                    type="button"
+                    aria-disabled={downloading}
+                    onClick={download}
+                >
+                    {downloading ? 'Trying again…' : 'Try again'}
+                </button>
+            </div>,
+            getFailureBox(map)
+        );
+    }
+
+    if (boundaryGeojson === null) {
         return null;
     }
 
@@ -120,6 +211,7 @@ export function RegionBoundaryLayer(): JSX.Element {
     return (
         <AdminBoundaryLayer
             enabled={region}
+            layerName="region"
             geometryUrl="/geometries/Gh_adm_bnd_L1.geojson"
             nameProperty="ADM1_EN"
             labelClassName="region-label"
@@ -134,6 +226,7 @@ export function DistrictBoundaryLayer(): JSX.Element {
     return (
         <AdminBoundaryLayer
             enabled={district}
+            layerName="district"
             geometryUrl="/geometries/Gh_adm_bnd_L2.geojson"
             nameProperty="labels"
             labelClassName="district-label"
