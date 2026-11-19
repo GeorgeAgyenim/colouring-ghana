@@ -1,4 +1,5 @@
 import db from '../../db';
+import { logErrorSafely } from '../logError';
 
 async function getLeaders(number_limit: number, time_limit: number) {
     // Hard constraint on number of users returned
@@ -35,7 +36,7 @@ async function getLeaders(number_limit: number, time_limit: number) {
             return {username: d.username, number_edits: Number(d.number_edits)};
         })
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get leaderboard:', error);
         return [];
     }
 }

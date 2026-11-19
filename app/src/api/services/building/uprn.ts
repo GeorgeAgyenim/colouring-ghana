@@ -1,4 +1,5 @@
 import db from '../../../db';
+import { logErrorSafely } from '../../logError';
 
 export async function getBuildingUPRNsById(id: number) {
     try {
@@ -7,7 +8,7 @@ export async function getBuildingUPRNsById(id: number) {
             [id]
         );
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building UPRNs:', error);
         return undefined;
     }
 }

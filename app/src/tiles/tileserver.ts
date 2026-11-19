@@ -6,6 +6,7 @@
 import express from 'express';
 
 import asyncController from '../api/routes/asyncController';
+import { logErrorSafely } from '../api/logError';
 import { strictParseInt } from '../parse';
 
 import { allTilesets, renderTile } from './rendererDefinition';
@@ -16,7 +17,7 @@ const handleTileRequest = asyncController(async function (req: express.Request, 
         var tileParams = parseTileParams(req.params);
         var dataParams = req.query;
     } catch(err) {
-        console.error(err);
+        logErrorSafely('Invalid tile request:', err);
         return res.status(400).send({error: err.message});
     }
     
@@ -25,7 +26,7 @@ const handleTileRequest = asyncController(async function (req: express.Request, 
         res.writeHead(200, { 'Content-Type': 'image/png' });
         res.end(im);
     } catch(err) {
-        console.error(err);
+        logErrorSafely('Failed to render tile:', err);
         res.status(500).send({ error: err });
     }
 });

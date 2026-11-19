@@ -12,6 +12,7 @@ import {
     getUserVerifiedAttributes
 } from './api/services/building/base';
 import { getUserById } from './api/services/user';
+import { logErrorSafely } from './api/logError';
 import { App } from './frontend/app';
 import { parseBuildingURL } from './parse';
 import asyncController from './api/routes/asyncController';
@@ -64,7 +65,7 @@ const frontendRoute = asyncController(async (req: express.Request, res: express.
         data.latestRevisionId = latestRevisionId;
         renderHTML(context, data, req, res);
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to load data for page:', error);
         data.user = undefined;
         data.building = undefined;
         data.user_verified = {}

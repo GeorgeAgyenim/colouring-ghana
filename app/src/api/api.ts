@@ -5,6 +5,7 @@ import autofillController from './controllers/autofillController';
 import * as editHistoryController from './controllers/editHistoryController';
 import { ApiParamError, ApiUserError } from './errors/api'; 
 import { DatabaseError } from './errors/general';
+import { logErrorSafely } from './logError';
 import buildingsRouter from './routes/buildingsRouter';
 import extractsRouter from './routes/extractsRouter';
 import leaderboardRouter from './routes/leaderboardRouter';
@@ -44,7 +45,7 @@ server.post('/logout', function (req, res) {
     logout(req.session).then(() => {
         res.send({ success: true });
     }).catch(err => {
-        console.error(err);
+        logErrorSafely('Failed to end session:', err);
         res.send({ error: 'Failed to end session'});
     });
 });
@@ -118,8 +119,14 @@ server.use((err: any, req: express.Request, res: express.Response, next: express
             return res.status(400).send({ error: errorMessage });
         }
         
+        // body-parser could not read the request body as JSON.
+        // Its error carries the whole body, so it is answered and not logged
+        if(err.type === 'entity.parse.failed') {
+            return res.status(400).send({ error: 'Request body is not valid JSON' });
+        }
+
         // we need to log the error only if it's not an api user error
-        console.log('Global error handler: ', err);
+        logErrorSafely('Global error handler:', err);
         
         if(err instanceof DatabaseError){
             res.status(500).send({ error: 'Database error' });

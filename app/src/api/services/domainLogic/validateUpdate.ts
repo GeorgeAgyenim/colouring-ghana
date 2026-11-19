@@ -24,7 +24,8 @@ function canEdit(key: string, allowDerived: boolean = false) {
 
 export function validateFieldChange(field: string, value: any, isExternal: boolean = true) {
     if(!isDefined(field)) {
-        console.log('Field does not exist', field);
+        // the name is not logged: it is whatever the request sent
+        console.log('Field does not exist');
         throw new InvalidFieldError('Field does not exist', field);
     }
     

@@ -76,8 +76,6 @@ export async function updateBuildingData(
     const columnConfig = Object.entries(forwardPatch).map(([key]) => columnConfigLookup[key]);
     const sets = db.$config.pgp.helpers.sets(forwardPatch, columnConfig);
 
-    console.log('Setting', buildingId, sets);
-
     try {
         const buildingRow: BaseBuilding =  await (t || db).one(
             `UPDATE

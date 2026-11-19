@@ -19,7 +19,8 @@ export function parseJsonOrDefault(jsonString: string) {
     try {
         return JSON.parse(jsonString);
     } catch(error) {
-        console.error(error);
+        // the error is not logged: its message can repeat part of the text, which may come from a person
+        console.error('Could not read text as JSON');
         return null;
     }
 }

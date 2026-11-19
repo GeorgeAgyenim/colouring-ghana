@@ -1,3 +1,4 @@
+import { logErrorSafely } from '../../api/logError';
 import { TileCache } from "../tileCache";
 import { RendererFunction, Tile, TileParams } from "../types";
 
@@ -11,7 +12,7 @@ async function getTileWithCaching(tileParams: TileParams, dataParams: any, tileC
         try {
             await tileCache.put(im, tileParams);
         } catch (err) {
-            console.error(err);
+            logErrorSafely('Failed to cache tile:', err);
         }
         return im;
     }

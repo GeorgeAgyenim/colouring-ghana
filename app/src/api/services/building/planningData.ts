@@ -1,4 +1,5 @@
 import db from '../../../db';
+import { logErrorSafely } from '../../logError';
 
 export async function getBuildingPlanningDataById(id: number) {
     try {
@@ -10,7 +11,7 @@ export async function getBuildingPlanningDataById(id: number) {
             [id]
         );
     } catch(error) {
-        console.error(error);
+        logErrorSafely('Failed to get building planning data:', error);
         return undefined;
     }
 }
