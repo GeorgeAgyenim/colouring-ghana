@@ -1,6 +1,6 @@
 # Pages still name London and its partners
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: none
@@ -41,9 +41,33 @@ server the site is hosted with). List any other visitor-facing London text found
 
 ## Acceptance criteria
 
-- [ ] Test: the log-in and sign-up pages show KNUST, Colouring Cities and Loughborough, and nothing from London.
-- [ ] Test: the page the server sends has `og:url` `https://ngci.encs.concordia.ca/colouringghana`, an
+- [x] Test: the log-in and sign-up pages show KNUST, Colouring Cities and Loughborough, and nothing from London.
+- [x] Test: the page the server sends has `og:url` `https://ngci.encs.concordia.ca/colouringghana`, an
       absolute `og:image` under that address, and a description without "London", "Bartlett" or "UCL".
-- [ ] The manifest's `name` and `short_name` are "Colouring Ghana".
-- [ ] In the running app: the log-in page shows the three partners' logos, all loading.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] The manifest's `name` and `short_name` are "Colouring Ghana".
+- [x] In the running app: the log-in page shows the three partners' logos, all loading.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Log-in and sign-up: KNUST, the Colouring Cities Research Programme and Loughborough University, with their
+  logos and links, from the one component both pages use. Logos scale down instead of overflowing a phone.
+- Link previews: `og:url` https://ngci.encs.concordia.ca/colouringghana (new `siteUrl` in
+  `app/src/cc-config.json`), `og:image` that address plus `/images/logo-cc.jpg` (2125×634), and a description
+  from the welcome page's words and the config. Values from the config are now HTML-escaped in the page shell.
+- Manifest: "Colouring Ghana".
+- Tests: `components/__tests__/supporter-logos.test.tsx`, `src/__tests__/link-preview.test.tsx` (the real
+  page route), `src/__tests__/web-manifest.test.ts`. They failed before (14 of 15; the title was already right).
+- Whole suite: 300 tests pass (285 before). `npm run typecheck` passes. No new lint errors.
+- Running app: the log-in page shows the three logos, all loading, linking to their sites; the page's
+  preview tags and the manifest are as above.
+- Limits: the preview image is wide (about 3.4:1) and services that crop to 1.91:1 may cut it; a 1200×630
+  Ghana image would be better. The Loughborough logo (139×50) is shown enlarged. The site address is from the
+  project's notes and was not checked live.
+- Other London text found, not changed here: privacy policy and contact page (issue 20); the historic map
+  layers (London 1890s tiles) and the age map's note on London street data; data-field help texts (Ordnance
+  Survey TOID and UPRN, Historic England, GLA zone descriptions, a London wiki link); the planning section
+  (Planning London Datahub, GLA and Historic England data and contacts); `public/openapi.yml` ("Colouring London
+  API", server colouring.london); the composite partners image on the welcome page, kept on purpose.

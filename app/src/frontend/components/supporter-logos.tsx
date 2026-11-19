@@ -1,3 +1,8 @@
+/**
+ * Colouring Ghana's partners, shown on the log-in and sign-up pages: the same organisations the Ghana team
+ * chose for the welcome page (pages/welcome.tsx).
+ * Ticket: docs/tickets/location-search/issues/18-london-leftovers.md
+ */
 import React, { Fragment } from 'react';
 
 import './supporter-logos.css';
@@ -7,33 +12,21 @@ const SupporterLogos = () => (
         <h2 className="h3">Lead Organisation and Project Partners</h2>
         <ul className="logo-list">
             <li>
-                <a href="https://www.ucl.ac.uk/bartlett/casa/">
-                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-casa.png`}
-                        alt="Centre for Advanced Spatial Analysis (CASA)" />
+                <a href="https://www.knust.edu.gh/">
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/knustlogo.png`}
+                        alt="Kwame Nkrumah University of Science and Technology" />
                 </a>
             </li>
             <li>
-                <a href="https://www.ucl.ac.uk/">
-                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-ucl.png`}
-                        alt="University College London" />
+                <a href="https://colouringcities.org/">
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-cc.jpg`}
+                        alt="Colouring Cities Research Programme" />
                 </a>
             </li>
             <li>
-                <a href="https://www.historicengland.org.uk/">
-                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-he.png`}
-                        alt="Historic England" />
-                </a>
-            </li>
-            <li>
-                <a href="https://www.ordnancesurvey.co.uk/">
-                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-os.png`}
-                        alt="Ordnance Survey" />
-                </a>
-            </li>
-            <li>
-                <a href="https://www.london.gov.uk/">
-                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-gla.png`}
-                        alt="Supported by the Mayor of London" />
+                <a href="https://www.lboro.ac.uk/">
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-loughborough.png`}
+                        alt="Loughborough University" />
                 </a>
             </li>
         </ul>

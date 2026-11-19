@@ -5,6 +5,7 @@ export interface CCConfig
     cityName: string;                           // City name (i.e. "Colouring {City Name}")
     institution: string;                        // Institution responsible for managing the local platform (i.e. "The University of...")
     projectBlurb: string;                       // Description used on homepage
+    siteUrl: string;                            // Public address of the site, without a trailing slash; link previews (og:url, og:image) are built from it
     
     githubURL: string;                          // URL of the project's GitHub repository
     manualURL: string;                          // Link to the project's page in the Open Manual (i.e. https://github.com/colouring-cities/manual/wiki/M3.-COLOURING-BRITAIN)
