@@ -17,6 +17,19 @@ function strictParseInt(value) {
 }
 
 /**
+ * Strip the query part and fragment from a URL, leaving the path
+ *
+ * The server hands the parsers the whole `req.url` (`/view/age-history/1?sc=2`), so they read the path alone.
+ * Ticket: docs/tickets/location-search/issues/14-building-pages-fail-on-the-server.md
+ *
+ * @param {String} url
+ * @returns {String} path without query part or fragment
+ */
+function pathOf(url) {
+    return url.split(/[?#]/, 1)[0];
+}
+
+/**
  * Parse building ID from URL
  *
  * @param {String} url
@@ -24,7 +37,7 @@ function strictParseInt(value) {
  */
 function parseBuildingURL(url) {
     const re = /\/(\d+)(\/history)?$/;
-    const matches = re.exec(url);
+    const matches = re.exec(pathOf(url));
 
     if (matches && matches.length >= 2) {
         return strictParseInt(matches[1]);
@@ -40,10 +53,11 @@ function parseBuildingURL(url) {
  */
 function parseCategoryURL(url) {
     const defaultCat = 'age';
-    if (url === '/') {
+    const path = pathOf(url);
+    if (path === '/') {
         return defaultCat;
     }
-    const matches = /^\/(view|edit|multi-edit)\/([^/.]+)/.exec(url);
+    const matches = /^\/(view|edit|multi-edit)\/([^/.]+)/.exec(path);
     const cat = (matches && matches.length >= 3) ? matches[2] : defaultCat;
     return cat;
 }

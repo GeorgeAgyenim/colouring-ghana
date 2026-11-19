@@ -8,6 +8,7 @@ import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import withCopyEdit from '../data-container';
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import DataEntry from '../data-components/data-entry';
 import InfoBox from '../../components/info-box';
 
@@ -25,8 +26,7 @@ const BreeamRatingOptions = [
 * Energy performance & systems view/edit section
 */
 const EnergyPerformanceView: React.FunctionComponent<CategoryViewProps> = (props) => {
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     const currentYear = new Date().getFullYear();
 

@@ -14,6 +14,7 @@ import DataEntry from '../data-components/data-entry';
 import InfoBox from '../../components/info-box';
 
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-data-entry';
 import PlanningDataOfficialDataEntry from '../data-components/planning-data-entry';
 import UserOpinionEntry from '../data-components/user-opinion-data-entry';
@@ -51,8 +52,7 @@ function isArchived(item) {
 * Planning & Conservation view/edit section
 */
 const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (props) => {
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
     
     const switchToExpectedApplicationMapStyle = (e) => {
         e.preventDefault();

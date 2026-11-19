@@ -82,7 +82,7 @@ function renderHTML(context, data, req, res) {
                 user={data.user}
                 building={data.building}
                 revisionId={data.latestRevisionId}
-                user_verified={data.userVerified}
+                user_verified={data.user_verified}
             />
         </StaticRouter>
     );

@@ -9,6 +9,7 @@ import withCopyEdit from '../data-container';
 import InfoBox from '../../components/info-box';
 
 import { CategoryViewProps } from './category-view-props';
+import { useSubCategory } from '../../hooks/use-sub-category';
 import { DataEntryGroup } from '../data-components/data-entry-group';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-data-entry';
@@ -19,8 +20,7 @@ import { LogicalDataEntry } from '../data-components/logical-data-entry/logical-
 */
 const WaterGreenInfrastructureView: React.FunctionComponent<CategoryViewProps> = (props) => {
     
-    const queryParameters = new URLSearchParams(window.location.search);
-    const subcat = queryParameters.get("sc");
+    const subcat = useSubCategory();
 
     return (
         <Fragment>

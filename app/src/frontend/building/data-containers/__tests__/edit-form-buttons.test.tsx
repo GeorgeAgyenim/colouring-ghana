@@ -3,7 +3,7 @@
  * A button with no type counts as a submit button in HTML. Until the page's script has loaded, pressing
  * one inside the edit form would send the form; so every other button in the form says type="button".
  * Every building category is rendered with its real fields, to the HTML the server would send.
- * (The category fields read `window` while they render, so the test runs where `window` exists.)
+ * (The test reads the HTML back through `document`, so it runs where `document` exists.)
  * Ticket: docs/tickets/location-search/issues/10-forms-submitted-before-the-script-loads.md
  */
 import React from 'react';
