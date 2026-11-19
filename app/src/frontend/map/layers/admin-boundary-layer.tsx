@@ -32,7 +32,8 @@ interface AdminBoundaryLayerProps {
  *
  * The GeoJSON is fetched the first time the layer is enabled and then kept in
  * state, so the multi-megabyte files are never downloaded for visitors who
- * never turn the layer on.
+ * never turn the layer on. A response that arrives while the layer is switched
+ * off is kept too, so switching it back on draws it without a second download.
  */
 function AdminBoundaryLayer({
     enabled,
@@ -44,11 +45,19 @@ function AdminBoundaryLayer({
 }: AdminBoundaryLayerProps) {
     const [boundaryGeojson, setBoundaryGeojson] = useState<GeoJsonObject>(null);
     const requestedRef = useRef(false);
+    const mountedRef = useRef(true);
     const layerRef = useRef<LeafletGeoJSON>(null);
 
     const map = useMap();
     const [showLabels, setShowLabels] = useState(showLabelsAtZoom(map.getZoom()));
     useMapEvent('zoomend', () => setShowLabels(showLabelsAtZoom(map.getZoom())));
+
+    // Only removal of the component makes a late response unwanted; switching
+    // the layer off does not.
+    useEffect(() => {
+        mountedRef.current = true;
+        return () => { mountedRef.current = false; };
+    }, []);
 
     useEffect(() => {
         if (enabled !== 'enabled' || requestedRef.current) {
@@ -56,10 +65,9 @@ function AdminBoundaryLayer({
         }
         requestedRef.current = true;
 
-        let unmounted = false;
         apiGet(geometryUrl)
             .then(data => {
-                if (!unmounted) {
+                if (mountedRef.current) {
                     setBoundaryGeojson(data as GeoJsonObject);
                 }
             })
@@ -68,8 +76,6 @@ function AdminBoundaryLayer({
                 requestedRef.current = false;
                 console.error(`Failed to load boundary layer ${geometryUrl}`, err);
             });
-
-        return () => { unmounted = true; };
     }, [enabled, geometryUrl]);
 
     // Permanent tooltips auto-open whenever their layer is added to the map,
