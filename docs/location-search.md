@@ -51,6 +51,13 @@ A per-building GhanaPost GPS digital address (format `AA-NNN-NNNN`, e.g. `GA-183
 Editable and verifiable in the building sidebar (Location → Individual Building/Property
 Address). Indexed into `search_locations` as class `gps`.
 
+The format is checked twice: by the browser as the person types, and by the API before
+anything is saved (`app/src/api/config/fieldSchemaConfig.ts`). Both use the one definition,
+`gpsAddressPattern` in `app/src/helpers.ts`. The API refuses a value that does not match with
+HTTP 400 and the message "Invalid format of data sent", which the edit form shows; clearing the
+field (null) is allowed. The refused value is not written to the server log. Addresses saved
+before this check existed are left as they are.
+
 ### `search_locations.building_id` (migration 063)
 Nullable FK to `buildings`. `NULL` for `town` rows (from GeoNames) and `street` rows
 (aggregates over many buildings); **set** for `name`/`gps` rows so the real-time sync can

@@ -36,7 +36,8 @@ export function validateFieldChange(field: string, value: any, isExternal: boole
     
     if(field in compiledSchemas) {
         if(!compiledSchemas[field](value)) {
-            console.log('Invalid format of data sent', field, value);
+            // the value is not logged: it is what a contributor typed, and can be a location
+            console.log('Invalid format of data sent', field);
             throw new FieldTypeError('Invalid format of data sent', field);
         }
     }
