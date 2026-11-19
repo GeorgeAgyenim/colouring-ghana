@@ -17,7 +17,7 @@ async function createUser(user) {
         validatePassword(user.password);
     } catch(err) {
         if (err instanceof ValidationError) {
-            throw { error: err.message };
+            return { error: err.message };
         } else throw err;
     }
 

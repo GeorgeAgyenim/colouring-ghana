@@ -36,7 +36,8 @@ server.post('/login', function (req, res) {
         }
         res.send(user);
     }).catch(function (error) {
-        res.send(error);
+        logErrorSafely('Error logging in:', error);
+        res.status(500).send({ error: 'Database error' });
     });
 });
 
@@ -60,7 +61,8 @@ server.post('/api/key', function (req, res) {
     getNewUserAPIKey(req.session.user_id).then(function (apiKey) {
         res.send(apiKey);
     }).catch(function (error) {
-        res.send(error);
+        logErrorSafely('Error sending new API key:', error);
+        res.status(500).send({ error: 'Server error' });
     });
 });
 
@@ -97,13 +99,18 @@ server.get('/search', function (req, res) {
             })
         });
     }).catch(function (error) {
-        res.send(error);
+        logErrorSafely('Error answering location search:', error);
+        res.status(500).send({ error: 'Server error' });
     });
 });
 
 server.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (res.headersSent) {
-        return next(err);
+        // the answer has started and cannot be replaced, so the connection is closed.
+        // Express's own handler would do the same, but it also prints the error's message
+        logErrorSafely('Global error handler, after the answer started:', err);
+        req.socket?.destroy();
+        return;
     }
 
     if (err != undefined) {
