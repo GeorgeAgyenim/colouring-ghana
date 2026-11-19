@@ -8,31 +8,31 @@ const SupporterLogos = () => (
         <ul className="logo-list">
             <li>
                 <a href="https://www.ucl.ac.uk/bartlett/casa/">
-                    <img src="images/logo-casa.png"
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-casa.png`}
                         alt="Centre for Advanced Spatial Analysis (CASA)" />
                 </a>
             </li>
             <li>
                 <a href="https://www.ucl.ac.uk/">
-                    <img src="images/logo-ucl.png"
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-ucl.png`}
                         alt="University College London" />
                 </a>
             </li>
             <li>
                 <a href="https://www.historicengland.org.uk/">
-                    <img src="images/logo-he.png"
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-he.png`}
                         alt="Historic England" />
                 </a>
             </li>
             <li>
                 <a href="https://www.ordnancesurvey.co.uk/">
-                    <img src="images/logo-os.png"
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-os.png`}
                         alt="Ordnance Survey" />
                 </a>
             </li>
             <li>
                 <a href="https://www.london.gov.uk/">
-                    <img src="images/logo-gla.png"
+                    <img src={`${process.env.SUBDIRECTORY??''}/images/logo-gla.png`}
                         alt="Supported by the Mayor of London" />
                 </a>
             </li>

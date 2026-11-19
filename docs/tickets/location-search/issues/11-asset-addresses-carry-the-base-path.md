@@ -1,6 +1,6 @@
 # Scripts, styles, icons and images carry the base path
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: none; decision record docs/decisions/0003 (local)
@@ -42,14 +42,43 @@ question for the product owner).
 
 ## Acceptance criteria
 
-- [ ] Built with `SUBDIRECTORY=/colouringghana`: every address in `build/assets.json` starts with
+- [x] Built with `SUBDIRECTORY=/colouringghana`: every address in `build/assets.json` starts with
       `/colouringghana/static/`; the built script loads its later parts from `/colouringghana/`; the page
       the built server sends has the script, stylesheet, manifest, icon and font addresses all starting
       with `/colouringghana/`.
-- [ ] Built with `SUBDIRECTORY` unset: script and stylesheet addresses are unchanged from today
+- [x] Built with `SUBDIRECTORY` unset: script and stylesheet addresses are unchanged from today
       (`/static/…`); manifest, icons and images start with `/`.
-- [ ] Test: the welcome, contact, log-in and sign-up pages render their images with the base path when it
+- [x] Test: the welcome, contact, log-in and sign-up pages render their images with the base path when it
       is set, and from `/` when it is not.
-- [ ] In the running app (development server, site at the root): images show on `/`, `/contact.html`,
+- [x] In the running app (development server, site at the root): images show on `/`, `/contact.html`,
       `/login.html` and `/sign-up.html`; on a building page the manifest and icon requests succeed.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Change: production builds set the public path to `SUBDIRECTORY` plus `/` (`app/razzle.config.js`), for the
+  browser and server builds. The page shell's manifest and icon links carry the base path, and there is now an
+  icon link for the browser tab. The images carry the base path. The manifest's `start_url` is `./`.
+- Corrections to the ticket: there were ten `images/…` addresses, not eleven. `build/assets.json` also lists
+  the copied public files, which never were under `/static/`; with the base path set they start
+  `/colouringghana/` (for example `/colouringghana/favicon.ico`), which is right.
+- A slash at the end of `SUBDIRECTORY` is dropped for the public path only, so `/` can never become `//`
+  (which a browser reads as another site). The rest of the app uses `SUBDIRECTORY` as given; set it without
+  one. Razzle's own `PUBLIC_PATH` setting is replaced by this in production builds; nothing set it.
+- Built with `SUBDIRECTORY=/colouringghana`: every script and stylesheet in `build/assets.json` starts
+  `/colouringghana/static/`; the script loads its later parts from `/colouringghana/`; the page the built
+  server sends links script, stylesheet, manifest, icons, fonts and images under `/colouringghana/`. The same
+  files asked for without the prefix (as the proxy passes them on) answered 200.
+- Built with it unset: `/static/…` as before, the script's own path is `/`, and `colouringghana` appears
+  nowhere in the build.
+- Tests: `pages/__tests__/image-addresses.test.tsx` (8), every image on the welcome, contact, log-in and
+  sign-up pages, with and without the base path. All 8 failed before the change.
+- Running app (development server, site at the root): all images load on `/`, `/contact.html`, `/login.html`
+  and `/sign-up.html`; the manifest, both icons and the favicon answer 200 on every page, building pages
+  included.
+- Whole suite: 98 tests pass (90 before). `npm run typecheck` passes. No new lint errors.
+- Not checked: behind the partners' proxy. Not changed: the preview image and page address point at
+  colouring.london (`frontendRoute.tsx`); `public/404.html` and `500.html` link `/about` at the root;
+  `site.webmanifest` still names "Colouring London".
