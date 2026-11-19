@@ -7,7 +7,8 @@ Feature doc: none
 Requirements: none recorded on this branch
 Branch: `fix/location-search-20-privacy-and-contact` off `feature/location-search`
 Source: product owner's decision, 19 November 2026: "KNUST" is responsible for the data; "The Geomatic
-Engineering Department is responsible". No contact email was given.
+Engineering Department is responsible"; contact email confirmed by the product owner the same day:
+geomaticeng@knust.edu.gh.
 
 ## Problem
 
@@ -29,8 +30,8 @@ Privacy policy (keep its structure and everything that is still true of this cod
 - Law and regulator: Ghana's Data Protection Act, 2012 (Act 843), and the Data Protection Commission, Ghana
   (link to its website), in place of the GDPR and the UK Information Commissioner's Office. Keep the list of
   rights, introduced as rights under data protection law, without naming the GDPR.
-- Contact: the department, with a link to its website (https://geomatics.knust.edu.gh/). No email address
-  until the product owner confirms one; the page must still read as complete.
+- Contact: the department, by email (geomaticeng@knust.edu.gh, as a `mailto:` link) and with a link to its
+  website (https://geomatics.knust.edu.gh/).
 - Email: "an email delivery service" instead of Mailgun (the code sends through whichever mail server is
   configured).
 - Storage: replace the placeholder with where the data is: in a database on a server at Concordia University,
@@ -53,6 +54,7 @@ variables are documented.
 
 - [ ] Test: the privacy policy and contact page, as the server sends them, contain none of "Turing", "UCL",
       "CASA", "London", "Information Commissioner", "Mailgun", "Ordnance Survey", "Privacy statement goes here";
-      they name the Department of Geomatic Engineering and KNUST, and link https://geomatics.knust.edu.gh/.
+      they name the Department of Geomatic Engineering and KNUST, link https://geomatics.knust.edu.gh/, and give
+      `mailto:geomaticeng@knust.edu.gh`.
 - [ ] Test: a password-reset email is sent from `MAIL_FROM` when set, and from `MAIL_SERVER_USER` when not.
 - [ ] `npm test` and `npm run typecheck` pass.
