@@ -84,9 +84,13 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
 
 1. User submits a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
-   (deliberately distinct from the geolocation control's blue location dot).
+   (orange, deliberately distinct from the geolocation control's blue location dot). The pin
+   is an outline with a hole in its centre and nothing drawn behind it, so the map under the
+   place stays visible. It is 32 × 51 px with a mouse and 40 × 64 px on touch screens
+   (`(pointer: coarse)`), where it must be easy to tap. Design source:
+   `docs/images/search-pins/` (orange for results, red for the hovered one).
 3. A **results dropdown** lists the region-qualified labels. **Hovering** a row pops out its
-   pin (larger, darker, raised); **clicking** flies the map to that place at its stored zoom
+   pin (larger, red, raised); **clicking** flies the map to that place at its stored zoom
    and clears the other pins.
 
 Spelling tolerance comes from two layers: GeoNames `alternatenames` are indexed (known
