@@ -6,7 +6,7 @@
     
     "githubURL": "https://github.com/colouring-cities/colouring-core",
     "manualURL": "https://github.com/colouring-cities/manual/wiki/COLOURING-BRITAIN",
-    "privacyStatement": "{Privacy statement goes here}",
+    "privacyStatement": "Your personal data is stored in a database on a server at Concordia University, Montréal, Canada, which hosts this website (ngci.encs.concordia.ca). Only the project team can access the database.",
 
     "initialMapPosition": [ 6.67137, -1.53958 ],
     "initialZoomLevel": 16,

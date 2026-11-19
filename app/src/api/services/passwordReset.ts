@@ -5,7 +5,7 @@ import url, { URL } from 'url';
 import db from '../../db';
 import { validatePassword } from '../validation';
 
-import { transporter } from './email';
+import { senderAddress, transporter } from './email';
 import * as userService from './user';
 
 import { CCConfig } from '../../cc-config';
@@ -65,7 +65,7 @@ function getPasswordResetEmail(email: string, token: string, siteOrigin: string)
         text: messageBody,
         subject: `Reset your Colouring ${config.cityName} password`,
         to: email,
-        from: 'no-reply@colouring.london'
+        from: senderAddress()
     };
 }
 
@@ -126,6 +126,7 @@ async function updatePasswordForUser(userId: string, newPassword: string): Promi
 }
 
 export {
+    getPasswordResetEmail,
     sendPasswordResetToken,
     resetPassword,
     TokenVerificationError

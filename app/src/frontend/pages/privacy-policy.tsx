@@ -4,13 +4,21 @@ import { Link } from 'react-router-dom';
 import { CCConfig } from '../../cc-config';
 let config: CCConfig = require('../../cc-config.json')
 
+/*
+ * Who is responsible, the law, the regulator, the contact and where data is stored are Colouring Ghana's,
+ * not the London project's. Ticket: docs/tickets/location-search/issues/20-privacy-policy-and-contact-page.md
+ */
+const departmentWebsite = 'https://geomatics.knust.edu.gh/';
+const departmentEmail = 'geomaticeng@knust.edu.gh';
+const dataProtectionCommissionWebsite = 'https://www.dataprotection.org.gh/';
+
 const PrivacyPolicyPage: React.SFC<any> = () => (
     <article>
         <section className='main-col'>
             <h1 className='h1'>Privacy Policy & Platform Security</ h1>
             <h2 className='h2'>Colouring {config.cityName} Privacy Policy with respect to personal data</h2>
             <p>
-                This privacy policy explains how Colouring {config.cityName} uses the personal data we collect from you when you use our website. Colouring {config.cityName} is a research project initially developed by the Bartlett Centre for Advanced Spatial Analysis (CASA) at UCL, and now run at The Alan Turing Institute. Colouring {config.cityName} is registered for data protection purposes with The Alan Turing Institute data protection office.
+                This privacy policy explains how Colouring {config.cityName} uses the personal data we collect from you when you use our website. Colouring {config.cityName} is a research project run by the Department of Geomatic Engineering at {config.institution} (KNUST), Kumasi, Ghana.
             </p>
 
             <h2 className='h2'>What data do we collect?</h2>
@@ -31,12 +39,12 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
                 Colouring {config.cityName} uses your personal data to enable you to login to access and contribute to the Colouring {config.cityName} project and to provide a personalised user experience when you are logged in. We will not share your personal data (such as your email address) with any other parties or use your personal data for any purposes other than the Colouring {config.cityName} project.
             </p>
             <p>
-                If you request a password reset, an automated email will be sent using <a href="https://www.mailgun.com/">Mailgun</a>, who process the email in order to deliver it to your email address. Mailgun retain personal data they process on behalf of Colouring {config.cityName} for as long as is needed to provide email services. Mailgun will retain the personal information as necessary to comply with their legal obligations, resolve disputes, and enforce their agreements.
+                If you request a password reset, an automated email will be sent using an email delivery service, which processes the email in order to deliver it to your email address. The email delivery service retains personal data it processes on behalf of Colouring {config.cityName} for as long as is needed to provide email services. It will retain the personal information as necessary to comply with its legal obligations, resolve disputes, and enforce its agreements.
             </p>
 
             <h2 className='h2'>What is the legal basis for processing your data?</h2>
             <p>
-                Data protection laws require us to meet certain conditions before we are allowed to use your data in the manner described in this notice, including having a ‘legal basis’ for the processing. Colouring {config.cityName}, as a research project, is processing your personal data in pursuance of its legitimate interests.
+                Data protection laws, including Ghana’s Data Protection Act, 2012 (Act 843), require us to meet certain conditions before we are allowed to use your data in the manner described in this notice, including having a ‘legal basis’ for the processing. Colouring {config.cityName}, as a research project, is processing your personal data in pursuance of its legitimate interests.
             </p>
 
             <h2 className='h2'>How do we store your data?</h2>
@@ -51,7 +59,7 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
 
             <h2 className='h2'>What are your data protection rights?</h2>
             <p>
-                Under the General Data Protection Regulation, you have certain individual rights in relation to the personal information we hold about you. For the purposes of research where such individual rights would seriously impair research outcomes, such rights are limited. However, subject to certain conditions, you have the following rights in relation to your personal data:
+                Under data protection law, you have certain individual rights in relation to the personal information we hold about you. For the purposes of research where such individual rights would seriously impair research outcomes, such rights are limited. However, subject to certain conditions, you have the following rights in relation to your personal data:
             </p>
 
             <ul>
@@ -90,7 +98,7 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
             </ul>
 
             <p>
-                It is important to understand that the extent to which these rights apply to research will vary and that in some circumstances your rights may be restricted. If you notify us (using the contact details set out below) that you wish to exercise any of the above rights and it is considered necessary to refuse to comply with any of your individual rights, you will be informed of the decision within one month and you also have the right to complain about our decision to the Information Commissioner’s Office.
+                It is important to understand that the extent to which these rights apply to research will vary and that in some circumstances your rights may be restricted. If you notify us (using the contact details set out below) that you wish to exercise any of the above rights and it is considered necessary to refuse to comply with any of your individual rights, you will be informed of the decision and the reasons for it, and you also have the right to complain about our decision to the Data Protection Commission, Ghana.
             </p>
 
             <p>
@@ -99,16 +107,16 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
 
             <h2 className='h2'>Changes to this privacy policy</h2>
             <p>
-                Changes to this privacy policy will be notified via the Colouring {config.cityName} website. This privacy policy was last updated on 4th November 2021. Previous update 2nd October 2019 following change ownership from UCL to The Alan Turing Institute.
+                Changes to this privacy policy will be notified via the Colouring {config.cityName} website. This privacy policy was last updated on 19 November 2026, when it was adapted for Colouring {config.cityName}.
             </p>
 
             <h2 className='h2'>Who do I contact with questions?</h2>
             <p>
-                If you wish to complain about our use of your personal data or exercise any of your rights, please contact the Turing's Data Protection Officer: <a href="mailto:dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a> or Data Protection Officer, The Alan Turing Institute, 96 Euston Road, London NW1 2DB.
+                If you wish to complain about our use of your personal data or exercise any of your rights, please contact the Department of Geomatic Engineering, {config.institution}, by email at <a href={`mailto:${departmentEmail}`}>{departmentEmail}</a> or through its website at <a href={departmentWebsite}>{departmentWebsite}</a>.
             </p>
 
             <p>
-                If we are unable to adequately address any concerns you may have about the way in which we use your data, you have the right to lodge a formal complaint with the UK Information Commissioner's Office. Full details may be accessed on the complaints section of the Information Commissioner's Office website.
+                If we are unable to adequately address any concerns you may have about the way in which we use your data, you have the right to lodge a formal complaint with the Data Protection Commission, Ghana. Full details may be accessed on the <a href={dataProtectionCommissionWebsite}>Data Protection Commission website</a>.
             </p>
 
             <h2 className='h2'>Further information on privacy and security</h2>
@@ -121,7 +129,7 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
             </p>
 
             <p>
-                Progress on Colouring {config.cityName} features specifically designed to address ethical issues, including these relating to security and privacy, can be tracked and commented on using our GitHub site, at <a href="https://github.com/colouring-cities/colouring-london/issues/687">#687</a>. If you have any immediate concerns regarding security or privacy please contact Turing's data protection team at <a href="mailto:dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a>.
+                Progress on Colouring Cities features specifically designed to address ethical issues, including these relating to security and privacy, can be tracked and commented on in the issues of the Colouring Cities code repository on GitHub, at <a href={`${config.githubURL}/issues`}>{`${config.githubURL}/issues`}</a>. If you have any immediate concerns regarding security or privacy please contact the Department of Geomatic Engineering by email at <a href={`mailto:${departmentEmail}`}>{departmentEmail}</a> or through its website at <a href={departmentWebsite}>{departmentWebsite}</a>.
             </p>
 
             <div className="buttons-container">

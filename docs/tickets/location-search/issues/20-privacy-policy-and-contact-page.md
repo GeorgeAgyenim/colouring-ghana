@@ -1,6 +1,6 @@
 # The privacy policy and contact page name the London project
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: none
@@ -52,9 +52,33 @@ variables are documented.
 
 ## Acceptance criteria
 
-- [ ] Test: the privacy policy and contact page, as the server sends them, contain none of "Turing", "UCL",
+- [x] Test: the privacy policy and contact page, as the server sends them, contain none of "Turing", "UCL",
       "CASA", "London", "Information Commissioner", "Mailgun", "Ordnance Survey", "Privacy statement goes here";
       they name the Department of Geomatic Engineering and KNUST, link https://geomatics.knust.edu.gh/, and give
       `mailto:geomaticeng@knust.edu.gh`.
-- [ ] Test: a password-reset email is sent from `MAIL_FROM` when set, and from `MAIL_SERVER_USER` when not.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] Test: a password-reset email is sent from `MAIL_FROM` when set, and from `MAIL_SERVER_USER` when not.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Privacy policy: run by the Department of Geomatic Engineering, KNUST, Kumasi; Ghana's Data Protection Act,
+  2012 (Act 843) and the Data Protection Commission, Ghana (linked) in place of the GDPR and the UK
+  Information Commissioner; contact by email (geomaticeng@knust.edu.gh) and the department's website;
+  "an email delivery service" in place of Mailgun; data stored on a server at Concordia University,
+  Montréal, Canada, which hosts the site; security issues tracked in the Colouring Cities code repository;
+  last updated 19 November 2026. The GDPR's one-month answer deadline was taken out: whether Act 843 sets the
+  same period was not checked. Everything else that is still true of the code is kept.
+- Contact page: run by the department as part of the Colouring Cities Research Programme; comments via the
+  GitHub discussions, enquiries to the department; map credit to Colouring Cities contributors and
+  OpenStreetMap contributors. "We are unable to answer individual queries" was taken out: it contradicted the
+  new enquiries contact.
+- Password-reset emails are sent from `MAIL_FROM`, or the mail server account when it is not set; if neither
+  is set, building the email fails with a message saying to set `MAIL_FROM`, rather than sending without a
+  sender. Documented in `onboarding-guide.md` and both `ecosystem.config` templates.
+- Tests: `pages/__tests__/privacy-and-contact-name-ghana.test.tsx` and
+  `api/services/__tests__/passwordReset.test.ts`. They failed before.
+- Whole suite: 313 tests pass (285 before). `npm run typecheck` passes. No new lint errors.
+- Running app: the contact page read in full; neither page contains any of the listed London names.
+- For a legal reviewer: the wording was adapted, not written by a lawyer.

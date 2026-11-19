@@ -22,6 +22,7 @@ module.exports = {
                 MAIL_SERVER_PORT: 587,
                 MAIL_SERVER_USER: "mail_username",
                 MAIL_SERVER_PASSWORD: "longrandompassword",
+                MAIL_FROM: "sender_address", // optional: address emails are sent from; defaults to MAIL_SERVER_USER
                 WEBAPP_ORIGIN: "https://beta.colouring.london",
                 EXTRACTS_DIRECTORY:"/path/to/extracts",
             }
