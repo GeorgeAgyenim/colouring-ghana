@@ -85,9 +85,11 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
 1. User types a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches. The box
    searches by itself once the person pauses typing for 300 ms, from 3 characters (shorter text
    matches almost anything: "a" finds buildings named "AB"); below 3 characters the list and pins
-   are cleared. Pressing Search or Enter searches straight away. Only the answer for the latest
+   are cleared. Pressing Search or Enter searches straight away, even below 3 characters, since
+   the person asked for it. Only the answer for the latest
    text is shown; an older answer that arrives late, or after Escape or picking a result, is dropped.
-   The current list stays up while the person types, until the new answer replaces it.
+   The current list stays up while the person types, until the new answer replaces it, so it
+   does not flicker on every keystroke; a failure message is removed as soon as they type.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
    (orange, deliberately distinct from the geolocation control's blue location dot). The pin
    is an outline with a hole in its centre and nothing drawn behind it, so the map under the

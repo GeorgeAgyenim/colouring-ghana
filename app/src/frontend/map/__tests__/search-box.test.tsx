@@ -49,6 +49,7 @@ describe('<SearchBox /> search as you type', () => {
         act(() => { ReactDOM.unmountComponentAtNode(container); });
         container.remove();
         jest.useRealTimers();
+        jest.restoreAllMocks();
     });
 
     function input(): HTMLInputElement {
@@ -73,8 +74,22 @@ describe('<SearchBox /> search as you type', () => {
         return Array.from(container.querySelectorAll('.search-result-label')).map(el => el.textContent);
     }
 
+    function pressEscape() {
+        act(() => { Simulate.keyDown(input(), { key: 'Escape' }); });
+    }
+
+    function searchButton(): HTMLButtonElement {
+        return container.querySelector('.search-btn') as HTMLButtonElement;
+    }
+
+    function wait(ms: number) {
+        act(() => { jest.advanceTimersByTime(ms); });
+    }
+
     it('shows results after the person pauses typing, without pressing Search', async () => {
         type('acc');
+        wait(PAUSE_MS - 1);
+        expect(apiGetMock).not.toHaveBeenCalled();
         await waitForPause();
 
         expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=acc');
@@ -91,6 +106,27 @@ describe('<SearchBox /> search as you type', () => {
 
         expect(apiGetMock).toHaveBeenCalledTimes(1);
         expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=kumasi');
+    });
+
+    it('waits for a pause after the last keystroke, not the first', async () => {
+        type('kum');
+        wait(200);
+        type('kuma');
+        wait(200);
+        expect(apiGetMock).not.toHaveBeenCalled();
+
+        await waitForPause();
+
+        expect(apiGetMock).toHaveBeenCalledTimes(1);
+        expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=kuma');
+    });
+
+    it('drops the waiting search when the text gets shorter than 3 characters before the pause', async () => {
+        type('acc');
+        type('ac');
+        await waitForPause();
+
+        expect(apiGetMock).not.toHaveBeenCalled();
     });
 
     it('sends no request below 3 characters and clears the list when the text gets that short', async () => {
@@ -123,14 +159,6 @@ describe('<SearchBox /> search as you type', () => {
         expect(listedLabels()).toEqual(['Kumasi, Ashanti']);
         expect(onResults).toHaveBeenLastCalledWith([place(2, 'Kumasi, Ashanti')]);
     });
-
-    function pressEscape() {
-        act(() => { Simulate.keyDown(input(), { key: 'Escape' }); });
-    }
-
-    function searchButton(): HTMLButtonElement {
-        return container.querySelector('.search-btn') as HTMLButtonElement;
-    }
 
     it('sends no request when the person presses Escape before the pause ends', async () => {
         type('acc');
@@ -167,5 +195,42 @@ describe('<SearchBox /> search as you type', () => {
 
         expect(apiGetMock).toHaveBeenCalledTimes(1);
         expect(listedLabels()).toEqual(['Accra, Greater Accra']);
+    });
+
+    it('hides an earlier failure as soon as the person types again', async () => {
+        apiGetMock.mockRejectedValueOnce(new Error('offline'));
+        jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+        type('acc');
+        await waitForPause();
+        expect(container.querySelector('[role="alert"]')).not.toBeNull();
+
+        type('accr');
+
+        expect(container.querySelector('[role="alert"]')).toBeNull();
+    });
+
+    it('drops the answer still on its way when the person picks a result', async () => {
+        let answer: (value: unknown) => void;
+        apiGetMock
+            .mockResolvedValueOnce({ results: [place(1, 'Accra, Greater Accra')] })
+            .mockReturnValueOnce(new Promise(resolve => { answer = resolve; }));
+
+        type('acc');
+        await waitForPause();
+        type('accr');
+        await waitForPause();
+        act(() => { Simulate.click(container.querySelector('.search-result')); });
+        await act(async () => { answer({ results: [place(4, 'Accra, Western')] }); });
+
+        expect(listedLabels()).toEqual([]);
+    });
+
+    it('sends no request when the box is removed before the pause ends', () => {
+        type('acc');
+        act(() => { ReactDOM.unmountComponentAtNode(container); });
+        wait(PAUSE_MS);
+
+        expect(apiGetMock).not.toHaveBeenCalled();
     });
 });

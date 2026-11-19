@@ -44,13 +44,16 @@ interface SearchBoxState {
 }
 
 /**
- * Search for location
+ * Search for location. Searches as the person types, once they pause; Search or Enter searches
+ * straight away (even below MIN_QUERY_LENGTH, since the person asked for it).
+ * Ticket: docs/tickets/location-search/issues/23-search-as-you-type.md
  */
 class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     /** The search waiting for the person to pause typing. */
     private typingTimer: ReturnType<typeof setTimeout> | null = null;
-    /** Each search takes the next number. Only the latest search's answer is shown: an answer for
-     * text the person has since changed, cleared or left must not replace what they see now. */
+    /** Each search, and each cancel, takes the next number. Only the answer of a search whose number is
+     * still the latest is shown: an answer for text the person has since changed, cleared or left must
+     * not replace what they see now. */
     private latestSearch = 0;
 
     constructor(props) {
@@ -90,6 +93,10 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             this.clearResults();
         } else {
             this.cancelPendingSearch();
+            // A failure message described the old text; drop it rather than leave it up while typing
+            if (this.state.error) {
+                this.setState({ error: null, searched: false });
+            }
             this.typingTimer = setTimeout(() => {
                 this.typingTimer = null;
                 this.search(targetValue);
@@ -97,16 +104,17 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }
     }
 
-    // Stop the search waiting for a pause, and ignore the answer of any search already sent
+    // Stop the search waiting for a pause, ignore the answer of any search already sent,
+    // and free the Search button
     cancelPendingSearch(): void {
-        this.stopSearching();
+        this.dropPendingSearch();
         if (this.state.fetching) {
             this.setState({ fetching: false });
         }
     }
 
-    // The part of cancelling that changes no state, so it is also safe while the box is removed
-    stopSearching(): void {
+    // Cancelling without touching React state, so it is also safe while the box is being removed
+    dropPendingSearch(): void {
         this.latestSearch++;
         if (this.typingTimer !== null) {
             clearTimeout(this.typingTimer);
@@ -172,7 +180,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         if (q === '') {
             return;
         }
-        const search = ++this.latestSearch;
+        const searchId = ++this.latestSearch;
         this.setState({
             fetching: true,
             error: null
@@ -180,7 +188,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
         apiGet(`/api/search?q=${encodeURIComponent(q)}`)
         .then((data) => {
-            if (search !== this.latestSearch) {
+            if (searchId !== this.latestSearch) {
                 return;
             }
             if (data && data.results){
@@ -194,7 +202,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                 throw new Error(data?.error ?? 'Unexpected search response');
             }
         }).catch((err) => {
-            if (search !== this.latestSearch) {
+            if (searchId !== this.latestSearch) {
                 return;
             }
             console.error('Search failed', err);
@@ -219,7 +227,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
-        this.stopSearching();
+        this.dropPendingSearch();
     }
 
     // On a real mobile device onResize() gets called when the virtual keyboard pops up (e.g. when entering search text)
