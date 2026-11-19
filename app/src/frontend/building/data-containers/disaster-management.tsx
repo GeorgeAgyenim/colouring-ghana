@@ -37,7 +37,7 @@ const DisasterManagementView: React.FunctionComponent<CategoryViewProps> = (prop
                 </i>
             </div>
             {(props.mapColourScale != "disaster_severity") ? 
-                <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToIsSeverityMapStyle}>
+                <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToIsSeverityMapStyle}>
                     {"Click to show severity of damage."}
                 </button>
                 :
@@ -132,7 +132,7 @@ const DisasterManagementView: React.FunctionComponent<CategoryViewProps> = (prop
                 This section is under development.
             </InfoBox>
             {(props.mapColourScale != "dynamics_demolished_count") ? 
-                <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToResilienceMapStyle}>
+                <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToResilienceMapStyle}>
                     {"Click to show building resilience."}
                 </button>
                 :

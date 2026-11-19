@@ -97,7 +97,7 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                             To comment on an application follow the application link if provided, or visit the relevant local authority's planning page.
                         </InfoBox>
                         {props.mapColourScale != "planning_applications_status_all" ?
-                            <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button sub-subcategory-button`} onClick={switchToAllPlanningApplicationsMapStyle}>
+                            <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button sub-subcategory-button`} onClick={switchToAllPlanningApplicationsMapStyle}>
                                 {'Click to view official planning application data'}
                             </button>
                             :
@@ -233,14 +233,14 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         This section provides data on past applications where available from the GLA, including those with no decision in over a year
                     </InfoBox>
                     {props.mapColourScale != "planning_applications_status_recent" ?
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button no-left-margin`} onClick={switchToLastTwelveMonthsMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button no-left-margin`} onClick={switchToLastTwelveMonthsMapStyle}>
                             {'Click to view planning applications from the last 12 months'}
                         </button>
                         :
                         <></>
                     }
                     {props.mapColourScale != "planning_applications_status_very_recent" ?
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button no-left-margin`} onClick={switchToLastThirtyDaysMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button no-left-margin`} onClick={switchToLastThirtyDaysMapStyle}>
                             {'Click to view planning applications from the last 30 days'}
                         </button>
                         :
@@ -270,7 +270,7 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         mode={props.mode}
                     />
                     {props.mapColourScale != "community_expected_planning_application_total" ?
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToExpectedApplicationMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToExpectedApplicationMapStyle}>
                             {'Click to view possible locations of future applications/demolitions'}
                         </button>
                         :
@@ -287,7 +287,7 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                         mode={props.mode}
                     />
                     {(props.mapColourScale != "community_local_significance_total") ? 
-                        <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToLocalSignificanceMapStyle}>
+                        <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToLocalSignificanceMapStyle}>
                             {'Click to show buildings of local interest.'}
                         </button>
                         :
@@ -366,7 +366,7 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                     <i><div><u>Disclaimer</u>:  Data for designated heritage assets has been accessed from the <a href="https://historicengland.org.uk/listing/the-list/">National Heritage List for England</a>. Source information for Conservation Area data can be accessed <a href="http://www.bedfordpark.net/leo/planning/">here</a>. Please note all data should be double checked against official sources where used for planning purposes'.</div></i>
                 </div>
                 {props.mapColourScale != "planning_combined" ?
-                    <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingProtectionMapStyle}>
+                    <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingProtectionMapStyle}>
                         {'Click to see individual protected buildings mapped'}
                     </button>
                     :
@@ -456,7 +456,7 @@ const PlanningConservationView: React.FunctionComponent<CategoryViewProps> = (pr
                     </>
                 }
                 {props.mapColourScale != "planning_world_heritage_buildings" ?
-                    <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingProtectionWorldHeritageMapStyle}>
+                    <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingProtectionWorldHeritageMapStyle}>
                         {'Click to see buildings within World Heritage Sites'}
                     </button>
                     :

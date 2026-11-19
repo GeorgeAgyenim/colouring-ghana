@@ -88,7 +88,7 @@ export default class PasswordReset extends React.Component<RouteComponentProps, 
                     <h1 className="h2">Forgotten password</h1>
                     <p>Please input the new password you want to set for your account. If your password reset token does not work, go back to the <Link to="/forgotten-password.html">forgotten password page</Link> to request a new link.</p>
                     {this.state.error && <ErrorBox msg={this.state.error} />}
-                    <form onSubmit={e => this.handleSubmit(e)}>
+                    <form method="POST" onSubmit={e => this.handleSubmit(e)}>
                         <label htmlFor="email">New password</label>
                         <input name="password"
                             className="form-control" type="password"

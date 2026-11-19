@@ -63,7 +63,7 @@ export default class ForgottenPassword extends React.Component<{}, ForgottenPass
                             null
                         }
                     </InfoBox>
-                    <form onSubmit={e => this.handleSubmit(e)}>
+                    <form method="POST" onSubmit={e => this.handleSubmit(e)}>
                         <label htmlFor="email">E-mail</label>
                         <input name="email" id="email"
                             className="form-control" type="email"

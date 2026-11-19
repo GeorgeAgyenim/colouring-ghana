@@ -98,7 +98,7 @@ const TypologySizeView: React.FunctionComponent<CategoryViewProps> = (props) => 
                 */}
                 <DataEntryGroup name="Block/Density Classification" collapsed={subcat==null || subcat!="1"}>
                     {(props.mapColourScale != "typology_classification") ? 
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToClassificationMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToClassificationMapStyle}>
                             {"Click to show typology classification."}
                         </button>
                         :
@@ -154,7 +154,7 @@ const TypologySizeView: React.FunctionComponent<CategoryViewProps> = (props) => 
                 </DataEntryGroup>
                 <DataEntryGroup name="Attachment/Adjacency" collapsed={subcat==null || subcat!="2"}>
                     {(props.mapColourScale != "building_attachment_form") ? 
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAttachmentMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToAttachmentMapStyle}>
                             {"Click here to show attachment/adjacency."}
                         </button>
                     :
@@ -241,7 +241,7 @@ const TypologySizeView: React.FunctionComponent<CategoryViewProps> = (props) => 
                 </ DataEntryGroup>
                 <DataEntryGroup name="Urban Tissue Types/Dynamic Classification" collapsed={subcat==null || subcat!="4"}>
                     {(props.mapColourScale != "typology_dynamic_classification") ? 
-                        <button className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToDynamicClassificationMapStyle}>
+                        <button type="button" className={`map-switcher-inline disabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToDynamicClassificationMapStyle}>
                             {"Click here to show dynamic classification."}
                         </button>
                         :

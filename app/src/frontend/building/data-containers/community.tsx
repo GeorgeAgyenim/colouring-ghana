@@ -112,11 +112,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_building_hominess_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingHominessMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingHominessMapStyle}>
                         {'Click to show building hominess.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing building hominess.'}
                     </button>
                 }
@@ -135,11 +135,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_streetscape_hominess_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeHominessMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeHominessMapStyle}>
                         {'Click to show streetscape hominess.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing building streetscape hominess.'}
                     </button>
                 }
@@ -162,11 +162,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_building_coherence_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingCoherenceMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingCoherenceMapStyle}>
                         {'Click to show building coherence.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing building coherence.'}
                     </button>
                 }
@@ -185,11 +185,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_streetscape_coherence_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeCoherenceMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeCoherenceMapStyle}>
                         {'Click to show streetscape coherence.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing streetscape coherence.'}
                     </button>
                 }
@@ -212,11 +212,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_building_fascination_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingFascinationMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingFascinationMapStyle}>
                         {'Click to show building fascination.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing building fascination.'}
                     </button>
                 }
@@ -235,11 +235,11 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     mode={props.mode}
                 />
                 {(props.mapColourScale != "community_streetscape_fascination_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingFascinationMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingFascinationMapStyle}>
                         {'Click to show streetscape fascination.'}
                     </button>
                     :
-                    <button disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
+                    <button type="button" disabled className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button-disabled`}>
                         {'Showing streetscape fascination.'}
                     </button>
                 }
@@ -328,7 +328,7 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     Average neuroaesthetic score for this building: <span className='float-right'><strong>{props.building.community_building_neuroaesthetic_avg}</strong></span>
                 </label>
                 {(props.mapColourScale != "community_building_neuroaesthetic_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingAverageMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToBuildingAverageMapStyle}>
                         {"Click to show the building's average score."}
                     </button>
                     :
@@ -342,7 +342,7 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     Average neuroaesthetic score for the streetscape: <span className='float-right'><strong>{props.building.community_streetscape_neuroaesthetic_avg}</strong></span>
                 </label>
                 {(props.mapColourScale != "community_streetscape_neuroaesthetic_avg") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeAverageMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToStreetscapeAverageMapStyle}>
                         {"Click to show the screetscape's average score."}
                     </button>
                     :
@@ -368,7 +368,7 @@ const CommunityView: React.FunctionComponent<CategoryViewProps> = (props) => {
                     </i>
                 </div>
                 {(props.mapColourScale != "community_in_public_ownership") ? 
-                    <button className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToPublicOwnershipMapStyle}>
+                    <button type="button" className={`map-switcher-inline enabled-state btn btn-outline btn-outline-dark key-button`} onClick={switchToPublicOwnershipMapStyle}>
                         {'Click to show building ownership status.'}
                     </button>
                     :
