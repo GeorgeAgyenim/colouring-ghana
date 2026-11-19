@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AttributionControl, MapContainer, ZoomControl, useMapEvent, Pane, useMap } from 'react-leaflet';
 import { GeolocationControl } from './geolocation-control'
 
@@ -38,6 +38,10 @@ interface ColouringMapProps {
     mode: 'basic' | 'view' | 'edit' | 'multi-edit';
     revisionId: string;
     onBuildingAction: (building: Building) => void;
+    /** Called as soon as the map is clicked, before the building under the click has been looked up. */
+    onBuildingLookupStarted?: () => void;
+    /** Called when the building under a click could not be looked up (for example, no connection). */
+    onBuildingLookupFailed?: () => void;
     mapColourScale: BuildingMapTileset;
     onMapColourScale: (x: BuildingMapTileset) => void;
     categoryMapDefinitions: CategoryMapDefinition[]
@@ -47,6 +51,8 @@ export const ColouringMap : FC<ColouringMapProps> = ({
     mode,
     revisionId,
     onBuildingAction,
+    onBuildingLookupStarted,
+    onBuildingLookupFailed,
     selectedBuildingId,
     mapColourScale,
     onMapColourScale,
@@ -83,14 +89,34 @@ export const ColouringMap : FC<ColouringMapProps> = ({
         []
     );
 
+    // Each click takes the next number. Only the latest click's lookup counts: an earlier click whose
+    // answer arrives later must not select (or paste onto) a building the person has moved on from.
+    const latestClick = useRef(0);
+
     const handleClick = useCallback(
         async (e) => {
             const {lat, lng} = e.latlng;
-            const data = await apiGet(`/api/buildings/locate?lat=${lat}&lng=${lng}`);
-            const building = data?.[0];
+            const click = ++latestClick.current;
+            onBuildingLookupStarted?.();
+
+            let data;
+            try {
+                data = await apiGet(`/api/buildings/locate?lat=${lat}&lng=${lng}`);
+            } catch(error) {
+                data = undefined;
+            }
+            if(click !== latestClick.current) {
+                return;
+            }
+            // no answer, or the server's { error } answer: the building is not known
+            if(data == undefined || data.error != undefined) {
+                onBuildingLookupFailed?.();
+                return;
+            }
+            const building = data[0];
             onBuildingAction(building);
         },
-        [onBuildingAction],
+        [onBuildingAction, onBuildingLookupStarted, onBuildingLookupFailed],
     )
 
     return (

@@ -8,12 +8,40 @@ import { allFieldsConfig } from '../config/data-fields-config';
 
 import DataEntry from './data-components/data-entry';
 
+/**
+ * What happened to the building the person last clicked:
+ * - updated: the values were saved
+ * - unchanged: the building already had the values
+ * - refused: the API would not save them; `reason` is the API's message
+ * - failed: the request did not get an answer
+ */
+export interface PasteResult {
+    status: 'updated' | 'unchanged' | 'refused' | 'failed';
+    reason?: string;
+}
+
 interface MultiEditProps {
     category: string;
+    /** Result of the latest click on the map; undefined before the first click and while one is being saved */
+    pasteResult?: PasteResult;
+}
+
+const pasteInfoMessages = {
+    updated: 'Building updated.',
+    unchanged: 'That building already has these values.'
+};
+
+function pasteErrorMessage(result: PasteResult): string {
+    const reason = result.status === 'failed' ?
+        'could not reach the server. Check your connection and click the building again.' :
+        result.reason;
+    return `The building you clicked was not changed: ${reason}`;
 }
 
 const MultiEdit: React.FC<MultiEditProps> = (props) => {
     const [data, error] = useMultiEditData();
+    const result = props.pasteResult;
+    const isPasteError = result?.status === 'refused' || result?.status === 'failed';
 
     return (
         <section className='data-section'>
@@ -26,6 +54,19 @@ const MultiEdit: React.FC<MultiEditProps> = (props) => {
                         error ?
                             <ErrorBox msg={error} /> :
                             <InfoBox msg='Click buildings one at a time to colour using the data below' />
+                    }
+                    {/* always present, so that a screen reader announces a message when it appears */}
+                    <div role="status">
+                        {
+                            result && !isPasteError &&
+                                <div className={`alert alert-${result.status === 'updated' ? 'success' : 'info'}`}>
+                                    {pasteInfoMessages[result.status]}
+                                </div>
+                        }
+                    </div>
+                    {
+                        isPasteError &&
+                            <ErrorBox msg={pasteErrorMessage(result)} />
                     }
                     {
                         data &&
