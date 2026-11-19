@@ -31,7 +31,6 @@ interface SearchBoxState {
     q: string;
     results: SearchResult[];
     searched: boolean;
-    fetching: boolean;
     /** Message shown when the search request itself failed (as opposed to finding nothing). */
     error: string | null;
     collapsedSearch: boolean;
@@ -58,7 +57,6 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             q: '',
             results: [],
             searched: false,
-            fetching: false,
             error: null,
             //track the state of the search box i.e. collapsed or expanded. Default to true
             collapsedSearch: true,
@@ -92,12 +90,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }
     }
 
-    // Ignore the answers of searches already sent, and stop showing "Searching…"
+    // Ignore the answers of searches already sent
     ignoreAnswersInFlight(): void {
         this.shownSearch = this.latestSearch;
-        if (this.state.fetching) {
-            this.setState({ fetching: false });
-        }
     }
 
     // Exit the search on ESC: clear the query and results, and drop focus
@@ -158,7 +153,6 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             return;
         }
         const searchId = ++this.latestSearch;
-        this.setState({ fetching: true });
         // A failure message described the old text; drop it rather than leave it up while typing
         if (this.state.error) {
             this.setState({ error: null, searched: false });
@@ -186,8 +180,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         this.setState({
             results: results,
             searched: true,
-            error: null,
-            fetching: this.latestSearch > searchId
+            error: null
         });
         this.props.onResults(results);
     }
@@ -203,7 +196,6 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         this.setState({
             results: [],
             searched: true,
-            fetching: false,
             error: 'Search is unavailable right now. Please try again.'
         });
         this.props.onResults([]);
@@ -219,8 +211,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
-        // Drop late answers without touching state: the box is being removed
-        this.shownSearch = this.latestSearch;
+        this.ignoreAnswersInFlight();
     }
 
     // On a real mobile device onResize() gets called when the virtual keyboard pops up (e.g. when entering search text)
@@ -305,7 +296,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             maxLength={28}
                         />
                         <button className="search-btn btn btn-outline-dark" type="submit">
-                            {this.state.fetching ? 'Searching…' : 'Search'}
+                            Search
                         </button>
                     </form>
                 </div>

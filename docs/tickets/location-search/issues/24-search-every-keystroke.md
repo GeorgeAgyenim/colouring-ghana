@@ -54,3 +54,5 @@ search wiped the list while a newer one was on its way (now only the latest text
 added for the pins updating, the button returning to "Search", and answers after the box is removed.
 Left as is: the button reads "Searching…" while a search is out, so it flips on each letter (a product
 call, raised with the product owner); superseded requests are not cancelled (one search is 6 to 13 ms).
+
+**19 November 2026.** The product owner chose "always show Search"; done in issue 25.
