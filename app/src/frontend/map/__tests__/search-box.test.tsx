@@ -1,6 +1,7 @@
 /**
- * Search results appear while the person types, without pressing Search.
- * Ticket: docs/tickets/location-search/issues/23-search-as-you-type.md
+ * Search results appear from the first letter and keep updating while the person types.
+ * Tickets: docs/tickets/location-search/issues/23-search-as-you-type.md,
+ *          docs/tickets/location-search/issues/24-search-every-keystroke.md
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -11,9 +12,6 @@ import SearchBox, { SearchResult } from '../search-box';
 
 jest.mock('../../apiHelpers');
 
-/** How long the box waits after the last keystroke before searching. */
-const PAUSE_MS = 300;
-
 function place(id: number, label: string): SearchResult {
     return {
         id,
@@ -23,16 +21,27 @@ function place(id: number, label: string): SearchResult {
     };
 }
 
+const ACCRA = place(1, 'Accra, Greater Accra');
+const KUMBI = place(2, 'Kumbi, Oti');
+const KUMASI = place(3, 'Kumasi, Ashanti');
+
 describe('<SearchBox /> search as you type', () => {
     const apiGetMock = apiGet as jest.MockedFunction<typeof apiGet>;
 
     let container: HTMLDivElement;
     let onResults: jest.Mock;
+    /** Answers to requests the test is holding back, by the text searched for. */
+    let answers: Map<string, (results: SearchResult[]) => Promise<void>>;
 
     beforeEach(() => {
-        jest.useFakeTimers();
+        answers = new Map();
         apiGetMock.mockReset();
-        apiGetMock.mockResolvedValue({ results: [place(1, 'Accra, Greater Accra')] });
+        apiGetMock.mockImplementation((path: string) => new Promise(resolve => {
+            const q = decodeURIComponent(path.replace('/api/search?q=', ''));
+            answers.set(q, async (results) => {
+                await act(async () => { resolve({ results }); });
+            });
+        }));
         onResults = jest.fn();
 
         container = document.createElement('div');
@@ -48,7 +57,6 @@ describe('<SearchBox /> search as you type', () => {
     afterEach(() => {
         act(() => { ReactDOM.unmountComponentAtNode(container); });
         container.remove();
-        jest.useRealTimers();
         jest.restoreAllMocks();
     });
 
@@ -63,11 +71,17 @@ describe('<SearchBox /> search as you type', () => {
         });
     }
 
-    /** Let the pause pass and any answer that has arrived be shown. */
-    async function waitForPause() {
-        await act(async () => {
-            jest.advanceTimersByTime(PAUSE_MS);
-        });
+    /** Deliver the answer to the request for this text. */
+    function answer(q: string, results: SearchResult[]): Promise<void> {
+        const deliver = answers.get(q);
+        if (!deliver) {
+            throw new Error(`no request was sent for "${q}"`);
+        }
+        return deliver(results);
+    }
+
+    function requestedTexts(): string[] {
+        return apiGetMock.mock.calls.map(([path]) => decodeURIComponent(path.replace('/api/search?q=', '')));
     }
 
     function listedLabels(): string[] {
@@ -82,155 +96,113 @@ describe('<SearchBox /> search as you type', () => {
         return container.querySelector('.search-btn') as HTMLButtonElement;
     }
 
-    function wait(ms: number) {
-        act(() => { jest.advanceTimersByTime(ms); });
-    }
+    it('searches from the first letter, without pressing Search', async () => {
+        type('a');
+        expect(requestedTexts()).toEqual(['a']);
 
-    it('shows results after the person pauses typing, without pressing Search', async () => {
-        type('acc');
-        wait(PAUSE_MS - 1);
-        expect(apiGetMock).not.toHaveBeenCalled();
-        await waitForPause();
+        await answer('a', [ACCRA]);
 
-        expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=acc');
         expect(listedLabels()).toEqual(['Accra, Greater Accra']);
-        expect(onResults).toHaveBeenLastCalledWith([place(1, 'Accra, Greater Accra')]);
+        expect(onResults).toHaveBeenLastCalledWith([ACCRA]);
     });
 
-    it('sends one request for the final text when the person types fast', async () => {
+    it('sends a request for the text so far on every keystroke', () => {
+        type('k');
+        type('ku');
         type('kum');
-        type('kuma');
-        type('kumas');
+
+        expect(requestedTexts()).toEqual(['k', 'ku', 'kum']);
+    });
+
+    it('keeps updating the list while the person types, even when answers come after the next keystroke', async () => {
+        type('k');
+        type('ku');
+        await answer('k', [KUMBI]);
+        expect(listedLabels()).toEqual(['Kumbi, Oti']);
+
+        type('kum');
+        await answer('ku', [KUMBI, KUMASI]);
+        expect(listedLabels()).toEqual(['Kumbi, Oti', 'Kumasi, Ashanti']);
+
+        await answer('kum', [KUMASI]);
+        expect(listedLabels()).toEqual(['Kumasi, Ashanti']);
+    });
+
+    it('keeps the answer for the latest text when an older answer arrives after it', async () => {
+        type('kum');
         type('kumasi');
-        await waitForPause();
+        await answer('kumasi', [KUMASI]);
 
-        expect(apiGetMock).toHaveBeenCalledTimes(1);
-        expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=kumasi');
+        await answer('kum', [KUMBI]);
+
+        expect(listedLabels()).toEqual(['Kumasi, Ashanti']);
+        expect(onResults).toHaveBeenLastCalledWith([KUMASI]);
     });
 
-    it('waits for a pause after the last keystroke, not the first', async () => {
-        type('kum');
-        wait(200);
-        type('kuma');
-        wait(200);
-        expect(apiGetMock).not.toHaveBeenCalled();
+    it('sends nothing for empty text and clears the list', async () => {
+        type('a');
+        await answer('a', [ACCRA]);
 
-        await waitForPause();
+        type(' ');
 
-        expect(apiGetMock).toHaveBeenCalledTimes(1);
-        expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=kuma');
-    });
-
-    it('drops the waiting search when the text gets shorter than 3 characters before the pause', async () => {
-        type('acc');
-        type('ac');
-        await waitForPause();
-
-        expect(apiGetMock).not.toHaveBeenCalled();
-    });
-
-    it('sends no request below 3 characters and clears the list when the text gets that short', async () => {
-        type('acc');
-        await waitForPause();
-        expect(listedLabels()).toEqual(['Accra, Greater Accra']);
-
-        type('ac');
-        await waitForPause();
-
-        expect(apiGetMock).toHaveBeenCalledTimes(1);
+        expect(requestedTexts()).toEqual(['a']);
         expect(listedLabels()).toEqual([]);
         expect(onResults).toHaveBeenLastCalledWith([]);
     });
 
-    it('keeps the answer for the latest text when an older answer arrives after it', async () => {
-        let answerKum: (value: unknown) => void;
-        apiGetMock
-            .mockReturnValueOnce(new Promise(resolve => { answerKum = resolve; }))
-            .mockResolvedValueOnce({ results: [place(2, 'Kumasi, Ashanti')] });
+    it('drops an answer that arrives after the text is cleared', async () => {
+        type('a');
+        type('');
+        await answer('a', [ACCRA]);
 
-        type('kum');
-        await waitForPause();
-        type('kumasi');
-        await waitForPause();
-        expect(listedLabels()).toEqual(['Kumasi, Ashanti']);
-
-        await act(async () => { answerKum({ results: [place(3, 'Kumbi, Oti')] }); });
-
-        expect(listedLabels()).toEqual(['Kumasi, Ashanti']);
-        expect(onResults).toHaveBeenLastCalledWith([place(2, 'Kumasi, Ashanti')]);
+        expect(listedLabels()).toEqual([]);
     });
 
-    it('sends no request when the person presses Escape before the pause ends', async () => {
+    it('drops an answer that arrives after Escape, and the Search button is usable again', async () => {
         type('acc');
-        pressEscape();
-        await waitForPause();
-
-        expect(apiGetMock).not.toHaveBeenCalled();
-        expect(input().value).toBe('');
-    });
-
-    it('ignores an answer that arrives after Escape, and the Search button is usable again', async () => {
-        let answer: (value: unknown) => void;
-        apiGetMock.mockReturnValueOnce(new Promise(resolve => { answer = resolve; }));
-
-        type('acc');
-        await waitForPause();
         expect(searchButton().disabled).toBe(true);
 
         pressEscape();
-        await act(async () => { answer({ results: [place(1, 'Accra, Greater Accra')] }); });
+        await answer('acc', [ACCRA]);
 
+        expect(input().value).toBe('');
         expect(listedLabels()).toEqual([]);
         expect(onResults).toHaveBeenLastCalledWith([]);
         expect(searchButton().disabled).toBe(false);
         expect(searchButton().textContent).toBe('Search');
     });
 
-    it('searches straight away on Search, and the pause does not search again', async () => {
+    it('drops an answer that arrives after the person picks a result', async () => {
+        type('acc');
+        await answer('acc', [ACCRA]);
+        type('accr');
+        act(() => { Simulate.click(container.querySelector('.search-result')); });
+
+        await answer('accr', [place(4, 'Accra, Western')]);
+
+        expect(listedLabels()).toEqual([]);
+    });
+
+    it('searches the current text when the person presses Search', async () => {
         type('accra');
+        await answer('accra', [ACCRA]);
+
         act(() => { Simulate.submit(container.querySelector('form')); });
-        expect(apiGetMock).toHaveBeenCalledWith('/api/search?q=accra');
 
-        await waitForPause();
-
-        expect(apiGetMock).toHaveBeenCalledTimes(1);
-        expect(listedLabels()).toEqual(['Accra, Greater Accra']);
+        expect(requestedTexts()).toEqual(['accra', 'accra']);
     });
 
     it('hides an earlier failure as soon as the person types again', async () => {
-        apiGetMock.mockRejectedValueOnce(new Error('offline'));
         jest.spyOn(console, 'error').mockImplementation(() => undefined);
-
-        type('acc');
-        await waitForPause();
+        apiGetMock.mockRejectedValueOnce(new Error('offline'));
+        await act(async () => {
+            input().value = 'acc';
+            Simulate.change(input());
+        });
         expect(container.querySelector('[role="alert"]')).not.toBeNull();
 
         type('accr');
 
         expect(container.querySelector('[role="alert"]')).toBeNull();
-    });
-
-    it('drops the answer still on its way when the person picks a result', async () => {
-        let answer: (value: unknown) => void;
-        apiGetMock
-            .mockResolvedValueOnce({ results: [place(1, 'Accra, Greater Accra')] })
-            .mockReturnValueOnce(new Promise(resolve => { answer = resolve; }));
-
-        type('acc');
-        await waitForPause();
-        type('accr');
-        await waitForPause();
-        act(() => { Simulate.click(container.querySelector('.search-result')); });
-        await act(async () => { answer({ results: [place(4, 'Accra, Western')] }); });
-
-        expect(listedLabels()).toEqual([]);
-    });
-
-    it('sends no request when the box is removed before the pause ends', () => {
-        type('acc');
-        act(() => { ReactDOM.unmountComponentAtNode(container); });
-        wait(PAUSE_MS);
-
-        expect(apiGetMock).not.toHaveBeenCalled();
     });
 });
