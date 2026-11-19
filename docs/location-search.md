@@ -90,7 +90,8 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
    current list stays up until the next answer replaces it, so it does not flicker. A failure is
    shown only for the latest text (while a newer search is on its way the list stays), and is
    removed as soon as they type. Pressing Search or Enter searches the current text again, even
-   while a search is still on its way, so it works as "try again".
+   while a search is still on its way, so it works as "try again". The button always reads
+   "Search"; the list updating is the sign a search happened.
    Load: one request per keystroke, at most 28 per search (the box's length limit); requests already
    sent are not cancelled. No traffic target has been set, because the site's traffic has not been
    measured. The one figure measured: on 19 November 2026, one search against the local index

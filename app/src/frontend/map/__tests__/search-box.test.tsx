@@ -137,7 +137,7 @@ describe('<SearchBox /> search as you type', () => {
         await answer('k', [KUMBI]);
         expect(listedLabels()).toEqual(['Kumbi, Oti']);
         expect(onResults).toHaveBeenLastCalledWith([KUMBI]);
-        expect(searchButton().textContent).toBe('Searching…');
+        expect(searchButton().textContent).toBe('Search');
 
         type('kum');
         await answer('ku', [KUMBI, KUMASI]);
