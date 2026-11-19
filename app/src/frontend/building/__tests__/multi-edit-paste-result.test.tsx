@@ -165,6 +165,17 @@ describe('pasting copied values onto buildings', () => {
         expect(statusMessage()).toBe('');
     });
 
+    // docs/tickets/location-search/issues/08-refused-edit-names-the-field.md: the panel shows the same
+    // message as the edit form, which names the refused field by its title
+    test('a paste the API refuses because of one field names that field by its title', async () => {
+        await clickBuilding(7);
+        await apiAnswers(sentPastes[0], 400, { error: 'Invalid format of data sent', field: 'date_year' });
+
+        expect(errorMessage()).toBe('The building you clicked was not changed: ' +
+            'Nothing was saved. Check "Year construction started (best estimate)": Invalid format of data sent');
+        expect(statusMessage()).toBe('');
+    });
+
     test('a paste after the login has run out shows the API\'s "Must be logged in"', async () => {
         await clickBuilding(7);
         // the API answers this one with HTTP 200

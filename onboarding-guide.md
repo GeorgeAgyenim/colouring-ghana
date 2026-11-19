@@ -585,11 +585,18 @@ DatabaseError        → HTTP 500, internal detail hidden from users
 ```
 
 **Error flow:**
-1. Domain code throws `UserError` or `InvalidFieldError`
-2. Controller catches it and re-throws as `ApiUserError` (preserving the message)
+1. Domain code throws `UserError`, or `InvalidFieldError` / `FieldTypeError` (both carry `fieldName`)
+2. Controller catches it and re-throws as `ApiUserError` (preserving the message, with the domain error as `originalError`)
 3. `asyncController` wrapper passes unhandled rejections to `next(err)`
 4. Global handler in `api.ts` sends the response:
    - `ApiUserError` → HTTP 400 `{ error: "message" }`, or `{ error: "Problem with parameter X: message" }` for an `ApiParamError`
+   - When the refusal is about one field (the `ApiUserError` wraps an `InvalidFieldError` or `FieldTypeError`), the
+     400 also names it: `{ error: "Invalid format of data sent", field: "location_gps_address" }`. The `error` text
+     is the same as without it. `app/src/frontend/api-data/building-update.ts` turns `field` into the title shown on
+     the form: `Nothing was saved. Check "GhanaPost GPS address": Invalid format of data sent`; a field the browser
+     has no title for gets the `error` text alone, and the internal name is never shown
+     (the paste panel shows the same message). A refused verification gets `field` too; the form's verify
+     path shows the `error` text alone, since the button sits next to the field
    - A request body that is not valid JSON → HTTP 400 `{ error: "Request body is not valid JSON" }` (not logged)
    - `DatabaseError` → HTTP 500 `{ error: "Database error" }`
    - Anything else → HTTP 500 `{ error: "Server error" }`

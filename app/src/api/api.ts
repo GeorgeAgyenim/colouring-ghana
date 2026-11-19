@@ -4,7 +4,7 @@ import express from 'express';
 import autofillController from './controllers/autofillController';
 import * as editHistoryController from './controllers/editHistoryController';
 import { ApiParamError, ApiUserError } from './errors/api'; 
-import { DatabaseError } from './errors/general';
+import { DatabaseError, FieldTypeError, InvalidFieldError } from './errors/general';
 import { logErrorSafely } from './logError';
 import buildingsRouter from './routes/buildingsRouter';
 import extractsRouter from './routes/extractsRouter';
@@ -116,6 +116,13 @@ server.use((err: any, req: express.Request, res: express.Response, next: express
                 errorMessage = err.message;
             }
             
+            // a refusal about one field also names it, so the browser can show which field to fix
+            // (docs/tickets/location-search/issues/08-refused-edit-names-the-field.md)
+            const original = err.originalError;
+            if(original instanceof InvalidFieldError || original instanceof FieldTypeError) {
+                return res.status(400).send({ error: errorMessage, field: original.fieldName });
+            }
+
             return res.status(400).send({ error: errorMessage });
         }
         

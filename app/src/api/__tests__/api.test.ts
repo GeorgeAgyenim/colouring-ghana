@@ -2,10 +2,13 @@
  * @jest-environment node
  */
 /*
- * Ticket: docs/tickets/location-search/issues/04-gps-address-server-validation.md
+ * Tickets: docs/tickets/location-search/issues/04-gps-address-server-validation.md
+ *          docs/tickets/location-search/issues/08-refused-edit-names-the-field.md
  *
  * What the API answers when a building edit is refused because of the GhanaPost
- * GPS address. The answer's `error` text is what the edit form shows the person.
+ * GPS address. The answer's `error` text is what the edit form shows the person;
+ * its `field` names the refused field, so the form can say which one to fix.
+ * A refusal that is not about one field has no `field`.
  * The real API router is used, over HTTP on a local port.
  * A refused edit never reaches the database; the transaction is replaced so a
  * mistake here cannot reach one either.
@@ -37,12 +40,12 @@ function postJson(port: number, path: string, body: Record<string, unknown>): Pr
     });
 }
 
-describe('POST /api/buildings/:building_id.json with a GhanaPost GPS address the API refuses', () => {
+describe('POST /api/buildings/:building_id.json, when the API refuses the edit', () => {
     let server: http.Server;
 
-    function editBuilding(attributes: Record<string, unknown>) {
+    function editBuilding(attributes: Record<string, unknown>, buildingId = '1') {
         const port = (server.address() as AddressInfo).port;
-        return postJson(port, '/api/buildings/1.json', { attributes });
+        return postJson(port, `/api/buildings/${buildingId}.json`, { attributes });
     }
 
     beforeAll(() => {
@@ -69,12 +72,13 @@ describe('POST /api/buildings/:building_id.json with a GhanaPost GPS address the
         jest.restoreAllMocks();
     });
 
-    it('answers a badly formatted address with the normal invalid-field 400', async () => {
+    it('answers a badly formatted address with the normal invalid-field 400, naming the field', async () => {
         const response = await editBuilding({ location_gps_address: 'hello' });
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-            error: 'Invalid format of data sent'
+            error: 'Invalid format of data sent',
+            field: 'location_gps_address'
         });
     });
 
@@ -83,7 +87,19 @@ describe('POST /api/buildings/:building_id.json with a GhanaPost GPS address the
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-            error: 'Invalid format of data sent'
+            error: 'Invalid format of data sent',
+            field: 'location_gps_address'
         });
+    });
+
+    it('answers a refusal that is not about one field without a field', async () => {
+        // the building id is refused before any field is looked at
+        const response = await editBuilding({ location_gps_address: 'GA-183-9385' }, 'not-a-number');
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Problem with parameter building_id: Invalid format: not a positive integer'
+        });
+        expect(response.body).not.toHaveProperty('field');
     });
 });

@@ -3,6 +3,7 @@
  */
 /*
  * Ticket: docs/tickets/location-search/issues/07-server-log-holds-what-people-typed.md
+ * (the `field` in a refusal's answer: docs/tickets/location-search/issues/08-refused-edit-names-the-field.md)
  *
  * The server log must never hold a person's location, the data they send, or who they
  * are (username, email, password, user id, API key, session id). Building ids may stay.
@@ -387,7 +388,8 @@ describe('What the API writes to the server log', () => {
             const response = await post('/api/buildings/1/verify.json', { ref_toid: 'osgb1000000000001' });
 
             expect(response.status).toBe(400);
-            expect(response.body).toEqual({ error: 'Field cannot be verified' });
+            // `field` names the refused field (issue 08); the value is not repeated
+            expect(response.body).toEqual({ error: 'Field cannot be verified', field: 'ref_toid' });
             expect(database.none).not.toHaveBeenCalled();
             expect(logged()).toBe('');
         });
@@ -398,7 +400,8 @@ describe('What the API writes to the server log', () => {
             const response = await post('/api/buildings/1/verify.json', { 'where kwame lives': '12 Example Street' });
 
             expect(response.status).toBe(400);
-            expect(response.body).toEqual({ error: 'Field cannot be verified' });
+            // `field` gives back the name this request sent (issue 08), never the value
+            expect(response.body).toEqual({ error: 'Field cannot be verified', field: 'where kwame lives' });
             expect(database.none).not.toHaveBeenCalled();
             expect(logged()).toBe('');
         });
