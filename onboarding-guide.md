@@ -593,6 +593,16 @@ DatabaseError        → HTTP 500, internal detail hidden from users
    - A request body that is not valid JSON → HTTP 400 `{ error: "Request body is not valid JSON" }` (not logged)
    - `DatabaseError` → HTTP 500 `{ error: "Database error" }`
    - Anything else → HTTP 500 `{ error: "Server error" }`
+   - An error after the answer has started → logged, and the connection is closed
+5. Last error handler at the end of `server.tsx`, for errors from the session store, the tile server and the
+   page route: logs with `logErrorSafely` and answers HTTP 500 as plain text (an error that carries a 4xx
+   status, such as an address that cannot be decoded, keeps it), or closes the connection when the answer
+   has already started. Nothing reaches Express's own handler, which would print the error's stack and
+   message to the log and, outside production, into the page.
+
+A route that catches an error itself answers `{ error: "<plain message>" }` and logs the error with
+`logErrorSafely`. It never sends the error (`res.send(err)`): an error can carry the failed query with the
+values a person sent.
 
 **Logging:** No structured logging library; logs go to the console. Never log a value a person sent,
 coordinates they clicked, text they searched for, or anything that identifies them (username, email, user

@@ -32,7 +32,7 @@ const createUser = asyncController(async (req: express.Request, res: express.Res
         }
     } catch(err) {
         logErrorSafely('Failed to create user:', err);
-        res.send(err);
+        res.status(500).send({ error: 'Server error' });
     }
 });
 
@@ -43,9 +43,14 @@ const getCurrentUser = asyncController(async (req: express.Request, res: express
 
     try {
         const user = await userService.getUserById(req.session.user_id);
+        if (user == undefined) {
+            // the service has logged the database failure
+            return res.status(500).send({ error: 'Database error' });
+        }
         res.send(user);
     } catch(error) {
-        res.send(error);
+        logErrorSafely('Failed to get current user:', error);
+        res.status(500).send({ error: 'Server error' });
     }
 });
 
@@ -57,12 +62,18 @@ const deleteCurrentUser = asyncController(async (req: express.Request, res: expr
     console.log('Deleting user account');
 
     try {
-        await userService.deleteUser(req.session.user_id);
+        const result = await userService.deleteUser(req.session.user_id);
+        if (result?.error) {
+            // the service has logged the database failure; the account is not deleted,
+            // so the person stays signed in to it
+            return res.status(500).send({ error: result.error });
+        }
         await userService.logout(req.session);
 
         res.send({ success: true });
     } catch(err) {
-        res.send({ error: err });
+        logErrorSafely('Failed to delete user:', err);
+        res.status(500).send({ error: 'Server error' });
     }
 });
 

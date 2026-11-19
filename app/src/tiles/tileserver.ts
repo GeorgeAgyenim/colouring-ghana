@@ -27,7 +27,7 @@ const handleTileRequest = asyncController(async function (req: express.Request, 
         res.end(im);
     } catch(err) {
         logErrorSafely('Failed to render tile:', err);
-        res.status(500).send({ error: err });
+        res.status(500).send({ error: 'Failed to render tile' });
     }
 });
 
