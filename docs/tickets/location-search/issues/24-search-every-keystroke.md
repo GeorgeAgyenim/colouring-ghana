@@ -46,3 +46,11 @@ Server cost, measured 19 November 2026 on the local index (27,775 rows): one sea
 3-character minimum from issue 23. Seen in the app: typing "kumasi" sent six requests (k, ku, kum, kuma,
 kumas, kumasi) and the list updated as answers arrived; typing "a" alone listed five results; the input did
 not change width while the button read "Searching…".
+
+**19 November 2026, review.** Two-axis review (standards and spec). Fixed: an error while showing an answer
+was silently swallowed (now kept apart from a failed search); the Search button was disabled while any
+search was out, so Enter did nothing (now always usable, and works as "try again"); a failure of an older
+search wiped the list while a newer one was on its way (now only the latest text's failure is shown). Tests
+added for the pins updating, the button returning to "Search", and answers after the box is removed.
+Left as is: the button reads "Searching…" while a search is out, so it flips on each letter (a product
+call, raised with the product owner); superseded requests are not cancelled (one search is 6 to 13 ms).

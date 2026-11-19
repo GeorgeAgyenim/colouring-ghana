@@ -87,12 +87,16 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
    list and pins keep updating while the person types. An answer is dropped only when a newer one is
    already shown (answers can arrive out of order), or when the person has since cleared the text,
    pressed Escape or picked a result. Empty text clears the list and pins and sends nothing. The
-   current list stays up until the next answer replaces it, so it does not flicker; a failure message
-   is removed as soon as they type. Pressing Search or Enter searches the current text.
-   Load: one request per keystroke, at most 28 per search (the box's length limit). Measured on
-   19 November 2026 against the local index (27,775 rows), one search takes 6 to 13 ms. At 10 times
-   the traffic the database is the first to feel it; the escape hatch is a short pause before
-   searching (a few lines in `search-box.tsx`), or caching common prefixes.
+   current list stays up until the next answer replaces it, so it does not flicker. A failure is
+   shown only for the latest text (while a newer search is on its way the list stays), and is
+   removed as soon as they type. Pressing Search or Enter searches the current text again, even
+   while a search is still on its way, so it works as "try again".
+   Load: one request per keystroke, at most 28 per search (the box's length limit); requests already
+   sent are not cancelled. No traffic target has been set, because the site's traffic has not been
+   measured. The one figure measured: on 19 November 2026, one search against the local index
+   (27,775 rows) took 6 to 13 ms (`EXPLAIN ANALYZE`, single query, not a load test). At 10 times the
+   traffic the database is the first to feel it; the escape hatch is a short pause before searching
+   (a few lines in `search-box.tsx`), cancelling superseded requests, or caching common prefixes.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
    (orange, deliberately distinct from the geolocation control's blue location dot). The pin
    is an outline with a hole in its centre and nothing drawn behind it, so the map under the

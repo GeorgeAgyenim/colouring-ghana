@@ -92,17 +92,12 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }
     }
 
-    // Ignore the answers of searches already sent, and free the Search button
-    cancelPendingSearch(): void {
-        this.dropAnswersInFlight();
+    // Ignore the answers of searches already sent, and stop showing "Searching…"
+    ignoreAnswersInFlight(): void {
+        this.shownSearch = this.latestSearch;
         if (this.state.fetching) {
             this.setState({ fetching: false });
         }
-    }
-
-    // Cancelling without touching React state, so it is also safe while the box is being removed
-    dropAnswersInFlight(): void {
-        this.shownSearch = this.latestSearch;
     }
 
     // Exit the search on ESC: clear the query and results, and drop focus
@@ -117,7 +112,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     }
 
     clearResults(){
-        this.cancelPendingSearch();
+        this.ignoreAnswersInFlight();
         this.setState({
             results: [],
             searched: false,
@@ -136,7 +131,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     // The user picked a result: fly there and hide the list (map clears its own pins)
     selectResult(result: SearchResult){
-        this.cancelPendingSearch();
+        this.ignoreAnswersInFlight();
         this.props.onResultSelect(result);
         this.setState({
             results: [],
@@ -171,36 +166,47 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
         apiGet(`/api/search?q=${encodeURIComponent(q)}`)
         .then((data) => {
-            if (searchId <= this.shownSearch) {
-                return;
-            }
-            if (data && data.results){
-                this.shownSearch = searchId;
-                this.setState({
-                    results: data.results,
-                    searched: true,
-                    error: null,
-                    fetching: this.latestSearch > searchId
-                });
-                this.props.onResults(data.results);
-            } else {
+            if (!(data && data.results)) {
                 throw new Error(data?.error ?? 'Unexpected search response');
             }
-        }).catch((err) => {
-            if (searchId <= this.shownSearch) {
-                return;
-            }
-            this.shownSearch = searchId;
-            console.error('Search failed', err);
+            return data.results as SearchResult[];
+        })
+        // Separate handlers, so an error while showing the answer is not mistaken for a failed search
+        .then(
+            (results) => this.showAnswer(searchId, results),
+            (err) => this.showFailure(searchId, err)
+        );
+    }
 
-            this.setState({
-                results: [],
-                searched: true,
-                fetching: this.latestSearch > searchId,
-                error: 'Search is unavailable right now. Please try again.'
-            });
-            this.props.onResults([]);
+    showAnswer(searchId: number, results: SearchResult[]): void {
+        if (searchId <= this.shownSearch) {
+            return;
+        }
+        this.shownSearch = searchId;
+        this.setState({
+            results: results,
+            searched: true,
+            error: null,
+            fetching: this.latestSearch > searchId
         });
+        this.props.onResults(results);
+    }
+
+    // Only the latest search's failure is shown: while a newer search is on its way, the list stays
+    showFailure(searchId: number, err: Error): void {
+        if (searchId !== this.latestSearch || searchId <= this.shownSearch) {
+            return;
+        }
+        this.shownSearch = searchId;
+        console.error('Search failed', err);
+
+        this.setState({
+            results: [],
+            searched: true,
+            fetching: false,
+            error: 'Search is unavailable right now. Please try again.'
+        });
+        this.props.onResults([]);
     }
 
     componentDidMount() {
@@ -213,7 +219,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
-        this.dropAnswersInFlight();
+        // Drop late answers without touching state: the box is being removed
+        this.shownSearch = this.latestSearch;
     }
 
     // On a real mobile device onResize() gets called when the virtual keyboard pops up (e.g. when entering search text)
@@ -297,7 +304,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             onChange={this.handleChange}
                             maxLength={28}
                         />
-                        <button className="search-btn btn btn-outline-dark" type="submit" disabled={this.state.fetching}>
+                        <button className="search-btn btn btn-outline-dark" type="submit">
                             {this.state.fetching ? 'Searching…' : 'Search'}
                         </button>
                     </form>
