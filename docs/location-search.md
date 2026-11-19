@@ -83,13 +83,20 @@ Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions)
 **shows candidates to verify** rather than guessing one:
 
 1. User types a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches. The box
-   searches by itself once the person pauses typing for 300 ms, from 3 characters (shorter text
-   matches almost anything: "a" finds buildings named "AB"); below 3 characters the list and pins
-   are cleared. Pressing Search or Enter searches straight away, even below 3 characters, since
-   the person asked for it. Only the answer for the latest
-   text is shown; an older answer that arrives late, or after Escape or picking a result, is dropped.
-   The current list stays up while the person types, until the new answer replaces it, so it
-   does not flicker on every keystroke; a failure message is removed as soon as they type.
+   searches on every keystroke, from the first letter, and shows each answer as it arrives, so the
+   list and pins keep updating while the person types. An answer is dropped only when a newer one is
+   already shown (answers can arrive out of order), or when the person has since cleared the text,
+   pressed Escape or picked a result. Empty text clears the list and pins and sends nothing. The
+   current list stays up until the next answer replaces it, so it does not flicker. A failure is
+   shown only for the latest text (while a newer search is on its way the list stays), and is
+   removed as soon as they type. Pressing Search or Enter searches the current text again, even
+   while a search is still on its way, so it works as "try again".
+   Load: one request per keystroke, at most 28 per search (the box's length limit); requests already
+   sent are not cancelled. No traffic target has been set, because the site's traffic has not been
+   measured. The one figure measured: on 19 November 2026, one search against the local index
+   (27,775 rows) took 6 to 13 ms (`EXPLAIN ANALYZE`, single query, not a load test). At 10 times the
+   traffic the database is the first to feel it; the escape hatch is a short pause before searching
+   (a few lines in `search-box.tsx`), cancelling superseded requests, or caching common prefixes.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
    (orange, deliberately distinct from the geolocation control's blue location dot). The pin
    is an outline with a hole in its centre and nothing drawn behind it, so the map under the

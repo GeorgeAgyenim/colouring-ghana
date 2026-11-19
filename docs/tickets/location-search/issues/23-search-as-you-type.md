@@ -54,3 +54,6 @@ box; a failure message no longer stays up while the person types; a variable tha
 renamed. Decided and documented: Search or Enter searches below 3 characters. Left as is: typing below 3
 characters tells the map to clear its pins on each keystroke even when none are shown (one cheap
 re-render; not worth a guard).
+
+**19 November 2026, superseded in part.** The product owner asked for a 1-letter minimum and results that
+update on every keystroke; the 300 ms pause and 3-character minimum were replaced by issue 24.

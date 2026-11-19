@@ -6,11 +6,6 @@ import './search-box.css';
 import { apiGet } from '../apiHelpers';
 import { SearchIcon } from '../components/icons';
 
-/** Wait this long after the last keystroke before searching, so a fast typist sends one request, not one per letter. */
-const TYPING_PAUSE_MS = 300;
-/** Shorter text matches almost anything in the index (e.g. "a" finds buildings named "AB"), so search from here. */
-const MIN_QUERY_LENGTH = 3;
-
 export interface SearchResult {
     id: number;
     type: string;
@@ -44,17 +39,18 @@ interface SearchBoxState {
 }
 
 /**
- * Search for location. Searches as the person types, once they pause; Search or Enter searches
- * straight away (even below MIN_QUERY_LENGTH, since the person asked for it).
- * Ticket: docs/tickets/location-search/issues/23-search-as-you-type.md
+ * Search for location. Searches on every keystroke, from the first letter, and shows each answer as
+ * it arrives, so the list keeps updating while the person types.
+ * Tickets: docs/tickets/location-search/issues/23-search-as-you-type.md,
+ *          docs/tickets/location-search/issues/24-search-every-keystroke.md
  */
 class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
-    /** The search waiting for the person to pause typing. */
-    private typingTimer: ReturnType<typeof setTimeout> | null = null;
-    /** Each search, and each cancel, takes the next number. Only the answer of a search whose number is
-     * still the latest is shown: an answer for text the person has since changed, cleared or left must
-     * not replace what they see now. */
+    /** Each search takes the next number. */
     private latestSearch = 0;
+    /** Answers to searches numbered up to here are dropped: either a newer answer is already shown,
+     * or the person has since cleared the text, pressed Escape or picked a result. Answers can arrive
+     * out of order; this keeps an older one from replacing a newer one. */
+    private shownSearch = 0;
 
     constructor(props) {
         super(props);
@@ -88,37 +84,19 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         });
 
         // The current results stay up until the answer for the new text replaces them, so the list
-        // does not flicker on every keystroke. Text too short to search clears them.
-        if (targetValue.trim().length < MIN_QUERY_LENGTH) {
+        // does not flicker on every keystroke.
+        if (targetValue.trim() === '') {
             this.clearResults();
         } else {
-            this.cancelPendingSearch();
-            // A failure message described the old text; drop it rather than leave it up while typing
-            if (this.state.error) {
-                this.setState({ error: null, searched: false });
-            }
-            this.typingTimer = setTimeout(() => {
-                this.typingTimer = null;
-                this.search(targetValue);
-            }, TYPING_PAUSE_MS);
+            this.search(targetValue);
         }
     }
 
-    // Stop the search waiting for a pause, ignore the answer of any search already sent,
-    // and free the Search button
-    cancelPendingSearch(): void {
-        this.dropPendingSearch();
+    // Ignore the answers of searches already sent, and stop showing "Searching…"
+    ignoreAnswersInFlight(): void {
+        this.shownSearch = this.latestSearch;
         if (this.state.fetching) {
             this.setState({ fetching: false });
-        }
-    }
-
-    // Cancelling without touching React state, so it is also safe while the box is being removed
-    dropPendingSearch(): void {
-        this.latestSearch++;
-        if (this.typingTimer !== null) {
-            clearTimeout(this.typingTimer);
-            this.typingTimer = null;
         }
     }
 
@@ -134,7 +112,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     }
 
     clearResults(){
-        this.cancelPendingSearch();
+        this.ignoreAnswersInFlight();
         this.setState({
             results: [],
             searched: false,
@@ -153,7 +131,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     // The user picked a result: fly there and hide the list (map clears its own pins)
     selectResult(result: SearchResult){
-        this.cancelPendingSearch();
+        this.ignoreAnswersInFlight();
         this.props.onResultSelect(result);
         this.setState({
             results: [],
@@ -167,10 +145,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }));
     }
 
-    // Search or Enter: search straight away
+    // Search or Enter: search the current text
     handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        this.cancelPendingSearch();
         this.search(this.state.q);
     }
 
@@ -181,40 +158,55 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             return;
         }
         const searchId = ++this.latestSearch;
-        this.setState({
-            fetching: true,
-            error: null
-        });
+        this.setState({ fetching: true });
+        // A failure message described the old text; drop it rather than leave it up while typing
+        if (this.state.error) {
+            this.setState({ error: null, searched: false });
+        }
 
         apiGet(`/api/search?q=${encodeURIComponent(q)}`)
         .then((data) => {
-            if (searchId !== this.latestSearch) {
-                return;
-            }
-            if (data && data.results){
-                this.setState({
-                    results: data.results,
-                    searched: true,
-                    fetching: false
-                });
-                this.props.onResults(data.results);
-            } else {
+            if (!(data && data.results)) {
                 throw new Error(data?.error ?? 'Unexpected search response');
             }
-        }).catch((err) => {
-            if (searchId !== this.latestSearch) {
-                return;
-            }
-            console.error('Search failed', err);
+            return data.results as SearchResult[];
+        })
+        // Separate handlers, so an error while showing the answer is not mistaken for a failed search
+        .then(
+            (results) => this.showAnswer(searchId, results),
+            (err) => this.showFailure(searchId, err)
+        );
+    }
 
-            this.setState({
-                results: [],
-                searched: true,
-                fetching: false,
-                error: 'Search is unavailable right now. Please try again.'
-            });
-            this.props.onResults([]);
+    showAnswer(searchId: number, results: SearchResult[]): void {
+        if (searchId <= this.shownSearch) {
+            return;
+        }
+        this.shownSearch = searchId;
+        this.setState({
+            results: results,
+            searched: true,
+            error: null,
+            fetching: this.latestSearch > searchId
         });
+        this.props.onResults(results);
+    }
+
+    // Only the latest search's failure is shown: while a newer search is on its way, the list stays
+    showFailure(searchId: number, err: Error): void {
+        if (searchId !== this.latestSearch || searchId <= this.shownSearch) {
+            return;
+        }
+        this.shownSearch = searchId;
+        console.error('Search failed', err);
+
+        this.setState({
+            results: [],
+            searched: true,
+            fetching: false,
+            error: 'Search is unavailable right now. Please try again.'
+        });
+        this.props.onResults([]);
     }
 
     componentDidMount() {
@@ -227,7 +219,8 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
-        this.dropPendingSearch();
+        // Drop late answers without touching state: the box is being removed
+        this.shownSearch = this.latestSearch;
     }
 
     // On a real mobile device onResize() gets called when the virtual keyboard pops up (e.g. when entering search text)
@@ -311,7 +304,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                             onChange={this.handleChange}
                             maxLength={28}
                         />
-                        <button className="search-btn btn btn-outline-dark" type="submit" disabled={this.state.fetching}>
+                        <button className="search-btn btn btn-outline-dark" type="submit">
                             {this.state.fetching ? 'Searching…' : 'Search'}
                         </button>
                     </form>
