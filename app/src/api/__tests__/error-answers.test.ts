@@ -2,7 +2,8 @@
  * @jest-environment node
  */
 /*
- * Ticket: docs/tickets/location-search/issues/15-api-answers-send-raw-errors.md
+ * Tickets: docs/tickets/location-search/issues/15-api-answers-send-raw-errors.md
+ *          docs/tickets/location-search/issues/17-small-error-and-page-fixes.md
  *
  * What the API answers when something fails. The answer is a plain `error` text that the
  * page can show. It is never the error itself: an error from the database connection carries
@@ -241,17 +242,6 @@ describe('What the API answers when something fails', () => {
             expect(logged()).toContain('location search');
             expect(logged()).not.toContain('Nkrumah');
         });
-
-        it('creating an account with a username that is not text answers an error text', async () => {
-            signedInUserId = undefined;
-
-            const response = await send('POST', '/api/users', { username: 12345678, password: PASSWORD });
-
-            expectPlainErrorAnswer(response.text, 'Server error');
-            expect(response.status).toBe(500);
-            expect(logged()).toContain('create user');
-            expect(logged()).not.toContain(PASSWORD);
-        });
     });
 
     describe('when the request is refused, the person still gets the message they get today', () => {
@@ -294,6 +284,52 @@ describe('What the API answers when something fails', () => {
 
             expect(response.status).toBe(200);
             expect(JSON.parse(response.text)).toEqual({ error: 'Must be logged in' });
+        });
+    });
+
+    // Only an API client can send these (the forms send text); each is a refusal the caller can act on.
+    // Issue 15 answered a username that is not text with "Server error"; issue 17 makes it a refusal.
+    describe('when a username or password is missing or not text, the request is refused', () => {
+
+        describe.each([
+            ['username', { password: PASSWORD }, 'Username'],
+            ['password', { username: USERNAME }, 'Password']
+        ])('a %s that is missing or not text when creating an account', (field, otherFields, title) => {
+            it.each([
+                ['a number', 12345678, `${title} must be text`],
+                ['an object', { text: 'kwame' }, `${title} must be text`],
+                ['missing', undefined, `${title} is required`]
+            ])('%s is refused with a message, not "Server error", and is not logged', async (kind, value, message) => {
+                signedInUserId = undefined;
+
+                const response = await send('POST', '/api/users', { ...otherFields, [field]: value });
+
+                expect(response.status).toBe(200);
+                expect(JSON.parse(response.text)).toEqual({ error: message });
+                expect(database.one).not.toHaveBeenCalled();
+                expect(logged()).toBe('');
+            });
+        });
+
+        // The database would fail on a number (`username = 12345678` compares text with a number), which
+        // was answered "Database error"; a log-in that cannot match an account is refused as a wrong one is.
+        it.each([
+            ['a username that is a number', { username: 12345678, password: PASSWORD }],
+            ['a username that is an object', { username: { text: USERNAME }, password: PASSWORD }],
+            ['a missing username', { password: PASSWORD }],
+            ['a password that is a number', { username: USERNAME, password: 12345678 }],
+            ['a password that is an object', { username: USERNAME, password: { text: PASSWORD } }],
+            ['a missing password', { username: USERNAME }]
+        ])('%s at log-in is refused as a wrong password is, without asking the database', async (kind, body) => {
+            signedInUserId = undefined;
+
+            const response = await send('POST', '/api/login', body);
+
+            expect(response.status).toBe(200);
+            expect(JSON.parse(response.text)).toEqual({ error: 'Username / password pair not recognised' });
+            expect(database.oneOrNone).not.toHaveBeenCalled();
+            expect(logged()).not.toContain(USERNAME);
+            expect(logged()).not.toContain(PASSWORD);
         });
     });
 

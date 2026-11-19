@@ -1,6 +1,6 @@
 # Three small faults: a sign-up refusal, an account-page message, the static error pages
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: none
@@ -33,8 +33,32 @@ Source: found while building issue 15, 19 November 2026; the product owner asked
 
 ## Acceptance criteria
 
-- [ ] Test: sign-up with a username that is a number, an object or missing gets a refusal message, not
+- [x] Test: sign-up with a username that is a number, an object or missing gets a refusal message, not
       "Server error"; the same for the password.
-- [ ] Test: each account action whose request fails shows its own message, not "Error getting API key.".
-- [ ] `grep` finds no "London" and no root-anchored link in `app/public/*.html`.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] Test: each account action whose request fails shows its own message, not "Error getting API key.".
+- [x] `grep` finds no "London" and no root-anchored link in `app/public/*.html`.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Sign-up: a username or password that is not text gets "Username must be text" / "Password must be text"
+  (a missing one keeps "… is required"), HTTP 200 like the other refusals, nothing logged, no database
+  query. Log-in refuses a username or password that is not text, or is missing, with the existing "Username /
+  password pair not recognised", before any query (before, a number reached the query). Password reset now
+  also refuses a password that is not text. Issue 15's test that required "Server error" for this case is
+  replaced, on purpose, by tests for numbers, objects and missing values.
+- Account requests that get no answer: log-in, sign-up, loading the account, log-out, new API key and
+  deleting the account each say what failed ("Could not delete the account. Check your connection and try
+  again."), and the log-in and sign-up buttons no longer stay disabled after a failed request. The
+  forgotten-password and password-reset pages, also account requests, got the same treatment ("Could not
+  request a password reset…", "Could not change the password…"); the password-reset page used to fail
+  silently.
+- 404.html and 500.html: "Colouring Ghana", no London text, one link, `./`, to the home page. They are only
+  served as plain files at `/404.html` and `/500.html` (under the sub-path behind the proxy); nothing in the
+  app sends them in place of another page.
+- Tests: API (sign-up and log-in, through the real router), `user/__tests__/account-requests-without-answer`
+  and `password-pages-without-answer`, and `src/__tests__/static-error-pages.test.ts`. They failed before.
+- Whole suite: 313 tests pass (285 before). `npm run typecheck` passes. No new lint errors.
+- Running app: `/404.html` reads "Not found | Colouring Ghana" with the one link.
