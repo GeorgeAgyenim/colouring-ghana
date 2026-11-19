@@ -84,8 +84,7 @@ export const MapApp: React.FC<MapAppProps> = props => {
     const { user } = useAuth();
     const [categoryUrlParam] = useUrlCategoryParam();
 
-    const [currentCategory, setCategory] = useState<Category>();
-    useEffect(() => setCategory(unless(categoryUrlParam, 'categories')), [categoryUrlParam]);
+    const currentCategory: Category = unless(categoryUrlParam, 'categories');
     
     const displayCategory = useLastNotEmpty(currentCategory) ?? defaultMapCategory;
     

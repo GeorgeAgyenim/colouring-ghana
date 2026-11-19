@@ -17,15 +17,24 @@ const EditHistoryLatest: React.FunctionComponent<EditHistoryLatestProps> = (prop
     const [history, setHistory] = useState<EditHistoryEntry[] | undefined>(undefined);
 
     useEffect(() => {
+        // an answer that arrives after this panel was removed, or after it moved to another building, is dropped
+        // (docs/tickets/location-search/issues/16-server-draws-the-default-category.md)
+        let answerWanted = true;
+
         const fetchData = async (building: Building) => {
             const {history} = await apiGet(`/api/buildings/${building.building_id}/history.json`);
 
-            setHistory(history);
+            if (answerWanted) {
+                setHistory(history);
+            }
         };
 
         if (props.building != undefined) { // only call fn if there is a building provided
             fetchData(props.building); // define and call, because effect cannot return anything and an async fn always returns a Promise
         }
+        return () => {
+            answerWanted = false;
+        };
     }, [props.building]); // only re-run effect on building prop change
     
     return (
