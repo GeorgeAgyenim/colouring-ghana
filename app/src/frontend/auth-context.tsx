@@ -1,3 +1,10 @@
+/**
+ * The signed-in account, and the account actions (log in, log out, sign up, API key, delete).
+ * A refusal the API answers is passed on with the API's own message. A request that gets no answer
+ * (no connection, or an answer that is not the API's) is reported with a message that says which
+ * action failed, and the form can be sent again.
+ * docs/tickets/location-search/issues/17-small-error-and-page-fixes.md
+ */
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { apiPost, apiGet, apiDelete } from './apiHelpers';
@@ -76,7 +83,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(true);
             }
         } catch(err) {
-            cb('Error logging in.');
+            setIsLoading(false);
+            cb('Could not log in. Check your connection and try again.');
         }
     }, [isAuthenticated]);
 
@@ -97,7 +105,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(false);
             }
         } catch(err) {
-            cb('Error logging out');
+            setIsLoading(false);
+            cb('Could not log out. Check your connection and try again.');
         }
 
     }, [isAuthenticated]);
@@ -124,7 +133,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(true);
             }
         } catch(err) {
-            cb('Error signing up.');
+            setIsLoading(false);
+            cb('Could not sign up. Check your connection and try again.');
         }
     }, [isAuthenticated]);
 
@@ -141,7 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(true);
             }
         } catch(err) {
-            setUserError('Error loading user info.');
+            setUserError('Could not load your account details. Check your connection and try again.');
         }
 
         setIsLoading(false);
@@ -156,7 +166,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 updateUserData();
             }
         } catch(err) {
-            cb('Error getting API key.');
+            cb('Could not create a new API key. Check your connection and try again.');
         }
     }, []);
 
@@ -169,7 +179,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
                 setIsAuthenticated(false);
             }
         } catch(err) {
-            cb('Error getting API key.');
+            cb('Could not delete the account. Check your connection and try again.');
         }
     }, []);
 

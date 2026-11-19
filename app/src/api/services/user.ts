@@ -56,7 +56,14 @@ async function createUser(user) {
     }
 }
 
-async function authUser(username: string, password: string) {
+async function authUser(username: unknown, password: unknown) {
+    // A request body can hold any JSON value. One that is not text cannot match an account (and a number
+    // would make the query fail), so it is refused as a wrong password is, without a query.
+    // docs/tickets/location-search/issues/17-small-error-and-page-fixes.md
+    if (typeof username !== 'string' || typeof password !== 'string') {
+        return { error: 'Username / password pair not recognised' };
+    }
+
     const user = await db.oneOrNone(
         `SELECT
             user_id,

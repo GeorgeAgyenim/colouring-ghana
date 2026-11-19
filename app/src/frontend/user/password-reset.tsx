@@ -66,7 +66,14 @@ export default class PasswordReset extends React.Component<RouteComponentProps, 
             password: this.state.password
         };
 
-        const data = await apiPut('/api/users/password', requestData);
+        let data;
+        try {
+            data = await apiPut('/api/users/password', requestData);
+        } catch (err) {
+            // no answer at all (for example, no connection)
+            this.setState({ error: 'Could not change the password. Check your connection and try again.' });
+            return;
+        }
 
         if (data.error != undefined) {
             this.setState({ error: data.error });

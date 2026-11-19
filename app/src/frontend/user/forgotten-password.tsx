@@ -46,7 +46,8 @@ export default class ForgottenPassword extends React.Component<{}, ForgottenPass
                 this.setState({ error: 'Unexpected result.' });
             }
         } catch (err) {
-            this.setState({ error: 'Something went wrong.' });
+            // no answer at all (for example, no connection)
+            this.setState({ error: 'Could not request a password reset. Check your connection and try again.' });
         }
     }
 
