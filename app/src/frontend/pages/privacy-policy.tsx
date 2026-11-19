@@ -104,7 +104,7 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
 
             <h2 className='h2'>Who do I contact with questions?</h2>
             <p>
-                If you wish to complain about our use of your personal data or exercise any of your rights, please contact the Turing's Data Protection Officer: <a href="dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a> or Data Protection Officer, The Alan Turing Institute, 96 Euston Road, London NW1 2DB.
+                If you wish to complain about our use of your personal data or exercise any of your rights, please contact the Turing's Data Protection Officer: <a href="mailto:dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a> or Data Protection Officer, The Alan Turing Institute, 96 Euston Road, London NW1 2DB.
             </p>
 
             <p>
@@ -121,7 +121,7 @@ const PrivacyPolicyPage: React.SFC<any> = () => (
             </p>
 
             <p>
-                Progress on Colouring {config.cityName} features specifically designed to address ethical issues, including these relating to security and privacy, can be tracked and commented on using our GitHub site, at <a href="https://github.com/colouring-cities/colouring-london/issues/687">#687</a>. If you have any immediate concerns regarding security or privacy please contact Turing's data protection team at <a href="dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a>.
+                Progress on Colouring {config.cityName} features specifically designed to address ethical issues, including these relating to security and privacy, can be tracked and commented on using our GitHub site, at <a href="https://github.com/colouring-cities/colouring-london/issues/687">#687</a>. If you have any immediate concerns regarding security or privacy please contact Turing's data protection team at <a href="mailto:dataprotection@turing.ac.uk">dataprotection@turing.ac.uk</a>.
             </p>
 
             <div className="buttons-container">
