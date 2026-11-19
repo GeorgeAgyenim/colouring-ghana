@@ -11,10 +11,10 @@ import { DataEntryGroup } from '../data-components/data-entry-group';
 import SelectDataEntry from '../data-components/select-data-entry';
 import { MultiDataEntry } from '../data-components/multi-data-entry/multi-data-entry';
 import { CCConfig } from '../../../cc-config';
+import { gpsAddressPattern } from '../../../helpers';
 
 const locationNumberPattern = "[1-9]\\d*[a-z]?(-([1-9]\\d*))?"; ///[1-9]\d*[a-z]?(-([1-9]\d*))?/;
 const postcodeCharacterPattern = "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?(\\s*[0-9][A-Z]{1,2})?$";
-const gpsAddressPattern = "^[A-Z]{2}-[0-9]{3,4}-[0-9]{3,4}$";
 const osmIdentifierPattern = "[0-9]{1,9}";
 let config: CCConfig = require('../../../cc-config.json')
 

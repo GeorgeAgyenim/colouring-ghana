@@ -97,3 +97,13 @@ export function valueType<C>(): ValueTypeCheck<C>{
 export function mapObject<T, R>(x: T, fn: ([key, value]: [keyof T, T[keyof T]]) => R): Record<keyof T, R> {
     return Object.assign({}, ...Object.entries(x).map(([key, value]) => ({ [key]: fn([key as keyof T, value]) })) );
 }
+
+/**
+ * Format of a GhanaPost GPS digital address, e.g. GA-183-9385.
+ * The one definition, used by both sides so they cannot drift apart:
+ * - the browser, as the input's HTML `pattern` (frontend/building/data-containers/location.tsx)
+ * - the API, as the JSON schema `pattern` for location_gps_address (api/config/fieldSchemaConfig.ts)
+ * Kept as a string, not a RegExp, because both of those take a pattern string.
+ * The longest match is 12 characters, inside the database's length rule (migration 061).
+ */
+export const gpsAddressPattern = '^[A-Z]{2}-[0-9]{3,4}-[0-9]{3,4}$';

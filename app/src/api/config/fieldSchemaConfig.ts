@@ -1,4 +1,5 @@
 import { SchemaObject } from 'ajv';
+import { gpsAddressPattern } from '../../helpers';
 import { allAttributesConfig } from './dataFields';
 
 /*
@@ -77,6 +78,13 @@ export const fieldSchemaConfig: { [key in keyof typeof allAttributesConfig]?: Sc
             }
         },
         additionalProperties: false
+    },
+
+    // null clears the field; '' and non-strings are rejected (the edit form sends null for an emptied input)
+    location_gps_address: {
+        type: 'string',
+        nullable: true,
+        pattern: gpsAddressPattern
     }
 
 } as const;
