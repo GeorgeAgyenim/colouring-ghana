@@ -1,9 +1,12 @@
 /**
  * A building edit refused by the API is shown to the person as a message on the edit form.
- * Ticket: docs/tickets/location-search/issues/04-gps-address-server-validation.md
+ * Tickets: docs/tickets/location-search/issues/04-gps-address-server-validation.md
+ *          docs/tickets/location-search/issues/08-refused-edit-names-the-field.md
  *
- * The API's answer is faked here (no server, no database); its exact text for a refused
- * GhanaPost GPS address is pinned by src/api/__tests__/api.test.ts.
+ * The API's answer is faked here (no server, no database); its exact answer for a refused
+ * GhanaPost GPS address, `{ error, field }`, is pinned by src/api/__tests__/api.test.ts.
+ * When the answer names a field the form knows, the message says which field to check,
+ * by the title the person sees; otherwise it is the API's message alone.
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -29,12 +32,15 @@ describe('edit form, when the API refuses the edit', () => {
 
     let container: HTMLDivElement;
     let fetchMock: jest.Mock;
+    /** What the faked API answers the edit with (HTTP 400) */
+    let refusalAnswer: Record<string, unknown>;
 
     beforeEach(() => {
-        // the API answers a refused edit with HTTP 400 and { error: <text> }
+        // the API answers a refused edit with HTTP 400 and { error: <text> }, plus { field } when it is about one field
+        refusalAnswer = { error: refusal };
         fetchMock = jest.fn((url: string, options: RequestInit) => Promise.resolve(
             options.method === 'POST' ?
-                { status: 400, ok: false, json: () => Promise.resolve({ error: refusal }) } :
+                { status: 400, ok: false, json: () => Promise.resolve(refusalAnswer) } :
                 { status: 200, ok: true, json: () => Promise.resolve({ history: [] }) }
         ));
         global.fetch = fetchMock as unknown as typeof fetch;
@@ -55,7 +61,8 @@ describe('edit form, when the API refuses the edit', () => {
         jest.restoreAllMocks();
     });
 
-    test('shows the API\'s message on the form', async () => {
+    /** Shows the form, makes the edit and saves it; returns the message on the form */
+    async function saveRefusedEdit(): Promise<string> {
         const building = { building_id: 1, revision_id: 1, location_gps_address: null } as unknown as Building;
 
         await act(async () => {
@@ -94,6 +101,25 @@ describe('edit form, when the API refuses the edit', () => {
             user_attributes: {}
         });
 
-        expect(container.querySelector('[role="alert"].alert-danger').textContent).toBe(refusal);
+        return container.querySelector('[role="alert"].alert-danger').textContent;
+    }
+
+    test('shows the API\'s message on the form', async () => {
+        expect(await saveRefusedEdit()).toBe(refusal);
+    });
+
+    test('names the refused field by the title the person sees on the form', async () => {
+        refusalAnswer = { error: refusal, field: 'location_gps_address' };
+
+        expect(await saveRefusedEdit()).toBe('Nothing was saved. Check "GhanaPost GPS address": Invalid format of data sent');
+    });
+
+    test('shows the API\'s message alone when the browser has no title for the field it names', async () => {
+        refusalAnswer = { error: refusal, field: 'not_a_field_the_browser_knows' };
+
+        const message = await saveRefusedEdit();
+
+        expect(message).toBe(refusal);
+        expect(message).not.toContain('not_a_field_the_browser_knows');
     });
 });

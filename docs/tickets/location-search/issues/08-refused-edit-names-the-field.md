@@ -1,6 +1,6 @@
 # A refused edit says which field to fix
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: 07 (both change `app/src/api/api.ts`)
 Feature doc: docs/location-search.md
@@ -31,9 +31,32 @@ Adding a property is safe for existing API clients: nothing is removed or rename
 
 ## Acceptance criteria
 
-- [ ] Test, through the real API router: a wrong GhanaPost GPS address gets HTTP 400 with
+- [x] Test, through the real API router: a wrong GhanaPost GPS address gets HTTP 400 with
       `error` "Invalid format of data sent" and `field` "location_gps_address".
-- [ ] Test: a refusal that is not about one field has no `field` property.
-- [ ] Test: the edit form shows `Nothing was saved. Check "GhanaPost GPS address": Invalid format of data sent`.
-- [ ] Test: an answer naming a field the browser has no title for shows the API's message alone.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] Test: a refusal that is not about one field has no `field` property.
+- [x] Test: the edit form shows `Nothing was saved. Check "GhanaPost GPS address": Invalid format of data sent`.
+- [x] Test: an answer naming a field the browser has no title for shows the API's message alone.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Change: when the API refuses a change because of one field (`InvalidFieldError`, `FieldTypeError`), the
+  HTTP 400 answer also has `field`, the field's internal name. The `error` text is unchanged; other refusals
+  have no `field`. The browser turns `field` into the form's title for it:
+  `Nothing was saved. Check "GhanaPost GPS address": Invalid format of data sent`. A field with no title
+  shows the API's message alone. The internal name is never shown. `onboarding-guide.md` describes the answer.
+- The paste panel (issue 09) uses the same message, so a refused paste reads
+  `The building you clicked was not changed: Nothing was saved. Check "<title>": <message>`. It repeats
+  itself a little, but names the field, which matters when many fields are pasted at once.
+- Verification refusals also carry `field` (same rule); the verify button sits beside its field, so the form
+  shows the API's text there as before.
+- For "Field does not exist", `field` repeats the name the caller sent. Only other API clients can send such
+  names; it is not logged.
+- Tests: `api/__tests__/api.test.ts` (3, through the real API router), `log-privacy.test.ts` (2 updated for
+  the new property), `building/__tests__/edit-form-refused-edit.test.tsx` (+2),
+  `multi-edit-paste-result.test.tsx` (+1). The new-behaviour tests failed before the change.
+- Whole suite: 207 tests pass (203 before). `npm run typecheck` passes. No new lint errors.
+- Not tried in the running app: the development database account cannot write, so no edit reaches the API's
+  validation there.
