@@ -82,7 +82,12 @@ Rebuilt by `etl/load_search_locations.sql`. Row types:
 Homonyms are common in Ghana (GeoNames has "Nyamebekyere" 66× across 7 regions), so search
 **shows candidates to verify** rather than guessing one:
 
-1. User submits a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches.
+1. User types a query → `GET /api/search?q=…` returns up to 5 trigram-ranked matches. The box
+   searches by itself once the person pauses typing for 300 ms, from 3 characters (shorter text
+   matches almost anything: "a" finds buildings named "AB"); below 3 characters the list and pins
+   are cleared. Pressing Search or Enter searches straight away. Only the answer for the latest
+   text is shown; an older answer that arrives late, or after Escape or picking a result, is dropped.
+   The current list stays up while the person types, until the new answer replaces it.
 2. The map **fits its bounds to all results** and drops one **teardrop pin** per result
    (orange, deliberately distinct from the geolocation control's blue location dot). The pin
    is an outline with a hole in its centre and nothing drawn behind it, so the map under the
@@ -185,7 +190,7 @@ psql -c "SELECT search_class, count(*) FROM search_locations GROUP BY search_cla
 psql -c "SELECT search_str, zoom FROM search_locations WHERE search_str ILIKE 'nyamebekyere%' LIMIT 10;"
 ```
 
-End-to-end: in the app, type a town name → the results dropdown lists candidates and the map
+End-to-end: in the app, type a town name (no need to press Search) → the results dropdown lists candidates and the map
 frames all pins; hover a row → its pin pops; click → the map flies there. Edit a building's
 GPS address, save, then search that code → it resolves immediately (no ETL run).
 

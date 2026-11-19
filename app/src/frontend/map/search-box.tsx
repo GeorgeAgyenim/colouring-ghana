@@ -6,6 +6,11 @@ import './search-box.css';
 import { apiGet } from '../apiHelpers';
 import { SearchIcon } from '../components/icons';
 
+/** Wait this long after the last keystroke before searching, so a fast typist sends one request, not one per letter. */
+const TYPING_PAUSE_MS = 300;
+/** Shorter text matches almost anything in the index (e.g. "a" finds buildings named "AB"), so search from here. */
+const MIN_QUERY_LENGTH = 3;
+
 export interface SearchResult {
     id: number;
     type: string;
@@ -42,6 +47,12 @@ interface SearchBoxState {
  * Search for location
  */
 class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
+    /** The search waiting for the person to pause typing. */
+    private typingTimer: ReturnType<typeof setTimeout> | null = null;
+    /** Each search takes the next number. Only the latest search's answer is shown: an answer for
+     * text the person has since changed, cleared or left must not replace what they see now. */
+    private latestSearch = 0;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -56,7 +67,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             smallScreen: false
         };
         this.handleChange = this.handleChange.bind(this);
-        this.search = this.search.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.clearResults = this.clearResults.bind(this);
         this.clearQuery = this.clearQuery.bind(this);
@@ -73,9 +84,33 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
             q: targetValue
         });
 
-        // Clear results if the query is changed sufficiently or deleted
-        if(targetValue === '' || !this.state.q.startsWith(targetValue) ) {
+        // The current results stay up until the answer for the new text replaces them, so the list
+        // does not flicker on every keystroke. Text too short to search clears them.
+        if (targetValue.trim().length < MIN_QUERY_LENGTH) {
             this.clearResults();
+        } else {
+            this.cancelPendingSearch();
+            this.typingTimer = setTimeout(() => {
+                this.typingTimer = null;
+                this.search(targetValue);
+            }, TYPING_PAUSE_MS);
+        }
+    }
+
+    // Stop the search waiting for a pause, and ignore the answer of any search already sent
+    cancelPendingSearch(): void {
+        this.stopSearching();
+        if (this.state.fetching) {
+            this.setState({ fetching: false });
+        }
+    }
+
+    // The part of cancelling that changes no state, so it is also safe while the box is removed
+    stopSearching(): void {
+        this.latestSearch++;
+        if (this.typingTimer !== null) {
+            clearTimeout(this.typingTimer);
+            this.typingTimer = null;
         }
     }
 
@@ -91,6 +126,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
     }
 
     clearResults(){
+        this.cancelPendingSearch();
         this.setState({
             results: [],
             searched: false,
@@ -109,6 +145,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     // The user picked a result: fly there and hide the list (map clears its own pins)
     selectResult(result: SearchResult){
+        this.cancelPendingSearch();
         this.props.onResultSelect(result);
         this.setState({
             results: [],
@@ -122,13 +159,20 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
         }));
     }
 
-    // Query search endpoint
-    search(e) {
+    // Search or Enter: search straight away
+    handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        const q = this.state.q.trim();
+        this.cancelPendingSearch();
+        this.search(this.state.q);
+    }
+
+    // Query search endpoint
+    search(text: string): void {
+        const q = text.trim();
         if (q === '') {
             return;
         }
+        const search = ++this.latestSearch;
         this.setState({
             fetching: true,
             error: null
@@ -136,6 +180,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
         apiGet(`/api/search?q=${encodeURIComponent(q)}`)
         .then((data) => {
+            if (search !== this.latestSearch) {
+                return;
+            }
             if (data && data.results){
                 this.setState({
                     results: data.results,
@@ -147,6 +194,9 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                 throw new Error(data?.error ?? 'Unexpected search response');
             }
         }).catch((err) => {
+            if (search !== this.latestSearch) {
+                return;
+            }
             console.error('Search failed', err);
 
             this.setState({
@@ -169,6 +219,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.onResize);
+        this.stopSearching();
     }
 
     // On a real mobile device onResize() gets called when the virtual keyboard pops up (e.g. when entering search text)
@@ -239,7 +290,7 @@ class SearchBox extends Component<SearchBoxProps, SearchBoxState> {
                     <div className={`collapse-btn ${this.state.smallScreen ? 'active' : ''}`} onClick={this.state.smallScreen ? this.expandSearch : undefined}>
                         <SearchIcon/>
                     </div>
-                    <form onSubmit={this.search} className="form-inline d-flex flex-nowrap">
+                    <form onSubmit={this.handleSubmit} className="form-inline d-flex flex-nowrap">
                         <input
                             className="form-control"
                             type="search"
