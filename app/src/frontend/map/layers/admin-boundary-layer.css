@@ -1,0 +1,40 @@
+/* "Could not load the ... boundaries" messages
+   (see admin-boundary-layer.tsx). The box sits over the map and does not move
+   with it; the messages inside stack one above the other. */
+.boundary-load-failures {
+    position: absolute;
+    z-index: 1000;
+    /* Below the search box (top 0.5rem, 2.4rem tall). On a phone the tab that
+       opens the side panel sits on the map's left edge (2rem wide), so start
+       to the right of it, and stop short of the zoom and locate buttons on
+       the right, even on a 320px screen. */
+    top: 3.4rem;
+    left: 2.5rem;
+    /* the first line is for browsers without min() */
+    max-width: 16rem;
+    max-width: min(16rem, calc(100% - 6.5rem));
+    cursor: default;
+}
+@media (min-width: 990px) {
+    /* From this width the layer buttons are shown, down the right-hand side
+       from 120px and up to 350px wide, and would be covered on a narrow map.
+       Sit bottom left instead: above the attribution, like the legend, and
+       left of the legend (14rem wide, bottom right). */
+    .boundary-load-failures {
+        top: auto;
+        bottom: 3.5rem;
+    }
+}
+/* Each message is a Bootstrap alert; the two-class selector outranks
+   Bootstrap's own spacing whichever stylesheet loads first. */
+.boundary-load-failures .boundary-load-failure {
+    margin: 0 0 0.5rem;
+    padding: 0.5rem 0.75rem;
+    /* Leaflet sets a 12px font on everything inside the map. */
+    font-size: 0.875rem;
+    box-shadow: 0px 0px 1px 1px #222222;
+}
+.boundary-load-failures .boundary-load-failure .btn {
+    display: block;
+    margin-top: 0.5rem;
+}

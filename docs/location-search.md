@@ -201,6 +201,9 @@ GPS address, save, then search that code → it resolves immediately (no ETL run
 
 ## Failure modes
 
+- **"Could not load the region (or district) boundaries" over the map.** The boundary file under
+  `public/geometries/` failed to download, or the answer was not GeoJSON (for example an error page from a
+  proxy). The browser console has `Failed to load boundary layer <path>`. "Try again" downloads it again.
 - **Search returns nothing for a known town.** `reference_tables.places` may be empty (step 3
   not run) or the index not rebuilt (step 4). Check the two verification queries above.
 - **A newly entered name/GPS isn't searchable.** The real-time sync is post-commit and

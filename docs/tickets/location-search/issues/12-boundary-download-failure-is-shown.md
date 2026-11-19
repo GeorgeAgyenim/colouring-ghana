@@ -1,6 +1,6 @@
 # A boundary layer that fails to download says so
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: docs/location-search.md; decision record docs/decisions/0001 (local)
@@ -32,12 +32,38 @@ Code: `app/src/frontend/map/layers/admin-boundary-layer.tsx`.
 
 ## Acceptance criteria
 
-- [ ] Test: a failed download while the layer is on shows the message naming the layer.
-- [ ] Test: "Try again" requests the file again; when it arrives the boundaries are drawn and the message
+- [x] Test: a failed download while the layer is on shows the message naming the layer.
+- [x] Test: "Try again" requests the file again; when it arrives the boundaries are drawn and the message
       is gone.
-- [ ] Test: switching the layer off removes the message.
-- [ ] Test: an answer that is not a feature collection is treated as a failure and can be retried.
-- [ ] The tests from issue 02 still pass unchanged.
-- [ ] In the running app, with the districts request made to fail: the message appears in both themes and
+- [x] Test: switching the layer off removes the message.
+- [x] Test: an answer that is not a feature collection is treated as a failure and can be retried.
+- [x] The tests from issue 02 still pass unchanged.
+- [x] In the running app, with the districts request made to fail: the message appears in both themes and
       at phone width; "Try again" with the request working again draws the boundaries.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Change: `admin-boundary-layer.tsx` keeps a failed flag. While the layer is on and its last download failed,
+  a message sits over the map: "Could not load the region boundaries. Check your connection." (or district)
+  with a "Try again" button. An answer that is not a GeoJSON feature collection counts as a failure.
+- While a retry is on its way the message stays and the button reads "Trying again…"; a second press starts
+  nothing. The message goes when the file arrives; if the retry fails, the message and the button stay, so the
+  keyboard focus is not lost. A download that fails while the layer is switched off shows nothing; switching
+  on tries again.
+- The message is a plain box in the map's corner, not a map layer, so it does not move with the map. Both
+  layers' messages share one box and stack. Clicks on it do not reach the map. Below 990px wide it sits top
+  left, below the search box and right of the side-panel tab; from 990px, bottom left, clear of the layer
+  buttons. Below 990px the layer buttons are hidden, so on a phone a layer can only be on if it was switched
+  on at a wider size.
+- Tests: 10 new in `map/layers/__tests__/admin-boundary-layer.test.tsx`; issue 02's 4 unchanged. They failed
+  before the change; the not-boundary-data, map-click and switched-off guards were each checked by removing
+  them.
+- Whole suite: 100 tests pass (90 before). `npm run typecheck` passes. No new lint errors.
+- Running app (development server, Chrome on Linux, both boundary requests forced to fail in the page):
+  one message per layer, stacked, readable in the light and dark themes; at 390px and 320px wide the box
+  clears the side-panel tab, the search box and the zoom buttons; "Try again" with the request working again
+  made one request, drew all 261 districts and removed that message; the click did not select a building.
+- Feature doc: `docs/location-search.md`, Failure modes.
