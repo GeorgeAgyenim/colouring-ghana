@@ -27,7 +27,7 @@ const Welcome = () => (
             It is overseen by an informal international academic consortium, made up of representatives from CCRP expert groups and Global Hubs.
         </p>
         <p>
-            All data collected (e.g <a href="/data-extracts.html">data-extracts</a>) 
+            All data collected (e.g <Link to="/data-extracts.html">data-extracts</Link>) 
             and <a href="https://github.com/colouring-cities/colouring-core">code</a> are free to download, 
             use and share under open licence terms. Our <a href="https://github.com/colouring-cities/manual/wiki">
             open manual</a> provides non-technical information for anyone interested in our research. We also have a <a href="https://github.com/colouring-cities/ccrp-technical-manual/wiki">Technical Manual</a>, and an <a href="https://colouringcities.org/impact-studies">Impact Studies Section</a> which shows how the data from the platform can be used.
