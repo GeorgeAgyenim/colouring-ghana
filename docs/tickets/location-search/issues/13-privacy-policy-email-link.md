@@ -1,6 +1,6 @@
 # The privacy policy's email link does not open an email
 
-Status: spec-complete
+Status: done
 Type: task
 Blocked by: none
 Feature doc: none
@@ -24,5 +24,16 @@ data, and the contact address, is a legal question, not a code change.
 
 ## Acceptance criteria
 
-- [ ] Test: the link's address starts with `mailto:`.
-- [ ] `npm test` and `npm run typecheck` pass.
+- [x] Test: the link's address starts with `mailto:`.
+- [x] `npm test` and `npm run typecheck` pass.
+
+## Comments
+
+**19 November 2026, closed.** Implemented in the commit that sets this status.
+
+- Change: the page had this link twice, not once; both are now `mailto:dataprotection@turing.ac.uk`.
+- Test: `app/src/frontend/pages/__tests__/privacy-policy.test.tsx`, 1 test, which checks every link on the
+  page that shows an email address. It failed before the change (the address had no `mailto:`).
+- Whole suite: 91 tests pass (90 before). `npm run typecheck` passes.
+- Still open, for the product owner: the policy names The Alan Turing Institute and UCL, and this contact
+  address is theirs. That is the London project's wording, not Colouring Ghana's.
