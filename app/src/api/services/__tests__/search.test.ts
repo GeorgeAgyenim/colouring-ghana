@@ -7,8 +7,8 @@
  * How map search chooses and orders the five results it shows from the candidates the
  * trigram index returns. Distances are pg_trgm's: `word_dist` is how far the typed text is
  * from the closest run of words in the stored text (0 = it appears there whole), `dist` the
- * distance between the two whole strings. The values below are the ones PostgreSQL gave for
- * these queries on the development index on 20 November 2026.
+ * distance between the two whole strings. Distances are like those PostgreSQL gave for these
+ * texts on 20 November 2026; ids and populations are made up to exercise each rule.
  */
 import { rankSearchCandidates, SearchCandidate } from '../search';
 

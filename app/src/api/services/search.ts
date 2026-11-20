@@ -33,7 +33,7 @@ export interface SearchCandidate {
  * 20 November 2026: typos such as accrra, tamalle, capecoast and takordi are at 0.25-0.38;
  * unrelated text (zzqqxxjj, qwerty, xyzzy) is at 0.67 or more.
  */
-export const MAX_WORD_DISTANCE = 0.4;
+const MAX_WORD_DISTANCE = 0.4;
 
 /** Unknown population counts as 0, which is also what GeoNames records when it does not know. */
 function populationOf(candidate: SearchCandidate): number {
@@ -51,7 +51,7 @@ function compareCandidates(a: SearchCandidate, b: SearchCandidate): number {
 }
 
 /** How many results the search box shows. */
-export const RESULT_LIMIT = 5;
+const RESULT_LIMIT = 5;
 
 /** A town is one place however many spellings it has; every other row is its own place. */
 function placeKey(candidate: SearchCandidate): string {
