@@ -4,19 +4,29 @@
  * Real-time geolocation for the map.
  *
  * Behaviour:
- *  - Starts tracking the user's position automatically when mounted.
+ *  - Adds a "Go to my location" button below the Leaflet zoom controls.
+ *    Nothing asks for the position until the person taps it. The first tap
+ *    starts watching the position; the button pulses until the first
+ *    position comes, and the map then centres on it. Later taps centre the
+ *    map on the live position.
  *  - Renders a dot with an accuracy circle on the map. There is no direction
  *    arrow: a compass heading is not reliable across phones, and a dot is
  *    never wrong (docs/tickets/location-search/issues/05-location-marker-plain-dot.md).
- *  - Adds a "Go to my location" button below the Leaflet zoom controls.
- *    Clicking it re-centres the map to the user's current live position.
- *  - If the position cannot be obtained (permission denied, no GPS fix), the
- *    button is disabled and its tooltip explains why.
+ *  - If no position comes (refused, location off, too slow), a message over
+ *    the map says why and what to change. The button stays usable: tapping
+ *    it again tries again.
+ *  - While the page is hidden the watch stops, so the GPS can turn off, and
+ *    it starts again when the page is shown.
+ *
+ * Ticket: docs/tickets/location-search/issues/06-ask-for-location-on-tap.md
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+
+import { getMapMessageBox } from './map-messages';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -41,6 +51,9 @@ const WATCH_OPTIONS: PositionOptions = {
 const MARKER_COLOUR = '#1a6de0';
 
 const LOCATE_BUTTON_TITLE = 'Go to my location';
+
+/** Class on the locate button while the first position is being found; the stylesheet pulses it. */
+const LOCATING_CLASS = 'locating';
 
 // ─── Icon ─────────────────────────────────────────────────────────────────────
 
@@ -83,21 +96,28 @@ const LOCATION_DOT_ICON: L.DivIcon = L.divIcon({
 // ─── Error helper ─────────────────────────────────────────────────────────────
 
 /**
- * Convert a GeolocationPositionError code into a human-readable string
- * suitable for display in the UI.
+ * The message shown over the map when no position comes: the cause and what
+ * to change. A browser reports a refusal for this site and, on some phones,
+ * location switched off for the whole device the same way, so that message
+ * names both settings.
  */
 function describePositionError(err: GeolocationPositionError): string {
     switch (err.code) {
         case err.PERMISSION_DENIED:
-            return 'Location access was denied. Please enable location permissions in your browser settings.';
+            return 'Location is off for this site. Turn it on in your browser\'s site settings, and check that '
+                + 'location is on in your device settings. Then tap the location button again.';
         case err.POSITION_UNAVAILABLE:
-            return 'Your position could not be determined. Please check your device GPS settings.';
+            return 'Your position could not be found. Check that location is on in your device settings, then '
+                + 'tap the location button again.';
         case err.TIMEOUT:
-            return 'Location request timed out. Make sure you have a clear GPS signal and try again.';
+            return 'Finding your position took too long. Move outside or near a window, then tap the location '
+                + 'button again.';
         default:
-            return 'An unknown error occurred while retrieving your location.';
+            return 'Your position could not be found. Tap the location button to try again.';
     }
 }
+
+const UNSUPPORTED_MESSAGE = 'This browser cannot share your location.';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -124,11 +144,21 @@ const GeolocationControl: React.FC = () => {
      *  always reads the live value. */
     const currentLatLngRef = useRef<L.LatLng | null>(null);
 
-    /** The locate button element, so its enabled state and tooltip can reflect errors. */
+    /** The locate button element, so its pulse can be switched on and off. */
     const buttonRef = useRef<HTMLAnchorElement | null>(null);
+
+    /** True from a tap that started the watch until its first position, which centres the map. */
+    const centreOnNextPositionRef = useRef(false);
+
+    /** True while the watch is stopped only because the page is hidden; it restarts when the page is shown. */
+    const pausedRef = useRef(false);
+
+    /** The latest tap handler, read by the Leaflet button's click listener. */
+    const onLocateTapRef = useRef<() => void>(() => undefined);
 
     // ── React state (UI feedback only) ────────────────────────────────────────
 
+    /** The message over the map saying why there is no position, if any. */
     const [locationError, setLocationError] = useState<string | null>(null);
 
     // ── Marker management ─────────────────────────────────────────────────────
@@ -171,59 +201,133 @@ const GeolocationControl: React.FC = () => {
         }
     }, [map]);
 
+    const removeLocationLayer = useCallback((): void => {
+        currentLatLngRef.current = null;
+
+        markerRef.current?.remove();
+        markerRef.current = null;
+
+        accuracyCircleRef.current?.remove();
+        accuracyCircleRef.current = null;
+    }, []);
+
     // ── Geolocation callbacks ─────────────────────────────────────────────────
+
+    const stopWatching = useCallback((): void => {
+        if (watchIdRef.current !== null) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+        }
+    }, []);
+
+    /** Show or end the button's "finding your position" pulse. */
+    const setLocating = useCallback((locating: boolean): void => {
+        buttonRef.current?.classList.toggle(LOCATING_CLASS, locating);
+    }, []);
 
     const onPosition = useCallback((position: GeolocationPosition): void => {
         const { latitude, longitude, accuracy } = position.coords;
         const latlng = L.latLng(latitude, longitude);
 
-        setLocationError(null);
         upsertLocationLayer(latlng, accuracy);
-    }, [upsertLocationLayer]);
 
-    const onPositionError = useCallback((err: GeolocationPositionError): void => {
-        const message = describePositionError(err);
-        console.warn('[GeolocationControl]', message);
-        setLocationError(message);
-    }, []);
-
-    // ── Re-centre logic ───────────────────────────────────────────────────────
-
-    const recenter = useCallback((): void => {
-        if (currentLatLngRef.current) {
-            map.setView(currentLatLngRef.current, RECENTER_ZOOM);
+        // The first position after a tap answers that tap: take the person there.
+        if (centreOnNextPositionRef.current) {
+            centreOnNextPositionRef.current = false;
+            setLocating(false);
+            map.setView(latlng, RECENTER_ZOOM);
         }
-    }, [map]);
+    }, [map, upsertLocationLayer, setLocating]);
 
-    // ── Start geolocation tracking ────────────────────────────────────────────
-
-    useEffect(() => {
-        if (!navigator.geolocation) {
-            setLocationError('Geolocation is not supported by your browser.');
+    /**
+     * While answering a tap, any failure ends the attempt and says why; the
+     * next tap tries again. Once tracking, a slow or lost fix is not worth
+     * interrupting the person for: the watch keeps trying and the dot stays at
+     * its last place. Losing permission while tracking ends it, and the dot
+     * goes with it, since it would no longer follow the person.
+     */
+    const onPositionError = useCallback((err: GeolocationPositionError): void => {
+        const lostPermission = err.code === err.PERMISSION_DENIED;
+        if (!centreOnNextPositionRef.current && !lostPermission) {
             return;
         }
 
-        // Begin continuous position watching immediately.
+        stopWatching();
+        centreOnNextPositionRef.current = false;
+        setLocating(false);
+        if (lostPermission) {
+            removeLocationLayer();
+        }
+        setLocationError(describePositionError(err));
+    }, [stopWatching, setLocating, removeLocationLayer]);
+
+    // ── Watching ──────────────────────────────────────────────────────────────
+
+    const startWatching = useCallback((): void => {
+        pausedRef.current = false;
         watchIdRef.current = navigator.geolocation.watchPosition(
             onPosition,
             onPositionError,
             WATCH_OPTIONS,
         );
-
-        // ── Cleanup on unmount ────────────────────────────────────────────────
-        return () => {
-            if (watchIdRef.current !== null) {
-                navigator.geolocation.clearWatch(watchIdRef.current);
-                watchIdRef.current = null;
-            }
-
-            markerRef.current?.remove();
-            markerRef.current = null;
-
-            accuracyCircleRef.current?.remove();
-            accuracyCircleRef.current = null;
-        };
     }, [onPosition, onPositionError]);
+
+    // ── The button ────────────────────────────────────────────────────────────
+
+    /**
+     * The first tap asks for the position and centres the map when it comes;
+     * later taps centre the map on the live position.
+     */
+    const onLocateTap = useCallback((): void => {
+        if (!navigator.geolocation) {
+            setLocationError(UNSUPPORTED_MESSAGE);
+            return;
+        }
+        if (watchIdRef.current === null) {
+            // A new attempt: the reason the last one failed no longer applies.
+            setLocationError(null);
+            centreOnNextPositionRef.current = true;
+            setLocating(true);
+            startWatching();
+        } else if (currentLatLngRef.current) {
+            map.setView(currentLatLngRef.current, RECENTER_ZOOM);
+        }
+        // Otherwise the watch is running and its first position will centre the map.
+    }, [map, startWatching, setLocating]);
+
+    onLocateTapRef.current = onLocateTap;
+
+    // ── Pause while the page is hidden ────────────────────────────────────────
+
+    /**
+     * A hidden page (another tab or app, the screen off) has no use for the
+     * position, and a running watch keeps the phone's GPS on. Stop it, leaving
+     * the dot where it was, and start it again when the page is shown. That
+     * restart needs no tap: the person already asked, and the browser already
+     * has their answer. A tap still waiting for its first position still
+     * centres the map when the position comes.
+     */
+    useEffect(() => {
+        const onVisibilityChange = (): void => {
+            if (document.visibilityState === 'hidden') {
+                if (watchIdRef.current !== null) {
+                    stopWatching();
+                    pausedRef.current = true;
+                }
+            } else if (pausedRef.current) {
+                startWatching();
+            }
+        };
+        document.addEventListener('visibilitychange', onVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+    }, [startWatching, stopWatching]);
+
+    // ── Cleanup on unmount ────────────────────────────────────────────────────
+
+    useEffect(() => () => {
+        stopWatching();
+        removeLocationLayer();
+    }, [stopWatching, removeLocationLayer]);
 
     // ── Add Leaflet control button ────────────────────────────────────────────
 
@@ -276,7 +380,7 @@ const GeolocationControl: React.FC = () => {
 
                 L.DomEvent.on(button, 'click', (e: Event) => {
                     L.DomEvent.preventDefault(e);
-                    recenter();
+                    onLocateTapRef.current();
                 });
 
                 return container;
@@ -290,33 +394,30 @@ const GeolocationControl: React.FC = () => {
             buttonRef.current = null;
             map.removeControl(control);
         };
-        // `recenter` only changes when `map` does, so the control is built once per map.
-    }, [map, recenter]);
+        // The click reads the tap handler through a ref, so the control is built once per map.
+    }, [map]);
 
     // ── Error display ─────────────────────────────────────────────────────────
 
-    // Reflect the error on the locate button: disabled with the reason as tooltip.
-    useEffect(() => {
-        const button = buttonRef.current;
-        if (!button) {
-            return;
-        }
-
-        if (locationError) {
-            button.classList.add('leaflet-disabled');
-            button.setAttribute('aria-disabled', 'true');
-            button.title = locationError;
-        } else {
-            button.classList.remove('leaflet-disabled');
-            button.removeAttribute('aria-disabled');
-            button.title = LOCATE_BUTTON_TITLE;
-        }
-    }, [locationError]);
-
-    // This component has no React-rendered DOM output. All visible elements
-    // (marker, accuracy circle, control button) are managed imperatively via
-    // the Leaflet API inside the effects above.
-    return null;
+    // The marker, accuracy circle and button are Leaflet objects managed in the
+    // effects above. The only React output is the message, in the box over the
+    // map that the boundary layers' messages share.
+    if (locationError === null) {
+        return null;
+    }
+    return ReactDOM.createPortal(
+        <div className="map-message alert alert-warning" role="alert">
+            {locationError}
+            <button
+                className="btn btn-sm btn-outline-dark"
+                type="button"
+                onClick={() => setLocationError(null)}
+            >
+                Close
+            </button>
+        </div>,
+        getMapMessageBox(map)
+    );
 };
 
 export { GeolocationControl };

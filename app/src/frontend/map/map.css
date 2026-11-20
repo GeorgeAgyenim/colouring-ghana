@@ -20,6 +20,24 @@
     border: 1px solid #fff;
     box-shadow: 0 0 1px 1px #222;
 }
+/* "Go to my location" while it waits for the first position after a tap
+   (geolocation-control.tsx): the icon takes the location dot's blue and
+   pulses. With reduced motion asked for, the blue alone shows it. */
+.leaflet-container .leaflet-control-locate a.locating {
+    color: #1a6de0;
+}
+.leaflet-container .leaflet-control-locate a.locating svg {
+    animation: locate-pulse 0.8s ease-in-out infinite alternate;
+}
+@keyframes locate-pulse {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .leaflet-container .leaflet-control-locate a.locating svg {
+        animation: none;
+    }
+}
 .leaflet-container .leaflet-control-attribution {
     width: 100%;
     background: #fff;

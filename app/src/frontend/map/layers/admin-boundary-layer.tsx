@@ -1,15 +1,13 @@
 import { GeoJsonObject } from 'geojson';
-import L from 'leaflet';
 import type { GeoJSON as LeafletGeoJSON, PathOptions } from 'leaflet';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { GeoJSON, useMap, useMapEvent } from 'react-leaflet';
 
-import './admin-boundary-layer.css';
-
 import { apiGet } from '../../apiHelpers';
 import { LayerEnablementState } from '../../config/map-config';
 import { useDisplayPreferences } from '../../displayPreferences-context';
+import { getMapMessageBox } from '../map-messages';
 
 const BOUNDARY_ATTRIBUTION = 'Administrative boundaries from <a href=https://data.humdata.org/dataset/cod-ab-gha>Ghana administrative boundaries (OCHA/GSS)</a>';
 
@@ -19,28 +17,6 @@ const REGION_LABEL_MAX_ZOOM = 11;
 // 261 districts would be unreadable at country scale, so their labels only
 // appear once zoomed in far enough that just a handful are in view.
 const DISTRICT_LABEL_MIN_ZOOM = 12;
-
-const FAILURE_BOX_CLASS = 'boundary-load-failures';
-
-/**
- * The box over the map that holds the "could not load" messages. Every
- * boundary layer on a map shares it, so two messages sit one above the other.
- * It is a plain element in the map's container, not a map layer, so it stays
- * put when the map is moved. It is made the first time a message is needed
- * and stays with the map; while empty it takes up no room.
- */
-function getFailureBox(map: L.Map): HTMLElement {
-    const mapContainer = map.getContainer();
-    let box = mapContainer.querySelector<HTMLElement>(`.${FAILURE_BOX_CLASS}`);
-    if (box === null) {
-        box = L.DomUtil.create('div', FAILURE_BOX_CLASS, mapContainer);
-        // Pressing "Try again" must not also click the map underneath, which
-        // would select a building. Same for dragging and scrolling on the box.
-        L.DomEvent.disableClickPropagation(box);
-        L.DomEvent.disableScrollPropagation(box);
-    }
-    return box;
-}
 
 interface AdminBoundaryLayerProps {
     enabled: LayerEnablementState;
@@ -167,7 +143,7 @@ function AdminBoundaryLayer({
 
     if (failed) {
         return ReactDOM.createPortal(
-            <div className="boundary-load-failure alert alert-warning" role="alert">
+            <div className="map-message alert alert-warning" role="alert">
                 Could not load the {layerName} boundaries. Check your connection.
                 <button
                     className="btn btn-sm btn-outline-dark"
@@ -178,7 +154,7 @@ function AdminBoundaryLayer({
                     {downloading ? 'Trying again…' : 'Try again'}
                 </button>
             </div>,
-            getFailureBox(map)
+            getMapMessageBox(map)
         );
     }
 
