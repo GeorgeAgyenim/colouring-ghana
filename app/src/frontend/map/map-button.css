@@ -76,8 +76,8 @@
     min-width: 340px;
 }
 
-/* Leaflet's zoom buttons (10px down, 60px tall) and the locate button (8px below them, 30px tall; map.css)
-   end 108px down: start 8px below them, so every map control is 8px from the next.
+/* Leaflet's zoom buttons (10px down, two 30px buttons; Bootstrap's border-box keeps the divider inside)
+   and the locate button (8px below them, 30px; map.css) end 108px down: start 8px below the locate button.
    Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
 .switchers-of-layers-map-menu {
     position: absolute;
@@ -120,7 +120,8 @@
         right: 0;
     }
 
-    /* At least 44 by 44 CSS pixels to tap, and only as wide as the words need. */
+    /* The switches: at least 44 by 44 CSS pixels to tap, and only as wide as the words need. The layers
+       button itself is smaller (below). */
     .switchers-of-layers-map-menu .map-button .btn {
         display: inline-flex;
         align-items: center;
@@ -140,9 +141,11 @@
         border: none;
         box-shadow: 0 0 0 1px #fff, 0 0 1px 2px #222;
     }
-    /* The rule above would hide Bootstrap's focus ring, which is also a shadow: keep it, outside the ring. */
+    /* The rule above would hide Bootstrap's focus ring, which is also a shadow. Bootstrap's grey halo barely
+       shows on the dark map, so focus is a solid blue band (the location dot's blue) outside the white ring,
+       seen on both maps. */
     .switchers-of-layers-map-menu .layer-options-toggle .btn:focus {
-        box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(33, 37, 41, 0.5);
+        box-shadow: 0 0 0 1px #fff, 0 0 0 4px #1a6de0;
     }
 
     .map-layer-options {
