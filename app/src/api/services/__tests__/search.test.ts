@@ -93,6 +93,17 @@ describe('rankSearchCandidates()', () => {
         expect(results.map(result => result.search_class)).toEqual(['name', 'town']);
     });
 
+    it('orders full ties the same way every time, by index row', () => {
+        // the small places called Kumasi: same distance, population 0
+        const results = rankSearchCandidates([
+            candidate({ search_id: 52, display_label: 'Kumasi, Volta', place_id: '1', population: '0' }),
+            candidate({ search_id: 7, display_label: 'Kumasi, Central', place_id: '2', population: '0' }),
+            candidate({ search_id: 31, display_label: 'Kumasi, Western', place_id: '3', population: '0' })
+        ]);
+
+        expect(labels(results)).toEqual(['Kumasi, Central', 'Kumasi, Western', 'Kumasi, Volta']);
+    });
+
     it('shows a place once, by its best-matching spelling (acra)', () => {
         // GeoNames lists Acra and ACC as other spellings of Accra: three rows, one place
         const results = rankSearchCandidates([

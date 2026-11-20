@@ -42,12 +42,14 @@ function populationOf(candidate: SearchCandidate): number {
 
 /**
  * Closest word match first; among equally close matches the bigger place, then the closer
- * whole text.
+ * whole text, then the earlier index row, so the order never depends on how the database
+ * happened to return ties.
  */
 function compareCandidates(a: SearchCandidate, b: SearchCandidate): number {
     return (a.word_dist - b.word_dist)
         || (populationOf(b) - populationOf(a))
-        || (a.dist - b.dist);
+        || (a.dist - b.dist)
+        || (a.search_id - b.search_id);
 }
 
 /** How many results the search box shows. */
@@ -102,7 +104,7 @@ function queryLocation(term: string): Promise<SearchCandidate[] | undefined> {
         FROM
             search_locations
         ORDER BY
-            word_dist, coalesce(population, 0) DESC, dist
+            word_dist, coalesce(population, 0) DESC, dist, search_id
         LIMIT $2;`,
         [term, CANDIDATE_LIMIT]
     ).then(rankSearchCandidates).catch((error) => {
