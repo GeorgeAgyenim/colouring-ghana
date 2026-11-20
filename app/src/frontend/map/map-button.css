@@ -76,9 +76,12 @@
     min-width: 340px;
 }
 
+/* Leaflet's zoom buttons (10px down, two 30px buttons; Bootstrap's border-box keeps the divider inside)
+   and the locate button (8px below them, 30px; map.css) end 108px down: start 8px below the locate button.
+   Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
 .switchers-of-layers-map-menu {
     position: absolute;
-    top: 120px;
+    top: 116px;
     right: 0px;
 }
 
@@ -98,11 +101,9 @@
     }
 
     .switchers-of-layers-map-menu {
-        /* Leaflet's zoom buttons (10px margin, 63px tall) and the locate button (10px margin, 34px tall)
-           end 117px down: start 10px below them, right-aligned with them 10px from the edge. Issue 12's
-           "Could not load ..." message keeps the right 4rem clear, so the closed button (44px wide)
-           sits beside it. */
-        top: 127px;
+        /* Below the zoom and locate buttons (top: 116px, above), right-aligned with them 10px from the
+           edge. Issue 12's "Could not load ..." message keeps the right 4rem clear, so the closed button
+           (30px wide) sits beside it. */
         right: 10px;
         display: flex;
         flex-direction: column;
@@ -110,8 +111,8 @@
         /* Stop above the legend (bottom right, 3.5rem up, up to about 8.5rem tall while collapsed, as it
            is below 768px wide); a longer list scrolls inside itself. On a map too short for that, still
            leave room for the button and a row of the list. The first line is for browsers without max(). */
-        max-height: calc(100% - 127px - 12rem);
-        max-height: max(calc(100% - 127px - 12rem), 7.5rem);
+        max-height: calc(100% - 116px - 12rem);
+        max-height: max(calc(100% - 116px - 12rem), 7.5rem);
     }
 
     .switchers-of-layers-map-menu .map-button {
@@ -119,13 +120,32 @@
         right: 0;
     }
 
-    /* At least 44 by 44 CSS pixels to tap, and only as wide as the words need. */
+    /* The switches: at least 44 by 44 CSS pixels to tap, and only as wide as the words need. The layers
+       button itself is smaller (below). */
     .switchers-of-layers-map-menu .map-button .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         min-width: 44px;
         min-height: 44px;
+    }
+
+    /* The layers button matches the zoom and locate buttons above it: a 30px square with their ring
+       (map.css), so the three read as one column. The switches in its list stay 44px tall. Ticket 27. */
+    .switchers-of-layers-map-menu .layer-options-toggle .btn {
+        width: 30px;
+        min-width: 30px;
+        height: 30px;
+        min-height: 30px;
+        padding: 0;
+        border: none;
+        box-shadow: 0 0 0 1px #fff, 0 0 1px 2px #222;
+    }
+    /* The rule above would hide Bootstrap's focus ring, which is also a shadow. Bootstrap's grey halo barely
+       shows on the dark map, so focus is a solid blue band (the location dot's blue) outside the white ring,
+       seen on both maps. */
+    .switchers-of-layers-map-menu .layer-options-toggle .btn:focus {
+        box-shadow: 0 0 0 1px #fff, 0 0 0 4px #1a6de0;
     }
 
     .map-layer-options {

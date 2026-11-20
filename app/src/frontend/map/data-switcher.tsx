@@ -28,7 +28,7 @@ const DataLayerSwitcher: React.FC<DataLayerSwitcherProps> = (props) => {
         }
     }
     return (
-        <form className={`map-button ${darkLightTheme}`} onSubmit={handleSubmit}>
+        <form className={`map-button layer-options-toggle ${darkLightTheme}`} onSubmit={handleSubmit}>
             <button className="btn btn-outline btn-outline-dark"
                 type="submit"
                 aria-expanded={isOpen}
