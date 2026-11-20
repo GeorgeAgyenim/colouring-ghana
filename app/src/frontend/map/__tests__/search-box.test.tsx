@@ -123,6 +123,18 @@ describe('<SearchBox /> search as you type', () => {
         expect(searchButton().textContent).toBe('Search');
     });
 
+    it('says "No matches found" when nothing is close to what was typed', async () => {
+        // since docs/tickets/location-search/issues/01-search-relevance-and-index-integrity.md
+        // the API answers an empty list for text such as zzqqxxjj
+        type('zzqqxxjj');
+        await answer('zzqqxxjj', []);
+
+        expect(listedLabels()).toEqual([]);
+        expect(container.querySelector('.search-results-empty')?.textContent).toContain('No matches found');
+        expect(failureShown()).toBe(false);
+        expect(onResults).toHaveBeenLastCalledWith([]);
+    });
+
     it('sends a request for the text so far on every keystroke', () => {
         type('k');
         type('ku');

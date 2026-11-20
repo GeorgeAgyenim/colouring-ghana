@@ -232,7 +232,8 @@ describe('What the API answers when something fails', () => {
 
         it('a location search whose results cannot be read answers an error text', async () => {
             database.manyOrNone.mockResolvedValue([
-                { search_id: 1, search_str: 'Nkrumah Circle', search_class: 'place', st_asgeojson: 'not a geometry', zoom: 9 }
+                { search_id: 1, search_str: 'Nkrumah Circle', display_label: null, search_class: 'place',
+                  st_asgeojson: 'not a geometry', zoom: 9, place_id: null, population: null, word_dist: 0, dist: 0 }
             ]);
 
             const response = await send('GET', '/api/search?q=Nkrumah%20Circle');
