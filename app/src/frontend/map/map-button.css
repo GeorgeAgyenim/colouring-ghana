@@ -76,9 +76,12 @@
     min-width: 340px;
 }
 
+/* Leaflet's zoom buttons (10px down, 60px tall) and the locate button (8px below them, 30px tall; map.css)
+   end 108px down: start 8px below them, so every map control is 8px from the next.
+   Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
 .switchers-of-layers-map-menu {
     position: absolute;
-    top: 120px;
+    top: 116px;
     right: 0px;
 }
 
@@ -98,11 +101,9 @@
     }
 
     .switchers-of-layers-map-menu {
-        /* Leaflet's zoom buttons (10px margin, 63px tall) and the locate button (10px margin, 34px tall)
-           end 117px down: start 10px below them, right-aligned with them 10px from the edge. Issue 12's
-           "Could not load ..." message keeps the right 4rem clear, so the closed button (44px wide)
-           sits beside it. */
-        top: 127px;
+        /* Below the zoom and locate buttons (top: 116px, above), right-aligned with them 10px from the
+           edge. Issue 12's "Could not load ..." message keeps the right 4rem clear, so the closed button
+           (30px wide) sits beside it. */
         right: 10px;
         display: flex;
         flex-direction: column;
@@ -110,8 +111,8 @@
         /* Stop above the legend (bottom right, 3.5rem up, up to about 8.5rem tall while collapsed, as it
            is below 768px wide); a longer list scrolls inside itself. On a map too short for that, still
            leave room for the button and a row of the list. The first line is for browsers without max(). */
-        max-height: calc(100% - 127px - 12rem);
-        max-height: max(calc(100% - 127px - 12rem), 7.5rem);
+        max-height: calc(100% - 116px - 12rem);
+        max-height: max(calc(100% - 116px - 12rem), 7.5rem);
     }
 
     .switchers-of-layers-map-menu .map-button {
@@ -126,6 +127,22 @@
         justify-content: center;
         min-width: 44px;
         min-height: 44px;
+    }
+
+    /* The layers button matches the zoom and locate buttons above it: a 30px square with their ring
+       (map.css), so the three read as one column. The switches in its list stay 44px tall. Ticket 27. */
+    .switchers-of-layers-map-menu .layer-options-toggle .btn {
+        width: 30px;
+        min-width: 30px;
+        height: 30px;
+        min-height: 30px;
+        padding: 0;
+        border: none;
+        box-shadow: 0 0 0 1px #fff, 0 0 1px 2px #222;
+    }
+    /* The rule above would hide Bootstrap's focus ring, which is also a shadow: keep it, outside the ring. */
+    .switchers-of-layers-map-menu .layer-options-toggle .btn:focus {
+        box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(33, 37, 41, 0.5);
     }
 
     .map-layer-options {

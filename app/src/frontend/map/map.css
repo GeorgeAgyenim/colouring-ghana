@@ -16,9 +16,16 @@
     height: 100%;
     width: 100%;
 }
-.leaflet-container .leaflet-control-zoom {
-    border: 1px solid #fff;
-    box-shadow: 0 0 1px 1px #222;
+/* The zoom, locate and layers buttons (map-button.css) are 30px squares, 8px apart, each with the same
+   white ring and dark edge. The ring is a shadow, not a border, so it takes no room: a border's width
+   is rounded to the screen's pixels and would move the layers button, which is placed by adding up
+   these sizes. Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
+.leaflet-container .leaflet-bar {
+    border: none;
+    box-shadow: 0 0 0 1px #fff, 0 0 1px 2px #222;
+}
+.leaflet-container .leaflet-top .leaflet-control-locate {
+    margin-top: 8px;
 }
 /* "Go to my location" while it waits for the first position after a tap
    (geolocation-control.tsx): the icon takes the location dot's blue and
