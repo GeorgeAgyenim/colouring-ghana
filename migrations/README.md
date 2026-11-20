@@ -72,3 +72,12 @@ Syntax for adding to existing migration:
 
     0##.filename-extension-#.up.sql
 
+
+## Derived tables
+
+`search_locations` (the map search index) is derived data: `etl/load_search_locations.sh`
+empties and rebuilds it from `reference_tables.places` and `buildings`. After a migration that
+changes it (063, 064), rebuild it. After the down migration of 064, rebuild it with the code
+version that matches, since 064's rebuild stores town names without their region.
+Migration 064 adds a unique index on `(building_id, search_class)`; it first deletes any
+duplicate name/GPS rows, keeping the newest of each.

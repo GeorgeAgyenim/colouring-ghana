@@ -69,7 +69,7 @@ server.post('/api/key', function (req, res) {
 // GET search
 server.get('/search', function (req, res) {
     const searchTerm = req.query.q;
-    if (!searchTerm) {
+    if (typeof searchTerm !== 'string' || !searchTerm) {
         res.send({
             error: 'Please provide a search term'
         });
@@ -90,7 +90,7 @@ server.get('/search', function (req, res) {
                     type: 'Feature',
                     id: item.search_id,
                     attributes: {
-                        label: item.search_str,
+                        label: item.display_label ?? item.search_str,
                         search_class: item.search_class,
                         zoom: item.zoom || 9
                     },
