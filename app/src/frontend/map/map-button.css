@@ -30,11 +30,16 @@
     background-color: #343a40;
     border-color: #343a40;
 }
-.map-button.night .btn:hover {
-    color: #d4d7da;
-    background-color: transparent;
-    background-image: none;
-    border-color: #343a40;
+/* Only where there is a mouse to hover with: a phone keeps :hover on the last button tapped, and this made
+   that button see-through over the form's white, so its light icon or words all but vanished.
+   Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
+@media (hover: hover) {
+    .map-button.night .btn:hover {
+        color: #d4d7da;
+        background-color: transparent;
+        background-image: none;
+        border-color: #343a40;
+    }
 }
 .map-switcher-inline.disabled-state,
 .map-button.disabled-state,
@@ -143,8 +148,9 @@
     }
     /* The rule above would hide Bootstrap's focus ring, which is also a shadow. Bootstrap's grey halo barely
        shows on the dark map, so focus is a solid blue band (the location dot's blue) outside the white ring,
-       seen on both maps. */
-    .switchers-of-layers-map-menu .layer-options-toggle .btn:focus {
+       seen on both maps. Keyboard focus only (:focus-visible): after a finger tap it would stay on until
+       the next tap elsewhere. */
+    .switchers-of-layers-map-menu .layer-options-toggle .btn:focus-visible {
         box-shadow: 0 0 0 1px #fff, 0 0 0 4px #1a6de0;
     }
 
