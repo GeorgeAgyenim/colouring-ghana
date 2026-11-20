@@ -40,20 +40,29 @@ const RECENTER_ZOOM = 19;
 /**
  * Options forwarded to navigator.geolocation.watchPosition.
  * High accuracy is essential for on-the-ground field mapping.
+ *
+ * The timeout counts from when the person allows location, not from the tap.
+ * A timeout before the first position ends the attempt with "took too long",
+ * so it is set long enough for a phone whose GPS was off to get its first
+ * fix, which commonly takes more than 10 s. While tracking, a timeout is
+ * ignored and the watch carries on.
  */
 const WATCH_OPTIONS: PositionOptions = {
     enableHighAccuracy: true,
     maximumAge: 1_000,   // accept a cached fix up to 1 s old
-    timeout:    10_000,  // give up and fire onError after 10 s without a fix
+    timeout:    30_000,  // fire onError after 30 s without a fix
 };
 
-/** Colour used consistently for the location dot and accuracy circle. */
+/** Colour of the location dot and accuracy circle. map.css gives the pulsing locate button the same blue. */
 const MARKER_COLOUR = '#1a6de0';
 
 const LOCATE_BUTTON_TITLE = 'Go to my location';
 
 /** Class on the locate button while the first position is being found; the stylesheet pulses it. */
 const LOCATING_CLASS = 'locating';
+
+const UNSUPPORTED_MESSAGE = 'This browser cannot share your location. To use this button, open the map in a '
+    + 'recent version of Chrome, Firefox, Safari, Edge or Samsung Internet.';
 
 // ─── Icon ─────────────────────────────────────────────────────────────────────
 
@@ -116,8 +125,6 @@ function describePositionError(err: GeolocationPositionError): string {
             return 'Your position could not be found. Tap the location button to try again.';
     }
 }
-
-const UNSUPPORTED_MESSAGE = 'This browser cannot share your location.';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -221,7 +228,7 @@ const GeolocationControl: React.FC = () => {
     }, []);
 
     /** Show or end the button's "finding your position" pulse. */
-    const setLocating = useCallback((locating: boolean): void => {
+    const showLocatingPulse = useCallback((locating: boolean): void => {
         buttonRef.current?.classList.toggle(LOCATING_CLASS, locating);
     }, []);
 
@@ -234,10 +241,10 @@ const GeolocationControl: React.FC = () => {
         // The first position after a tap answers that tap: take the person there.
         if (centreOnNextPositionRef.current) {
             centreOnNextPositionRef.current = false;
-            setLocating(false);
+            showLocatingPulse(false);
             map.setView(latlng, RECENTER_ZOOM);
         }
-    }, [map, upsertLocationLayer, setLocating]);
+    }, [map, upsertLocationLayer, showLocatingPulse]);
 
     /**
      * While answering a tap, any failure ends the attempt and says why; the
@@ -254,12 +261,12 @@ const GeolocationControl: React.FC = () => {
 
         stopWatching();
         centreOnNextPositionRef.current = false;
-        setLocating(false);
+        showLocatingPulse(false);
         if (lostPermission) {
             removeLocationLayer();
         }
         setLocationError(describePositionError(err));
-    }, [stopWatching, setLocating, removeLocationLayer]);
+    }, [stopWatching, showLocatingPulse, removeLocationLayer]);
 
     // ── Watching ──────────────────────────────────────────────────────────────
 
@@ -287,15 +294,18 @@ const GeolocationControl: React.FC = () => {
             // A new attempt: the reason the last one failed no longer applies.
             setLocationError(null);
             centreOnNextPositionRef.current = true;
-            setLocating(true);
+            showLocatingPulse(true);
             startWatching();
         } else if (currentLatLngRef.current) {
             map.setView(currentLatLngRef.current, RECENTER_ZOOM);
         }
         // Otherwise the watch is running and its first position will centre the map.
-    }, [map, startWatching, setLocating]);
+    }, [map, startWatching, showLocatingPulse]);
 
-    onLocateTapRef.current = onLocateTap;
+    // Taps only come after the first render is committed, so the ref is set in time.
+    useEffect(() => {
+        onLocateTapRef.current = onLocateTap;
+    }, [onLocateTap]);
 
     // ── Pause while the page is hidden ────────────────────────────────────────
 

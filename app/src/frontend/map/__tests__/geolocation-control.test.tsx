@@ -222,6 +222,8 @@ describe('<GeolocationControl />', () => {
 
         expect(messages()).toHaveLength(1);
         expect(messages()[0].textContent).toContain('Turn it on in your browser\'s site settings');
+        // In the box the boundary-layer messages use, so the two stack instead of overlapping.
+        expect(messages()[0].parentElement.classList).toContain('map-messages');
         expect(clearWatch).toHaveBeenCalledWith(1);
         // The button stays usable: no greyed-out state, no pulse.
         expect(locateButton().classList).not.toContain('leaflet-disabled');
@@ -244,6 +246,15 @@ describe('<GeolocationControl />', () => {
         act(() => deliverError(fakeError(3)));
         expect(messages()).toHaveLength(1);
         expect(messages()[0].textContent).toContain('took too long');
+    });
+
+    test('a browser that cannot share location says so and what to use instead', () => {
+        delete (navigator as { geolocation?: Geolocation }).geolocation;
+        tapLocate();
+
+        expect(messages()).toHaveLength(1);
+        expect(messages()[0].textContent).toContain('cannot share your location');
+        expect(messages()[0].textContent).toContain('recent version');
     });
 
     test('the message can be closed', () => {
