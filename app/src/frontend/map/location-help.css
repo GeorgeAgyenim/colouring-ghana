@@ -1,0 +1,14 @@
+/* The "Learn more" pop-up (location-help.tsx). Bootstrap hides .modal until its
+   own script shows it; this pop-up is shown by React, so it is visible whenever
+   it is rendered. The dimmed background is Bootstrap's backdrop colour. */
+.modal.location-help {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Above the site header (header.css, z-index 3000), so the whole page is
+       dimmed and nothing behind the pop-up can be tapped. */
+    z-index: 3010;
+}
+.modal.location-help ul {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+}

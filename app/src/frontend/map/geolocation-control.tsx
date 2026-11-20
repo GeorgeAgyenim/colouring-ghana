@@ -13,12 +13,14 @@
  *    arrow: a compass heading is not reliable across phones, and a dot is
  *    never wrong (docs/tickets/location-search/issues/05-location-marker-plain-dot.md).
  *  - If no position comes (refused, location off, too slow), a message over
- *    the map says why and what to change. The button stays usable: tapping
- *    it again tries again.
+ *    the map says "Your location could not be found." with "Learn more",
+ *    which opens a pop-up with what to try (location-help.tsx). The button
+ *    stays usable: tapping it again tries again.
  *  - While the page is hidden the watch stops, so the GPS can turn off, and
  *    it starts again when the page is shown.
  *
  * Ticket: docs/tickets/location-search/issues/06-ask-for-location-on-tap.md
+ * Ticket: docs/tickets/location-search/issues/26-location-off-reads-as-slow.md
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -26,6 +28,7 @@ import ReactDOM from 'react-dom';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 
+import { LocationHelp } from './location-help';
 import { getMapMessageBox } from './map-messages';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -42,8 +45,8 @@ const RECENTER_ZOOM = 19;
  * High accuracy is essential for on-the-ground field mapping.
  *
  * The timeout counts from when the person allows location, not from the tap.
- * A timeout before the first position ends the attempt with "took too long",
- * so it is set long enough for a phone whose GPS was off to get its first
+ * A timeout before the first position ends the attempt with a message, so it
+ * is set long enough for a phone whose GPS was off to get its first
  * fix, which commonly takes more than 10 s. While tracking, a timeout is
  * ignored and the watch carries on.
  */
@@ -61,8 +64,11 @@ const LOCATE_BUTTON_TITLE = 'Go to my location';
 /** Class on the locate button while the first position is being found; the stylesheet pulses it. */
 const LOCATING_CLASS = 'locating';
 
-const UNSUPPORTED_MESSAGE = 'This browser cannot share your location. To use this button, open the map in a '
-    + 'recent version of Chrome, Firefox, Safari, Edge or Samsung Internet.';
+/**
+ * The message for every failure. Browsers do not report the cause reliably, so
+ * the message does not guess one; "Learn more" lists them all.
+ */
+const FAILURE_MESSAGE = 'Your location could not be found.';
 
 // ─── Icon ─────────────────────────────────────────────────────────────────────
 
@@ -101,30 +107,6 @@ const LOCATION_DOT_ICON: L.DivIcon = L.divIcon({
     iconSize:   [DOT_ICON_SIZE, DOT_ICON_SIZE],
     iconAnchor: [DOT_ICON_SIZE / 2, DOT_ICON_SIZE / 2],
 });
-
-// ─── Error helper ─────────────────────────────────────────────────────────────
-
-/**
- * The message shown over the map when no position comes: the cause and what
- * to change. A browser reports a refusal for this site and, on some phones,
- * location switched off for the whole device the same way, so that message
- * names both settings.
- */
-function describePositionError(err: GeolocationPositionError): string {
-    switch (err.code) {
-        case err.PERMISSION_DENIED:
-            return 'Location is off for this site. Turn it on in your browser\'s site settings, and check that '
-                + 'location is on in your device settings. Then tap the location button again.';
-        case err.POSITION_UNAVAILABLE:
-            return 'Your position could not be found. Check that location is on in your device settings, then '
-                + 'tap the location button again.';
-        case err.TIMEOUT:
-            return 'Finding your position took too long. Move outside or near a window, then tap the location '
-                + 'button again.';
-        default:
-            return 'Your position could not be found. Tap the location button to try again.';
-    }
-}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -165,8 +147,14 @@ const GeolocationControl: React.FC = () => {
 
     // ── React state (UI feedback only) ────────────────────────────────────────
 
-    /** The message over the map saying why there is no position, if any. */
-    const [locationError, setLocationError] = useState<string | null>(null);
+    /**
+     * What the person sees after no position came: nothing, the message over
+     * the map, or the message with its "Learn more" pop-up open on top.
+     */
+    const [failureShown, setFailureShown] = useState<'none' | 'message' | 'help'>('none');
+
+    /** "Learn more", so focus can go back to it when the pop-up closes. */
+    const learnMoreRef = useRef<HTMLButtonElement>(null);
 
     // ── Marker management ─────────────────────────────────────────────────────
 
@@ -247,7 +235,7 @@ const GeolocationControl: React.FC = () => {
     }, [map, upsertLocationLayer, showLocatingPulse]);
 
     /**
-     * While answering a tap, any failure ends the attempt and says why; the
+     * While answering a tap, any failure ends the attempt and says so; the
      * next tap tries again. Once tracking, a slow or lost fix is not worth
      * interrupting the person for: the watch keeps trying and the dot stays at
      * its last place. Losing permission while tracking ends it, and the dot
@@ -265,7 +253,7 @@ const GeolocationControl: React.FC = () => {
         if (lostPermission) {
             removeLocationLayer();
         }
-        setLocationError(describePositionError(err));
+        setFailureShown('message');
     }, [stopWatching, showLocatingPulse, removeLocationLayer]);
 
     // ── Watching ──────────────────────────────────────────────────────────────
@@ -287,12 +275,12 @@ const GeolocationControl: React.FC = () => {
      */
     const onLocateTap = useCallback((): void => {
         if (!navigator.geolocation) {
-            setLocationError(UNSUPPORTED_MESSAGE);
+            setFailureShown('message');
             return;
         }
         if (watchIdRef.current === null) {
             // A new attempt: the reason the last one failed no longer applies.
-            setLocationError(null);
+            setFailureShown('none');
             centreOnNextPositionRef.current = true;
             showLocatingPulse(true);
             startWatching();
@@ -409,25 +397,44 @@ const GeolocationControl: React.FC = () => {
 
     // ── Error display ─────────────────────────────────────────────────────────
 
+    /** Close the pop-up and put focus back on the "Learn more" that opened it. */
+    const closeHelp = useCallback((): void => {
+        setFailureShown('message');
+        learnMoreRef.current?.focus();
+    }, []);
+
     // The marker, accuracy circle and button are Leaflet objects managed in the
     // effects above. The only React output is the message, in the box over the
-    // map that the boundary layers' messages share.
-    if (locationError === null) {
+    // map that the boundary layers' messages share, and its "Learn more" pop-up.
+    if (failureShown === 'none') {
         return null;
     }
-    return ReactDOM.createPortal(
-        <div className="map-message alert alert-warning" role="alert">
-            {locationError}
-            <button
-                className="btn btn-sm btn-outline-dark"
-                type="button"
-                onClick={() => setLocationError(null)}
-            >
-                Close
-            </button>
-        </div>,
-        getMapMessageBox(map)
-    );
+    return (<>
+        {ReactDOM.createPortal(
+            <div className="map-message map-message-dismissible alert alert-warning" role="alert">
+                <span>
+                    {FAILURE_MESSAGE}{' '}
+                    {/* Looks like a link; a button underneath, since it opens a pop-up rather than a page. */}
+                    <button
+                        ref={learnMoreRef}
+                        className="map-message-link"
+                        type="button"
+                        onClick={() => setFailureShown('help')}
+                    >
+                        Learn more
+                    </button>
+                </span>
+                <button
+                    className="btn-close"
+                    type="button"
+                    aria-label="Close"
+                    onClick={() => setFailureShown('none')}
+                />
+            </div>,
+            getMapMessageBox(map)
+        )}
+        {failureShown === 'help' && <LocationHelp onClose={closeHelp} />}
+    </>);
 };
 
 export { GeolocationControl };

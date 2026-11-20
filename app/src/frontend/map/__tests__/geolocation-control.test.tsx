@@ -5,6 +5,9 @@
  * Location is asked for only when the person taps "Go to my location", and the watch pauses while the page
  * is hidden.
  * Ticket: docs/tickets/location-search/issues/06-ask-for-location-on-tap.md
+ *
+ * Every failure shows one plain line; "Learn more" opens a pop-up with what to try.
+ * Ticket: docs/tickets/location-search/issues/26-location-off-reads-as-slow.md
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -102,6 +105,29 @@ describe('<GeolocationControl />', () => {
     /** The messages shown over the map. role="alert" is what makes a screen reader announce them. */
     function messages(): HTMLElement[] {
         return Array.from(container.querySelectorAll<HTMLElement>('[role="alert"]'));
+    }
+
+    /** The one line every failure shows. "Learn more" follows it as text; the close button is an ×, no text. */
+    const FAILURE_LINE = 'Your location could not be found.';
+    const MESSAGE_TEXT = `${FAILURE_LINE} Learn more`;
+
+    /** The × that closes the message. It has no text, so a screen reader reads its label. */
+    function closeCross(message: HTMLElement): HTMLButtonElement {
+        const cross = message.querySelector<HTMLButtonElement>('button[aria-label="Close"]');
+        expect(cross).not.toBeNull();
+        expect(cross.textContent).toBe('');
+        return cross;
+    }
+
+    function buttonIn(element: HTMLElement, label: string): HTMLButtonElement {
+        const button = Array.from(element.querySelectorAll('button')).find(b => b.textContent === label);
+        expect(button).toBeDefined();
+        return button;
+    }
+
+    /** The "Learn more" pop-up. It is drawn over the whole page, not inside the map. */
+    function helpPopup(): HTMLElement | null {
+        return document.body.querySelector<HTMLElement>('[role="dialog"]');
     }
 
     /** Hide or show the page, as switching tab or app, or turning the screen off, does. */
@@ -216,12 +242,12 @@ describe('<GeolocationControl />', () => {
         setView.mockRestore();
     });
 
-    test('a refusal says where to turn location on, and tapping again asks again', () => {
+    test('a refusal shows the failure line, and tapping again asks again', () => {
         tapLocate();
         act(() => deliverError(fakeError(1)));
 
         expect(messages()).toHaveLength(1);
-        expect(messages()[0].textContent).toContain('Turn it on in your browser\'s site settings');
+        expect(messages()[0].textContent).toBe(MESSAGE_TEXT);
         // In the box the boundary-layer messages use, so the two stack instead of overlapping.
         expect(messages()[0].parentElement.classList).toContain('map-messages');
         expect(clearWatch).toHaveBeenCalledWith(1);
@@ -237,33 +263,83 @@ describe('<GeolocationControl />', () => {
         expect(messages()).toHaveLength(0);
     });
 
-    test('no position, or one that takes too long, each say what to try', () => {
+    test('no position and too slow show the same one line as a refusal', () => {
         tapLocate();
         act(() => deliverError(fakeError(2)));
-        expect(messages()[0].textContent).toContain('device settings');
+        expect(messages()[0].textContent).toBe(MESSAGE_TEXT);
 
         tapLocate();
         act(() => deliverError(fakeError(3)));
         expect(messages()).toHaveLength(1);
-        expect(messages()[0].textContent).toContain('took too long');
+        expect(messages()[0].textContent).toBe(MESSAGE_TEXT);
     });
 
-    test('a browser that cannot share location says so and what to use instead', () => {
+    test('a browser that cannot share location shows the same one line', () => {
         delete (navigator as { geolocation?: Geolocation }).geolocation;
         tapLocate();
 
         expect(messages()).toHaveLength(1);
-        expect(messages()[0].textContent).toContain('cannot share your location');
-        expect(messages()[0].textContent).toContain('recent version');
+        expect(messages()[0].textContent).toBe(MESSAGE_TEXT);
+    });
+
+    // Chrome on Android reports location switched off for the whole phone as a timeout, so the pop-up covers
+    // every cause rather than guessing one from the browser's answer (issue 26).
+    test('"Learn more" opens a pop-up with what to try; its Close shuts it and returns to the message', () => {
+        tapLocate();
+        act(() => deliverError(fakeError(3)));
+        expect(helpPopup()).toBeNull();
+
+        const learnMore = buttonIn(messages()[0], 'Learn more');
+        act(() => learnMore.click());
+
+        const popup = helpPopup();
+        expect(popup).not.toBeNull();
+        expect(popup.getAttribute('aria-modal')).toBe('true');
+        const title = document.getElementById(popup.getAttribute('aria-labelledby'));
+        expect(title.textContent).toBe('Finding your location');
+        expect(popup.textContent).toContain('site settings');
+        expect(popup.textContent).toContain('device\'s settings');
+        expect(popup.textContent).toContain('near a window');
+        expect(popup.textContent).toContain('recent browser');
+        // Keyboard and screen-reader users land in the pop-up.
+        const close = buttonIn(popup, 'Close');
+        expect(document.activeElement).toBe(close);
+
+        act(() => close.click());
+
+        expect(helpPopup()).toBeNull();
+        expect(messages()).toHaveLength(1);
+        expect(document.activeElement).toBe(buttonIn(messages()[0], 'Learn more'));
+    });
+
+    test('Escape, or a tap outside the pop-up, also closes it', () => {
+        tapLocate();
+        act(() => deliverError(fakeError(1)));
+
+        act(() => buttonIn(messages()[0], 'Learn more').click());
+        // Tab stays on the pop-up's Close: focus does not wander to the page behind.
+        const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+        act(() => {
+            document.activeElement.dispatchEvent(tab);
+        });
+        expect(tab.defaultPrevented).toBe(true);
+        expect(document.activeElement).toBe(buttonIn(helpPopup(), 'Close'));
+        // Escape works even when focus has left the pop-up, as a tap on its text can do in Safari.
+        act(() => {
+            document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        });
+        expect(helpPopup()).toBeNull();
+
+        act(() => buttonIn(messages()[0], 'Learn more').click());
+        act(() => helpPopup().click());
+        expect(helpPopup()).toBeNull();
     });
 
     test('the message can be closed', () => {
         tapLocate();
         act(() => deliverError(fakeError(1)));
 
-        const close = messages()[0].querySelector('button');
-        expect(close.textContent).toBe('Close');
-        act(() => close.click());
+        act(() => closeCross(messages()[0]).click());
 
         expect(messages()).toHaveLength(0);
     });
@@ -286,6 +362,7 @@ describe('<GeolocationControl />', () => {
         expect(clearWatch).toHaveBeenCalledWith(1);
         expect(container.querySelector('.location-dot')).toBeNull();
         expect(messages()).toHaveLength(1);
+        expect(messages()[0].textContent).toBe(MESSAGE_TEXT);
     });
 
     test('hiding the page stops the watch and keeps the dot; showing it again carries on without moving the map', () => {
