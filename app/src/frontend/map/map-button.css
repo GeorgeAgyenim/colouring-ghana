@@ -21,8 +21,21 @@
     min-width: 310px;
     color: #191b1d;
 }
-.map-button .btn:hover {
-    color: #fff;
+/* A phone keeps :hover on the last button tapped, so hover looks apply only where a mouse can hover. On a
+   touch screen a hovered button keeps its resting look: Bootstrap's .btn-outline-dark:hover would leave a
+   tapped button on the light map filled dark. Placed before the dark-map and on/off rules below, which
+   override it. Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
+@media (hover: hover) {
+    .map-button .btn:hover {
+        color: #fff;
+    }
+}
+@media (hover: none) {
+    .map-button .btn-outline-dark:hover {
+        color: #191b1d;
+        background-color: transparent;
+        border-color: #212529;
+    }
 }
 
 .map-button.night .btn {
@@ -30,9 +43,8 @@
     background-color: #343a40;
     border-color: #343a40;
 }
-/* Only where there is a mouse to hover with: a phone keeps :hover on the last button tapped, and this made
-   that button see-through over the form's white, so its light icon or words all but vanished.
-   Ticket: docs/tickets/location-search/issues/27-map-control-spacing.md */
+/* Mouse only (see above): on a phone this made a tapped button see-through over the form's white, so its
+   light icon or words all but vanished. */
 @media (hover: hover) {
     .map-button.night .btn:hover {
         color: #d4d7da;
