@@ -15,6 +15,7 @@ interface DataExtractsState {
     extracts: ExtractViewModel[] | undefined;
     latestExtract: ExtractViewModel | undefined;
     previousExtracts: ExtractViewModel[] | undefined;
+    loadFailed: boolean;
 }
 
 export default class DataExtracts extends React.Component<{}, DataExtractsState> {
@@ -24,15 +25,40 @@ export default class DataExtracts extends React.Component<{}, DataExtractsState>
         this.state = {
             extracts: undefined,
             latestExtract: undefined,
-            previousExtracts: undefined
+            previousExtracts: undefined,
+            loadFailed: false
         };
     }
 
     async componentDidMount() {
-        let data = await apiGet('/api/extracts', { jsonReviver: dateReviver});
-        const extracts = (data.extracts as ExtractViewModel[]);
+        let extracts: ExtractViewModel[] | undefined;
+        try {
+            const data = await apiGet('/api/extracts', { jsonReviver: dateReviver});
+            extracts = data.extracts;
+        } catch {
+            console.error('Connection problem. Please try again later...');
+        }
+
+        // No list (the request failed, or the API sent an error or no `extracts`) is a failure.
+        if (!Array.isArray(extracts)) {
+            this.setState({ loadFailed: true });
+            return;
+        }
 
         this.setState({ extracts: extracts, latestExtract: extracts[0], previousExtracts: extracts.slice(1) });
+    }
+
+    renderStatus() {
+        if (this.state.loadFailed) {
+            return <p>Extracts could not be loaded. Please try again later.</p>;
+        }
+        if (this.state.extracts == undefined) {
+            return <p>Loading extracts...</p>;
+        }
+        if (this.state.extracts.length === 0) {
+            return <p>No extracts available</p>;
+        }
+        return null;
     }
 
     render() {
@@ -60,15 +86,7 @@ export default class DataExtracts extends React.Component<{}, DataExtractsState>
                     Please note that certain datasets including building footprint geometries are not currently included as we are still undertaking assessment of these. Improvements to the download section will be made over the next six months.
                     </p>
 
-                    {
-                        this.state.extracts == undefined ?
-                            <p>Loading extracts...</p> :
-                            (
-                                this.state.extracts.length === 0 ?
-                                    <p>No extracts available</p> :
-                                    null
-                            )
-                    }
+                    {this.renderStatus()}
                     {
                         this.state.latestExtract != undefined ?
                             <div>
@@ -84,7 +102,7 @@ export default class DataExtracts extends React.Component<{}, DataExtractsState>
                                 <ul>
                                 {
                                     this.state.previousExtracts.map(e =>
-                                        <li>
+                                        <li key={e.extract_id}>
                                             <ExtractDownloadLink {...e} />
                                         </li>
                                     )

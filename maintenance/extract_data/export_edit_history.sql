@@ -1,4 +1,4 @@
-COPY(SELECT
+SELECT
     log_id as revision_id,
     date_trunc('second', log_timestamp) as revision_timestamp,
     building_id,
@@ -6,7 +6,7 @@ COPY(SELECT
     reverse_patch,
     u.username as user
 FROM logs l
-JOIN users u
-    ON l.user_id = u.user_id)
-TO '/tmp/edit_history.csv'
-WITH CSV HEADER
+-- LEFT JOIN: logs.user_id may be empty, and every change belongs in the history
+LEFT JOIN users u
+    ON l.user_id = u.user_id
+ORDER BY log_id
