@@ -11,6 +11,7 @@ import http from 'http';
 
 import apiServer from './api/api';
 import { logErrorSafely } from './api/logError';
+import { extractDownloadsPath } from './api/services/dataExtract';
 import db from './db';
 import frontendRoute from './frontendRoute';
 import tileserver from './tiles/tileserver';
@@ -27,6 +28,15 @@ if (publicDir == undefined) {
     throw new Error('RAZZLE_PUBLIC_DIR is not set');
 }
 server.use(express.static(publicDir));
+
+// serve open data extracts, written here by maintenance/extract_data/extract_data.py
+// and listed by /api/extracts under extractDownloadsPath
+const extractsDir = process.env.EXTRACTS_DIRECTORY;
+if (extractsDir) {
+    server.use(extractDownloadsPath, express.static(extractsDir, { index: false }));
+} else {
+    console.warn('EXTRACTS_DIRECTORY is not set: data extract downloads will not be served');
+}
 
 // handle user sessions
 const pgSession = pgConnect(session);

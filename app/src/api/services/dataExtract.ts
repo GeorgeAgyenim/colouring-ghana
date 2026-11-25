@@ -55,12 +55,16 @@ function getDataExtractFromRow(er: DataExtractRow): DataExtract {
     };
 }
 
+/** Where the app serves the files in EXTRACTS_DIRECTORY (app/src/server.tsx). */
+const extractDownloadsPath = '/downloads';
+
 function getDownloadLinkForExtract(extract: DataExtractRow): string {
     const file_name = path.basename(extract.extract_path);
-    return `/downloads/${file_name}`; // TODO: potentially move base path to env var
+    return `${extractDownloadsPath}/${file_name}`;
 }
 
 export {
+    extractDownloadsPath,
     listDataExtracts,
     getDataExtractById
 };

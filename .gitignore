@@ -1,5 +1,6 @@
 # Packages
 node_modules
+.venv
 
 # Config
 config.json
