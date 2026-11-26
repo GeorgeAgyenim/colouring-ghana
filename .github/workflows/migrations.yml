@@ -1,0 +1,39 @@
+# Runs the SQL migration tests (migrations/tests/run.sh) against a throwaway PostGIS database.
+# Ticket: docs/tickets/query-engine/issues/17-cut-off-land-use-values.md
+# The image matches the database the platform runs on (PostgreSQL 18, PostGIS 3.6, checked
+# 26 November 2026). The job runs inside the same image so psql matches the server, and the
+# service container is discarded after the run; it holds no real data.
+
+name: Migration tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  migrations:
+
+    runs-on: ubuntu-latest
+    container: postgis/postgis:18-3.6
+
+    services:
+      postgres:
+        image: postgis/postgis:18-3.6
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+
+    steps:
+    - uses: actions/checkout@v4
+    - run: migrations/tests/run.sh

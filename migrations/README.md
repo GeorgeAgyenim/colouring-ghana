@@ -81,3 +81,24 @@ changes it (063, 064), rebuild it. After the down migration of 064, rebuild it w
 version that matches, since 064's rebuild stores town names without their region.
 Migration 064 adds a unique index on `(building_id, search_class)`; it first deletes any
 duplicate name/GPS rows, keeping the newest of each.
+
+## Migration tests
+
+Run them against a throwaway PostGIS server; the script only creates and drops its own
+`migration_test_*` databases. Its `PG*` user must be able to create databases and roles.
+
+```bash
+docker run -d --rm --name migration-tests -e POSTGRES_HOST_AUTH_METHOD=trust \
+    -p 127.0.0.1:55433:5432 postgis/postgis:18-3.6
+PGHOST=127.0.0.1 PGPORT=55433 PGUSER=postgres migrations/tests/run.sh       # or: run.sh 066
+docker stop migration-tests
+```
+
+CI runs the same script (`.github/workflows/migrations.yml`).
+
+## Land-use group repair and check (065, 066)
+
+1. As the owner of `buildings`, run
+   `psql -v ON_ERROR_STOP=1 -f 065.repair-cut-off-landuse-groups.up.sql` and keep its output
+   with the ticket, then run `066.landuse-groups-from-reference-list.up.sql` the same way.
+2. To undo, run 066's down, then 065's down, the same way.
