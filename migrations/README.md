@@ -81,3 +81,21 @@ changes it (063, 064), rebuild it. After the down migration of 064, rebuild it w
 version that matches, since 064's rebuild stores town names without their region.
 Migration 064 adds a unique index on `(building_id, search_class)`; it first deletes any
 duplicate name/GPS rows, keeping the newest of each.
+
+## Migration tests
+
+`tests/run.sh` tests migrations against a throwaway PostgreSQL server. Each test file
+`tests/NNN.<what>.test.sql` gets a fresh database built from every up migration numbered below
+`NNN` (applied as above), then runs with `ON_ERROR_STOP`; a test asserts by raising an
+exception. Point the standard `PG*` variables (not `PGDATABASE`, which is ignored) at a server
+where the user may create databases and roles and PostGIS is installed. The script only creates, uses and
+drops databases named `migration_test_*`, so it never touches live data. For example:
+
+```bash
+docker run -d --rm --name migration-tests -e POSTGRES_HOST_AUTH_METHOD=trust \
+    -p 127.0.0.1:55433:5432 postgis/postgis:18-3.6
+PGHOST=127.0.0.1 PGPORT=55433 PGUSER=postgres migrations/tests/run.sh       # or: run.sh 066
+docker stop migration-tests
+```
+
+CI runs the same script in `postgis/postgis:18-3.6` (`.github/workflows/migrations.yml`).
