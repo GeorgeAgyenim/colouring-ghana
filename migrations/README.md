@@ -84,12 +84,8 @@ duplicate name/GPS rows, keeping the newest of each.
 
 ## Migration tests
 
-`tests/run.sh` tests migrations against a throwaway PostgreSQL server. Each test file
-`tests/NNN.<what>.test.sql` gets a fresh database built from every up migration numbered below
-`NNN` (applied as above), then runs with `ON_ERROR_STOP`; a test asserts by raising an
-exception. Point the standard `PG*` variables (not `PGDATABASE`, which is ignored) at a server
-where the user may create databases and roles and PostGIS is installed. The script only creates, uses and
-drops databases named `migration_test_*`, so it never touches live data. For example:
+Run them against a throwaway PostGIS server; the script only creates and drops its own
+`migration_test_*` databases. Its `PG*` user must be able to create databases and roles.
 
 ```bash
 docker run -d --rm --name migration-tests -e POSTGRES_HOST_AUTH_METHOD=trust \
@@ -98,15 +94,11 @@ PGHOST=127.0.0.1 PGPORT=55433 PGUSER=postgres migrations/tests/run.sh       # or
 docker stop migration-tests
 ```
 
-CI runs the same script in `postgis/postgis:18-3.6` (`.github/workflows/migrations.yml`).
+CI runs the same script (`.github/workflows/migrations.yml`).
 
 ## Land-use group repair and check (065, 066)
 
-065 repairs land-use groups cut off mid-label (a label missing its closing bracket) and records
-each change in `landuse_group_repairs`; 066 then makes the database refuse land-use groups that
-are not in `reference_tables.buildings_landuse_group`. Apply 065 before 066 and undo them in
-reverse order (066's down first), as the owner of the `buildings` table, each with
-`psql -v ON_ERROR_STOP=1 -f <file>`: each file is one transaction, and without that flag psql
-reports success even when the transaction rolled back. Keep 065's output: it lists the counts
-before and after, every value it did not repair with the reason, and any repaired building whose
-stored land-use order does not match its labels.
+1. As the owner of `buildings`, run
+   `psql -v ON_ERROR_STOP=1 -f 065.repair-cut-off-landuse-groups.up.sql` and keep its output
+   with the ticket, then run `066.landuse-groups-from-reference-list.up.sql` the same way.
+2. To undo, run 066's down, then 065's down, the same way.
