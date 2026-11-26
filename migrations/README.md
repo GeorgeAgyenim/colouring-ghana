@@ -99,3 +99,14 @@ docker stop migration-tests
 ```
 
 CI runs the same script in `postgis/postgis:18-3.6` (`.github/workflows/migrations.yml`).
+
+## Land-use group repair and check (065, 066)
+
+065 repairs land-use groups cut off mid-label (a label missing its closing bracket) and records
+each change in `landuse_group_repairs`; 066 then makes the database refuse land-use groups that
+are not in `reference_tables.buildings_landuse_group`. Apply 065 before 066 and undo them in
+reverse order (066's down first), as the owner of the `buildings` table, each with
+`psql -v ON_ERROR_STOP=1 -f <file>`: each file is one transaction, and without that flag psql
+reports success even when the transaction rolled back. Keep 065's output: it lists the counts
+before and after, every value it did not repair with the reason, and any repaired building whose
+stored land-use order does not match its labels.
