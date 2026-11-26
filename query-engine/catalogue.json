@@ -1,0 +1,3859 @@
+{
+  "formatVersion": "1.0.0",
+  "generatedBy": "ccrp-query-engine 0.1.0 catalogue command",
+  "categories": [
+    {
+      "key": "location",
+      "title": "Location"
+    },
+    {
+      "key": "land-use",
+      "title": "Land Use"
+    },
+    {
+      "key": "typology-size",
+      "title": "Form & Size"
+    },
+    {
+      "key": "construction-design",
+      "title": "Construction & Design"
+    },
+    {
+      "key": "age-history",
+      "title": "Age & History"
+    },
+    {
+      "key": "planning-conservation",
+      "title": "Planning & Conservation"
+    },
+    {
+      "key": "retrofit-condition",
+      "title": "Retrofit & Condition"
+    },
+    {
+      "key": "energy-performance",
+      "title": "Energy Performance & Systems"
+    },
+    {
+      "key": "water-green-infrastructure",
+      "title": "Green/Water Infrastructure Context"
+    },
+    {
+      "key": "urban-infrastructure",
+      "title": "Urban Infrastructure Context"
+    },
+    {
+      "key": "disaster-management",
+      "title": "Disaster Management"
+    },
+    {
+      "key": "community",
+      "title": "Community"
+    }
+  ],
+  "fields": [
+    {
+      "key": "location_name",
+      "category": "location",
+      "title": "Building name (non-residential)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_name_link",
+      "category": "location",
+      "title": "Building name link (non-residential) - Wikipedia or other",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_residential_name_link",
+      "category": "location",
+      "title": "Building name link (residential) - Wikipedia or other",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_number",
+      "category": "location",
+      "title": "Building number",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_street",
+      "category": "location",
+      "title": "Street name",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_line_two",
+      "category": "location",
+      "title": "Address line 2",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_town",
+      "category": "location",
+      "title": "Town/City",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_postcode",
+      "category": "location",
+      "title": "Area code/Postcode",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_gps_address",
+      "category": "location",
+      "title": "GhanaPost GPS address",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_address_source",
+      "category": "location",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "location_address_links",
+      "category": "location",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "ref_toid",
+      "category": "location",
+      "title": "Open building footprint ID",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_alternative_footprint_links",
+      "category": "location",
+      "title": "Alternative open building footprint links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_subdivided",
+      "category": "location",
+      "title": "Is this building subdivided",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores false when nothing is entered, so a recorded false may not be an observation."
+    },
+    {
+      "key": "location_num_subdivisions",
+      "category": "location",
+      "title": "How many properties are there within this building?",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "location_subdivisions_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "location_subdivisions_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "ref_osm_id",
+      "category": "location",
+      "title": "OpenStreetMap ID",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_latitude",
+      "category": "location",
+      "title": "Building latitude coordinate",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_longitude",
+      "category": "location",
+      "title": "Building longitude coordinate",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "location_coordinates_source",
+      "category": "location",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "location_coordinates_links",
+      "category": "location",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_group",
+      "category": "land-use",
+      "title": "Current land use(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_order",
+      "category": "land-use",
+      "title": "This land use is shown on the map as:",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_source",
+      "category": "land-use",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_source_detail",
+      "category": "land-use",
+      "title": "Source details",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_link",
+      "category": "land-use",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "current_landuse_verified",
+      "category": "land-use",
+      "title": "Has this land use been manually verified?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores false when nothing is entered, so a recorded false may not be an observation."
+    },
+    {
+      "key": "building_attachment_form",
+      "category": "typology-size",
+      "title": "Which description best explains the way the building is attached to others?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Detached",
+        "Semi-Detached",
+        "End-Terrace",
+        "Mid-Terrace"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "building_attachment_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "building_attachment_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "building_residential_typology_description",
+      "category": "typology-size",
+      "title": "Which dropdown option best matches the residential typology description?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Single-storey house/Bungalow",
+        "Multi-storey house",
+        "Maisonette",
+        "Flat"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "date_year",
+      "category": "age-history",
+      "title": "Year construction started (best estimate)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_year_completed",
+      "category": "age-history",
+      "title": "Year construction completed if known",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_lower",
+      "category": "age-history",
+      "title": "Year construction started (best estimate)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_upper",
+      "category": "age-history",
+      "title": "Latest possible start year",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_year_inferred",
+      "category": "age-history",
+      "title": "Year construction started (automatically inferred from other data)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_year_inferred_lower",
+      "category": "age-history",
+      "title": "Best estimate for the earliest year in which construction could have started (automatically inferred from other data)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_year_inferred_upper",
+      "category": "age-history",
+      "title": "This should be the latest year in which construction could have started (automatically inferred from other data)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "facade_year",
+      "category": "age-history",
+      "title": "Date of front of building (best estimate)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "date_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "date_source_links",
+      "category": "age-history",
+      "title": "Additional Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_storeys_core",
+      "category": "construction-design",
+      "title": "Core number of floors",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "size_storeys_attic",
+      "category": "construction-design",
+      "title": "Number of floors within roof space",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "size_storeys_basement",
+      "category": "construction-design",
+      "title": "Number of floors beneath ground level",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "size_storeys_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_storeys_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_apex",
+      "category": "construction-design",
+      "title": "Height to apex (m)",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_material_window_frame",
+      "category": "construction-design",
+      "title": "What is the material used for most of the window frames?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Wood",
+        "Metal",
+        "Plastic",
+        "Other",
+        "No windows"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_material_window_frame_source_type",
+      "category": "construction-design",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_material_window_frame_source_links",
+      "category": "construction-design",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_apex_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_apex_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_eaves",
+      "category": "construction-design",
+      "title": "Height to eaves (m)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_eaves_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_height_eaves_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_floor_area_ground",
+      "category": "construction-design",
+      "title": "Ground floor area (m²)",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_floor_area_total",
+      "category": "construction-design",
+      "title": "Total floor area (m²)",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_floor_area_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_floor_area_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_width_frontage",
+      "category": "construction-design",
+      "title": "Frontage width (m)",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_width_frontage_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_width_frontage_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_plot_area_total",
+      "category": "retrofit-condition",
+      "title": "Total area of plot (m²)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_plot_area_total_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_plot_area_total_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_far_ratio",
+      "category": "retrofit-condition",
+      "title": "FAR ratio (percentage of plot covered by building)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_far_ratio_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_far_ratio_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_parcel_geometry",
+      "category": "retrofit-condition",
+      "title": "Land parcel geometry link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "size_parcel_geometry_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "size_parcel_geometry_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_core_material",
+      "category": "planning-conservation",
+      "title": "What is the main structural material thought to be?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Wood",
+        "Stone",
+        "Brick",
+        "Steel",
+        "Reinforced Concrete",
+        "Other Metal",
+        "Other Natural Material",
+        "Other Man-Made Material"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_core_material_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_core_material_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_secondary_materials",
+      "category": "planning-conservation",
+      "title": "Main secondary construction material/s",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_covering",
+      "category": "planning-conservation",
+      "title": "What is the main roof covering?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Corrugated Metal Sheet",
+        "Concrete (Flat Roof)",
+        "Asbestos Sheet",
+        "Thatch",
+        "Roofing Tiles",
+        "Other Natural Material",
+        "Other Man-Made Material"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_covering_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_covering_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_structural_system",
+      "category": "planning-conservation",
+      "title": "What type of structural system does the building appear to have?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Solid masonry walls supporting the roof",
+        "A lateral load resisting structure (e.g. concrete, steel or wooden frame)",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_structural_system_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_structural_system_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_foundation",
+      "category": "planning-conservation",
+      "title": "What is the foundation system thought to be",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Shallow foundations with no lateral support",
+        "Shallow foundations with lateral support",
+        "Deep foundations with no lateral support",
+        "Deep Foundations with lateral support",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_foundation_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_foundation_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_shape",
+      "category": "planning-conservation",
+      "title": "What kind of roof shape does the building have?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Flat",
+        "Pitched with gable ends",
+        "Pitched and hipped",
+        "Pitched with dormers",
+        "Monopitch",
+        "Sawtooth",
+        "Curved",
+        "Complex regular",
+        "Complex irregular",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_shape_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_roof_shape_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_irregularities",
+      "category": "planning-conservation",
+      "title": "Are there any irregularities in the shape of the building?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Vertical irregularities",
+        "Horizontal irregularities",
+        "No irregularities"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_irregularities_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_irregularities_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_decorative_features",
+      "category": "planning-conservation",
+      "title": "Are there decorative features/mouldings integrated into the facade?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_decorative_feature_materials",
+      "category": "planning-conservation",
+      "title": "What are these decorative features mainly made of?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Wood",
+        "Clay",
+        "Concrete",
+        "Glass",
+        "Metal",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_decorative_feature_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_decorative_feature_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_internal_wall",
+      "category": "planning-conservation",
+      "title": "What is the main internal wall material thought to be?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Brick",
+        "Stone",
+        "Concrete blocks",
+        "Concrete slabs/panels",
+        "Wood",
+        "Metal",
+        "Adobe/Earth",
+        "Glass",
+        "Plastic",
+        "Stucco on light framing",
+        "Vegetative (straw, matting etc)",
+        "Cement based boards",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_internal_wall_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_internal_wall_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_external_wall",
+      "category": "planning-conservation",
+      "title": "What is the main external wall material thought to be?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Brick",
+        "Stone",
+        "Concrete blocks",
+        "Concrete slabs/panels",
+        "Wood",
+        "Metal",
+        "Adobe/Earth",
+        "Glass",
+        "Plastic",
+        "Stucco on light framing",
+        "Vegetative (straw, matting etc)",
+        "Cement based boards",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_external_wall_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_external_wall_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "construction_ground_floor",
+      "category": "planning-conservation",
+      "title": "What is the main ground floor material thought to be?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Masonry",
+        "Earthen",
+        "Concrete",
+        "Wood",
+        "Metal",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_ground_floor_source_type",
+      "category": "planning-conservation",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "construction_ground_floor_source_links",
+      "category": "planning-conservation",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_breeam_rating",
+      "category": "water-green-infrastructure",
+      "title": "Official environmental quality rating",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_breeam_rating_source_type",
+      "category": "water-green-infrastructure",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "sust_breeam_rating_source_link",
+      "category": "water-green-infrastructure",
+      "title": "Source link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_dec",
+      "category": "water-green-infrastructure",
+      "title": "Non-residential Building Energy Rating",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_aggregate_estimate_epc",
+      "category": "water-green-infrastructure",
+      "title": "Residential Building Energy Rating",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_aggregate_estimate_epc_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "sust_aggregate_estimate_epc_source_link",
+      "category": "energy-performance",
+      "title": "Source link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_dec_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "sust_dec_source_link",
+      "category": "energy-performance",
+      "title": "Source link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_retrofit_date",
+      "category": "water-green-infrastructure",
+      "title": "Date of last significant retrofit",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "sust_life_expectancy",
+      "category": "water-green-infrastructure",
+      "title": "Expected lifespan for typology",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "survival_status",
+      "category": "age-history",
+      "title": "Survival status",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Same as Historical Map (Unchanged)",
+        "Similar to Historical Map (Some Changes)",
+        "Historical Building(s) Demolished",
+        "Current Building on Previous Green Space"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "survival_source",
+      "category": "age-history",
+      "title": "Method type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Matched by comparing maps",
+        "Checked using streetview images",
+        "Historical publication or archive document",
+        "Expert knowledge",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "survival_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_portal_link",
+      "category": "urban-infrastructure",
+      "title": "Local authority planning application link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_in_conservation_area_url",
+      "category": "urban-infrastructure",
+      "title": "Please provide a link to information about the conservation area.",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_crowdsourced_site_completion_status",
+      "category": "urban-infrastructure",
+      "title": "Has the work on this site been completed?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_crowdsourced_site_completion_year",
+      "category": "urban-infrastructure",
+      "title": "Year of completion (best estimate)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_crowdsourced_site_completion_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "planning_crowdsourced_site_completion_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_crowdsourced_planning_id",
+      "category": "urban-infrastructure",
+      "title": "If you know of a planning application that has been recently submitted for this site, and is not listed in the blue box above, please enter its planning application ID below:",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_in_conservation_area",
+      "category": "urban-infrastructure",
+      "title": "Is the building in a conservation area?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_in_conservation_area_id",
+      "category": "urban-infrastructure",
+      "title": "Conservation Area identifier",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_conservation_area_name",
+      "category": "urban-infrastructure",
+      "title": "Conservation Area Name",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_listed",
+      "category": "urban-infrastructure",
+      "title": "Is this a listed building?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_list_id",
+      "category": "urban-infrastructure",
+      "title": "Please add the ID from the NHLE if the building is listed:",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_list_grade",
+      "category": "urban-infrastructure",
+      "title": "What is its protection rating?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "I",
+        "II*",
+        "II"
+      ],
+      "ambiguity": "The database stores \"None\" when nothing is entered, so a recorded \"None\" may not be an observation."
+    },
+    {
+      "key": "planning_heritage_at_risk_url",
+      "category": "urban-infrastructure",
+      "title": "If the building is on a heritage at risk register, please provide a link to the entry on the register.",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_world_heritage_site",
+      "category": "urban-infrastructure",
+      "title": "Is the building part of a World Heritage Site?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_world_list_id",
+      "category": "urban-infrastructure",
+      "title": "Please add the World Heritage Site ID:",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_glher_url",
+      "category": "urban-infrastructure",
+      "title": "Is it recorded on any historic environment records?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_in_apa",
+      "category": "urban-infrastructure",
+      "title": "Is the building in an area of archaeological priority?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_in_apa_url",
+      "category": "urban-infrastructure",
+      "title": "Area of archaeological priority link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_local_list",
+      "category": "urban-infrastructure",
+      "title": "Is the building a locally listed heritage asset?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_local_list_url",
+      "category": "urban-infrastructure",
+      "title": "Please provide a link to the heritage asset registry.",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_historic_area_assessment",
+      "category": "urban-infrastructure",
+      "title": "Does the building have any other type of designation?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_historic_area_assessment_url",
+      "category": "urban-infrastructure",
+      "title": "Links to other designation type:",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_missing_data",
+      "category": "urban-infrastructure",
+      "title": "Is information on a planning application relating to this building missing?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_missing_data_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_heritage_at_risk",
+      "category": "urban-infrastructure",
+      "title": "Is the building on a heritage at risk register?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_scientific_interest",
+      "category": "urban-infrastructure",
+      "title": "Is the building on a site of special scientific interest?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_scientific_interest_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "planning_scientific_interest_source_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_flood_zone",
+      "category": "urban-infrastructure",
+      "title": "Is the building inside a Flood Zone?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_housing_zone",
+      "category": "urban-infrastructure",
+      "title": "Is the building in a Housing Zone?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_enterprise_zone",
+      "category": "urban-infrastructure",
+      "title": "Is the building in a Creative Enterprise Zone?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "planning_protected_vista",
+      "category": "urban-infrastructure",
+      "title": "Is the building within a Protected Vista?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "is_domestic",
+      "category": "energy-performance",
+      "title": "Is the building residential, non-residential or mixed? (automatically generated from Specific Land Use/s)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Yes",
+        "No",
+        "Mixed domestic/non-domestic"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "is_domestic_source",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "is_domestic_links",
+      "category": "energy-performance",
+      "title": "Source links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "likes_total",
+      "category": "community",
+      "title": "Total number of likes",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_type_worth_keeping_total",
+      "category": "community",
+      "title": "People who think this type of building contributes to the city.",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_local_significance_total",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_hominess_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_coherence_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_fascination_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_hominess_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_coherence_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_fascination_count",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_hominess_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_coherence_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_building_fascination_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_hominess_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_coherence_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_streetscape_fascination_avg",
+      "category": "community",
+      "title": "People who think the building should be recorded as one of local interest",
+      "type": "number",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_expected_planning_application_total",
+      "category": "community",
+      "title": "People who think the building will be affected by a planning application in the near future",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores 0 when nothing is entered, so a recorded 0 may not be an observation."
+    },
+    {
+      "key": "community_activities_current",
+      "category": "community",
+      "title": "Is this building currently used for community activities?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "community_activities",
+      "category": "community",
+      "title": "If not, has it been used for community activities in the past?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "community_activities_always",
+      "category": "community",
+      "title": "If yes, has it always been used for community activities?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "community_public_ownership",
+      "category": "community",
+      "title": "What is the ownership type for this building?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Public/State body",
+        "Public body with Private company",
+        "Charity",
+        "Community group/Cooperative",
+        "Other non-profit body",
+        "Privately owned company",
+        "Privately owned offshore company",
+        "Private individual",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "community_public_ownership_source_type",
+      "category": "urban-infrastructure",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "community_public_ownership_sources",
+      "category": "community",
+      "title": "Community ownership source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "dynamics_has_demolished_buildings",
+      "category": "disaster-management",
+      "title": "Were any other buildings ever built on this site?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "has_extension",
+      "category": "energy-performance",
+      "title": "Does this information relate to the original main building?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_year",
+      "category": "energy-performance",
+      "title": "Year extension built (best estimate)",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "developer_type",
+      "category": "energy-performance",
+      "title": "What type of developer built the building?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "State",
+        "Charity",
+        "Community/Cooperative",
+        "Other non-profit body",
+        "Private (individual)",
+        "Commercial (company/estate)",
+        "Religious body",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "developer_name",
+      "category": "energy-performance",
+      "title": "Who were the developer(s)?",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "developer_links",
+      "category": "energy-performance",
+      "title": "Developer link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "developer_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "developer_source_link",
+      "category": "energy-performance",
+      "title": "Source links for developer(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_developer_type",
+      "category": "energy-performance",
+      "title": "What type of developer built the extension?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "State",
+        "Charity",
+        "Community/Cooperative",
+        "Other non-profit body",
+        "Private (individual)",
+        "Commercial (company/estate)",
+        "Religious body",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_developer_name",
+      "category": "energy-performance",
+      "title": "Who were the developer(s)?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_developer_links",
+      "category": "energy-performance",
+      "title": "Developer link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_developer_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_developer_source_link",
+      "category": "energy-performance",
+      "title": "Source links for developer(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "landowner",
+      "category": "energy-performance",
+      "title": "Landowner(s) at time of construction",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "landowner_links",
+      "category": "energy-performance",
+      "title": "Landowner link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "landowner_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "landowner_source_link",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "designers",
+      "category": "energy-performance",
+      "title": "Who were the main designer(s)?",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "designers_links",
+      "category": "energy-performance",
+      "title": "Designer link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "designers_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "designers_source_link",
+      "category": "energy-performance",
+      "title": "Source links for designer(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "lead_designer_type",
+      "category": "energy-performance",
+      "title": "Which title best describes the lead designer?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Landowner",
+        "Speculative builder",
+        "Government architecture department",
+        "Architect/ architectural firm",
+        "Engineer/ Engineering firm",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_designers",
+      "category": "energy-performance",
+      "title": "Who were the main designer(s) of the extension?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_designers_links",
+      "category": "energy-performance",
+      "title": "Designer link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_designers_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_designers_source_link",
+      "category": "energy-performance",
+      "title": "Source links for designer(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_lead_designer_type",
+      "category": "energy-performance",
+      "title": "Which title best describes the lead designer?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Landowner",
+        "Speculative builder",
+        "Government architecture department",
+        "Architect/ architectural firm",
+        "Engineer/ Engineering firm",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "designer_awards",
+      "category": "energy-performance",
+      "title": "Has the building won any awards?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "awards_source_link",
+      "category": "energy-performance",
+      "title": "Source link(s) for building award(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "builder",
+      "category": "energy-performance",
+      "title": "Name of builder/construction team.",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "builder_links",
+      "category": "energy-performance",
+      "title": "Builder link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "builder_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "builder_source_link",
+      "category": "energy-performance",
+      "title": "Source for builder/construction team",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_builder",
+      "category": "energy-performance",
+      "title": "Name of builder/construction team.",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_builder_links",
+      "category": "energy-performance",
+      "title": "Builder link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_builder_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_builder_source_link",
+      "category": "energy-performance",
+      "title": "Source for builder/construction team",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "other_team",
+      "category": "energy-performance",
+      "title": "Other significant members of the team",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "other_team_source_link",
+      "category": "energy-performance",
+      "title": "Source other significant team members",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "building_client",
+      "category": "energy-performance",
+      "title": "Original building client link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "building_client_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "building_client_source_link",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_client",
+      "category": "energy-performance",
+      "title": "Extension client link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "extension_client_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "extension_client_source_link",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "disaster_type",
+      "category": "disaster-management",
+      "title": "Disaster type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Flood",
+        "Earthquake",
+        "Hurricane",
+        "Fire",
+        "Extreme heat",
+        "Political/war damage",
+        "Other human (blast damage/spills etc.)",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "disaster_severity",
+      "category": "disaster-management",
+      "title": "How severe do you assess the damage to be?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Building destroyed",
+        "Very severe",
+        "Severe",
+        "Moderate",
+        "Minimal",
+        "No damage visible"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "disaster_assessment_method",
+      "category": "disaster-management",
+      "title": "Damage assessment type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "disaster_source_link",
+      "category": "disaster-management",
+      "title": "Damage assessment source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_front_garden",
+      "category": "retrofit-condition",
+      "title": "Does the building have a front garden with greenery?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_back_garden",
+      "category": "retrofit-condition",
+      "title": "Does the building have a back garden with greenery?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_flats_garden",
+      "category": "retrofit-condition",
+      "title": "Does this building contain flats and have a dedicated green space?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_garden_source_type",
+      "category": "retrofit-condition",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_garden_source_links",
+      "category": "retrofit-condition",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_width",
+      "category": "energy-performance",
+      "title": "Average street width (m)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_width_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_width_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_pavement_width",
+      "category": "energy-performance",
+      "title": "Average pavement width (m)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_pavement_width_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_pavement_width_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_walkability_index",
+      "category": "energy-performance",
+      "title": "Walkability index",
+      "type": "integer",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_green_space_distance",
+      "category": "energy-performance",
+      "title": "Distance to nearest green space (m)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_green_space_distance_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_green_space_distance_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_tree_distance",
+      "category": "energy-performance",
+      "title": "Distance to nearest tree (m)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_tree_distance_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_tree_distance_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_geometry",
+      "category": "energy-performance",
+      "title": "Street network geometry link",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_geometry_source_type",
+      "category": "energy-performance",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "context_street_geometry_source_links",
+      "category": "energy-performance",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_cladding_date",
+      "category": "age-history",
+      "title": "Cladding date (best estimate)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_cladding_date_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "age_cladding_date_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_extension_date",
+      "category": "age-history",
+      "title": "Date of significant extensions (best estimate)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_extension_date_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "age_extension_date_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_retrofit_date",
+      "category": "age-history",
+      "title": "Date of last significant retrofit (best estimate)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_retrofit_date_source_type",
+      "category": "age-history",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "age_retrofit_date_source_links",
+      "category": "age-history",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "building_condition",
+      "category": "retrofit-condition",
+      "title": "What is the current physical condition of this building? (Best estimate)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Excellent (Looks new or very well-maintained)",
+        "Good (Minor wear; faded surfaces or light repairs needed)",
+        "Fair (Visible cracks, peeling paint, or minor damage)",
+        "Poor (Major damage; structural wear posing potential safety risks)",
+        "Derelict (Ruinous; abandoned or partially collapsing, posing safety risks)",
+        "Uncompleted (Under construction or unfinished)"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "building_condition_source_type",
+      "category": "retrofit-condition",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "building_condition_source_links",
+      "category": "retrofit-condition",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_historical_raster_map_links",
+      "category": "age-history",
+      "title": "Historical maps links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "age_historical_vectorised_footprint_links",
+      "category": "age-history",
+      "title": "Extracted vectorised historical footprints links",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "energy_solar",
+      "category": "water-green-infrastructure",
+      "title": "Does the building have solar panels?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "energy_solar_source_type",
+      "category": "water-green-infrastructure",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "energy_solar_source_links",
+      "category": "water-green-infrastructure",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "energy_green_roof",
+      "category": "water-green-infrastructure",
+      "title": "Does the building have green walls/green roof?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "energy_green_roof_source_type",
+      "category": "water-green-infrastructure",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "energy_green_roof_source_links",
+      "category": "water-green-infrastructure",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_classification",
+      "category": "typology-size",
+      "title": "Which dropdown option best suits the building and its context?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Low-rise: Not part of a group/cluster (1-2 core floors- excluding extensions)",
+        "Low-rise: Part of dense block/row/terrace",
+        "Low-rise: Part of group of widely spaced blocks (includes semi-detached houses)",
+        "Mid-rise: Not part of a group/cluster (3-5 core floors)",
+        "Mid-rise: Part of group of densely spaced blocks",
+        "Mid-rise: Part of group of widely spaced blocks",
+        "High rise: Not part of a group/cluster",
+        "High-rise: Part of group of densely spaced blocks (6 + core floors)",
+        "High-rise: Part of group of widely spaced blocks"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_classification_source_type",
+      "category": "typology-size",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_classification_source_links",
+      "category": "typology-size",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_style_period",
+      "category": "typology-size",
+      "title": "Which description best suits the building's historical period?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Pre-1400 (Indigenous Traditional Settlements)",
+        "1400–1800 (Early Coastal States & Trade Era)",
+        "1800–1874 (Early Colonial Influence / Forts & Castles)",
+        "1874–1957 (British Colonial Era)",
+        "1957–1980 (Post-Independence Modernism)",
+        "1981–1999 (Late 20th Century / Structural Adjustment Era)",
+        "2000–2010 (Early 21st Century Urban Expansion)",
+        "2011–present (Contemporary Architecture)"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_style_period_source_type",
+      "category": "typology-size",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_style_period_source_links",
+      "category": "typology-size",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_dynamic_classification",
+      "category": "typology-size",
+      "title": "Which dropdown option best describes the urban tissue?",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Small, often repetitive plots, mainly residential",
+        "Linear non-domestic, i.e. high streets",
+        "Large plots with internal roads"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_dynamic_classification_source_type",
+      "category": "typology-size",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_dynamic_classification_source_links",
+      "category": "typology-size",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_original_use",
+      "category": "typology-size",
+      "title": "Which land use best describes the purpose for which the building was originally built?",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_original_use_verified",
+      "category": "land-use",
+      "title": "Has this land use been manually verified?",
+      "type": "boolean",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": "The database stores false when nothing is entered, so a recorded false may not be an observation."
+    },
+    {
+      "key": "typology_original_use_order",
+      "category": "typology-size",
+      "title": "Original land use (order)",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": null,
+      "ambiguity": null
+    },
+    {
+      "key": "typology_original_use_source_type",
+      "category": "typology-size",
+      "title": "Source type",
+      "type": "text",
+      "multiValued": false,
+      "allowedValues": [
+        "Assessed by eye/personal knowledge of the building",
+        "Assessed using professional knowledge of building or building type",
+        "Assessed using streetview photographs, satellite imagery or maps",
+        "Assessed by specialist emergency group",
+        "Central government record/online database",
+        "Local government record/online database",
+        "Live streamed from a government source",
+        "Open database (non-profit)",
+        "Open database (commercial)",
+        "Website (non-profit)",
+        "Website (commercial)",
+        "Inferred computationally from CCRP data",
+        "Inferred by eye from CCRP data",
+        "Synthetic data",
+        "Other"
+      ],
+      "ambiguity": null
+    },
+    {
+      "key": "typology_original_use_source_links",
+      "category": "typology-size",
+      "title": "Source link(s)",
+      "type": "text",
+      "multiValued": true,
+      "allowedValues": null,
+      "ambiguity": null
+    }
+  ],
+  "excludedColumns": [
+    {
+      "column": "building_id",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "current_landuse_class",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "date_change_building_use",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "date_link",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "date_source",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "date_source_detail",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "demolished_buildings",
+      "reason": "Its definition describes nested values, which plan format 1 cannot query."
+    },
+    {
+      "column": "designer_source_type",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "disaster_end_date",
+      "reason": "Its type (date) cannot be queried in plan format 1."
+    },
+    {
+      "column": "disaster_start_date",
+      "reason": "Its type (date) cannot be queried in plan format 1."
+    },
+    {
+      "column": "facade_lower",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "facade_source",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "facade_source_detail",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "facade_upper",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "geometry_id",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "latest_demolish_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_conservation_area_delegation_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_conservation_area_update_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_conservation_area_update_type",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_in_list",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_list_amend_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_list_cat",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "planning_list_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "revision_id",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "sust_breeam_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "sust_dec_date",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "sust_embodied_carbon",
+      "reason": "It has no field definition."
+    },
+    {
+      "column": "sust_lifespan_average",
+      "reason": "It has no field definition."
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+# Checks that Colouring Ghana's database schema and its query engine field catalogue
+# (query-engine/catalogue.json) still match the query engine: the engine's `check` command, run
+# against a throwaway database built from this repository's migrations. It fails when a buildings
+# column is neither in the catalogue nor on its exclusion list, and when the catalogue was not
+# regenerated after the field definitions or the buildings table changed.
+# Ticket: docs/tickets/query-engine/issues/18-connect-colouring-ghana-to-engine.md
+# (FR-1.6, spec user stories 73 and 81; ADR-0017, ADR-0013). Engine: the host setup guide's
+# "Check your platform in CI", github.com/GeorgeAgyenim/ccrp-query-engine.
+#
+# The job runs on the runner itself, not inside the database image as the migration tests do: the
+# engine's Node.js 26 needs libatomic, which that image lacks (tried 26 November 2026). The layout
+# and the pinned actions are those the engine's own CI ran green with on 26 November 2026. psql
+# only applies plain SQL files here, so its version need not match the server's.
+
+name: Query engine check
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # The engine commit Colouring Ghana is pinned to; change it together with docs/tools/inventory.md.
+  ENGINE_COMMIT: a8c614faf1696dca0e0d8aa82b2f0a7959f80ab7
+
+jobs:
+  check:
+
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgis/postgis:18-3.6
+        env:
+          # a throwaway server only this job can reach: no password to keep
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      QUERY_ENGINE_DATABASE_URL: postgres://postgres@127.0.0.1:5432/ghana
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+    - name: Check out the query engine at the pinned commit
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: GeorgeAgyenim/ccrp-query-engine
+        ref: ${{ env.ENGINE_COMMIT }}
+        path: ccrp-query-engine
+        persist-credentials: false
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version-file: ccrp-query-engine/.nvmrc
+        cache: npm
+        cache-dependency-path: ccrp-query-engine/package-lock.json
+    - name: Install psql
+      run: command -v psql || { sudo apt-get update && sudo apt-get install -y postgresql-client; }
+    - name: Build a database from Colouring Ghana's migrations
+      run: migrations/tests/build-database.sh ghana
+    - name: Install the query engine
+      working-directory: ccrp-query-engine
+      run: npm ci --omit=dev
+    - name: Check the schema against the catalogue
+      working-directory: ccrp-query-engine
+      env:
+        QUERY_ENGINE_CATALOGUE_FILE: ../query-engine/catalogue.json
+      run: node src/cli.ts check
+    - name: Check the catalogue is regenerated from the current field definitions
+      working-directory: ccrp-query-engine
+      run: |
+        node src/cli.ts catalogue --definitions ../app/src/frontend/config/data-fields-config.ts \
+          --output "$RUNNER_TEMP/catalogue.json"
+        if ! diff -u ../query-engine/catalogue.json "$RUNNER_TEMP/catalogue.json"; then
+          echo "::error file=query-engine/catalogue.json::The catalogue differs from one generated from the current field definitions and migrations. Regenerate it (query-engine/README.md)."
+          exit 1
+        fi

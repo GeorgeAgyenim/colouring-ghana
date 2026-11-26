@@ -9,8 +9,10 @@ import express from 'express';
 import session from 'express-session';
 import http from 'http';
 
+import { analyseModeOn } from './analyseMode';
 import apiServer from './api/api';
 import { logErrorSafely } from './api/logError';
+import { queryEngineProxy } from './api/queryEngineProxy';
 import { extractDownloadsPath } from './api/services/dataExtract';
 import db from './db';
 import frontendRoute from './frontendRoute';
@@ -60,6 +62,10 @@ if (server.get('env') === 'production') {
 server.use(session(sess));
 
 server.use('/tiles', tileserver);
+if (analyseModeOn(process.env)) {
+    // before the API router, which reads request bodies and answers 404 to any address it does not know
+    server.use('/api/query', queryEngineProxy(process.env.ANALYSE_ENGINE_URL));
+}
 server.use('/api', apiServer);
 server.use(frontendRoute);
 
