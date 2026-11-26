@@ -4,9 +4,8 @@
 # Ticket: docs/tickets/query-engine/issues/17-cut-off-land-use-values.md
 #
 # Each test file is named NNN.<what it tests>.test.sql. For each one the script creates a fresh
-# database, builds it from every up migration numbered below NNN (applied the way
-# migrations/README.md applies them: in file-name order, an error in one statement does not stop
-# the rest, and is printed here as a warning), then runs the test file with ON_ERROR_STOP. A test
+# database, builds it from every up migration numbered below NNN with build-database.sh (applied the
+# way migrations/README.md applies them), then runs the test file with ON_ERROR_STOP. A test
 # asserts by raising an exception, so any failed assertion or SQL error fails the run.
 #
 # Needs: psql on PATH, and the standard PG* variables (PGHOST, PGPORT, PGUSER, PGPASSWORD) pointing
@@ -25,7 +24,6 @@ set -euo pipefail
 export LC_ALL=C   # file-name order, for globs below, is the same on every machine
 
 here="$(cd "$(dirname "$0")" && pwd)"
-migrations="$(cd "$here/.." && pwd)"
 filter="${1:-}"
 
 run_psql() {
@@ -57,27 +55,9 @@ for test_path in "$here"/*.test.sql; do
     fi
 
     current_db="migration_test_${number}_$$"
-    run_psql -d postgres -c "SET client_min_messages = warning" \
-        -c "DROP DATABASE IF EXISTS $current_db" -c "CREATE DATABASE $current_db"
-    run_psql -d "$current_db" -c "CREATE EXTENSION postgis; CREATE EXTENSION pgcrypto; CREATE EXTENSION pg_trgm;"
-
+    run_psql -d postgres -c "SET client_min_messages = warning" -c "DROP DATABASE IF EXISTS $current_db"
     # Base schema: every up migration numbered below the test's number, as README.md applies them.
-    for migration_path in "$migrations"/*.up.sql; do
-        migration_number="$(basename "$migration_path")"
-        migration_number="${migration_number%%.*}"
-        if [ "$((10#$migration_number))" -ge "$((10#$number))" ]; then
-            continue
-        fi
-        # psql exits non-zero only if it cannot run the file at all (e.g. no connection): stop then.
-        # A failed statement inside it is reported and the rest of the file still runs, as in
-        # README.md (e.g. 007 re-adds a constraint that 004 made).
-        if ! messages="$(psql -X -q -d "$current_db" -f "$migration_path" 2>&1 >/dev/null)"; then
-            echo "$messages" >&2
-            echo "Could not run $(basename "$migration_path")" >&2
-            exit 1
-        fi
-        printf '%s\n' "$messages" | grep -E 'ERROR' | sed 's|^|  base migration warning: |' || true
-    done
+    "$here/build-database.sh" "$current_db" "$number"
 
     echo "Running $name"
     tests_run=$((tests_run + 1))
