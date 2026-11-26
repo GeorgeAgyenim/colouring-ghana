@@ -26,7 +26,7 @@ permissions:
 
 env:
   # The engine commit Colouring Ghana is pinned to; change it together with docs/tools/inventory.md.
-  ENGINE_COMMIT: a8c614faf1696dca0e0d8aa82b2f0a7959f80ab7
+  ENGINE_COMMIT: c9288aea9f6249f858362cf4d63d324f020e9e91
 
 jobs:
   check:
